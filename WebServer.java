@@ -6,47 +6,39 @@ public class WebServer {
 	
 	public static void main ( String argv[] ) {
 		
-		try {
+		ServerSocket ss = null;
 
-			URL url = new URL("http://localhost/Mastermind/test.php");
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-			connection.setRequestMethod("GET");
-
-			/******Usefull methods
-			String method = connection.getRequestMethod();
-			int status = connection.getResponseCode();
-
-			System.out.println("Status :" + status);
-			System.out.println("Method : " + method);
-			*/
-
-			String headerField;
-			int i = 0;
-			while((headerField = connection.getHeaderField(i)) != null){
-				System.out.println(headerField);
-				i++;
-			}
-
-			/****** Getting the whole HTTP page (not useful)
-
-
-			BufferedReader testBR = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			StringBuffer buf = new StringBuffer();
-			String line;
-
-			while((line = testBR.readLine()) != null){
-				buf.append(line);
-			}
+		try {	
+			ss = new ServerSocket(8001);
+			System.out.println("Server started...");
 			
-			testBR.close();
-			connection.disconnect();
+			Socket clientSocket = ss.accept();
 
-			System.out.println(buf.toString());
-			*/
+		    PrintWriter clientOut = new PrintWriter(clientSocket.getOutputStream());
 
+
+		    clientOut.println("HTTP/1.1 200 OK");
+		    clientOut.println("Content-Type: text/html");
+		    clientOut.println("\r\n");
+		    clientOut.println("<p> Hello world </p>");
+		    clientOut.flush();
+
+			clientSocket.close();
+			
+		}
+		catch(IOException e) {
+			e.printStackTrace();
 		}
 		catch(Exception e){
 			e.printStackTrace();
+		}
+		finally{
+			try {
+				ss.close();
+			}
+			catch(IOException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 }
