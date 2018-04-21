@@ -20,8 +20,6 @@ public class MastermindServer {
 				Thread t = new Thread(new MastermindServerWorker(client));
 				t.start();
 			}
-
-			
 		}
 		catch(IOException e) {
 			e.printStackTrace();

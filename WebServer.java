@@ -13,10 +13,28 @@ public class WebServer {
 			System.out.println("Server started...");
 			
 			Socket clientSocket = ss.accept();
+			BufferedReader BR = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
 		    PrintWriter clientOut = new PrintWriter(clientSocket.getOutputStream());
+		    
 
+		    String headers;
+		    
 
+		    
+		    
+		    clientOut.println("HTTP/1.1 303 See Other");
+		    clientOut.println("Location: /play.html");
+		    clientOut.println("\r\n");
+		    clientOut.flush();
+	
+		    clientSocket = ss.accept();
+
+		    while((headers = BR.readLine()) != null){
+		    	System.out.println(headers);
+		    }
+
+		    
 		    clientOut.println("HTTP/1.1 200 OK");
 		    clientOut.println("Content-Type: text/html");
 		    clientOut.println("\r\n");
@@ -24,6 +42,10 @@ public class WebServer {
 		    clientOut.flush();
 
 			clientSocket.close();
+
+
+
+
 			
 		}
 		catch(IOException e) {
