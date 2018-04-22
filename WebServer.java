@@ -48,6 +48,7 @@ public class WebServer {
 			    		
 			    clientOut.println("HTTP/1.1 200 OK");
 			    clientOut.println("Content-Type: text/html");
+			    clientOut.println("Set-Cookie: SESSID=rk64vvmhlbt6rsdfv4f02kc5g0; path=/");
 			    clientOut.println("\r\n");
 			    clientOut.println("<p> Hello world </p>");
 			    clientOut.flush();
