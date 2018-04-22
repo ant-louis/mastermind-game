@@ -6,14 +6,20 @@ public class WebServer {
 	
 	public static void main ( String argv[] ) {
 		
-		ServerSocket ss = null;
+		ServerSocket serverSocket = null;
 
 		try {	
 
-				ss = new ServerSocket(8001);
+				serverSocket = new ServerSocket(8001);
 				System.out.println("Server started...");
-				
-				Socket clientSocket = ss.accept();
+			
+			//while(true) {
+				Socket clientSocket = serverSocket.accept() ;
+				Thread t = new Thread(new WebServerWorker(clientSocket));
+				t.start();
+			//}
+			
+				/*
 				BufferedReader BR = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
 			    PrintWriter clientOut = new PrintWriter(clientSocket.getOutputStream());
@@ -31,14 +37,9 @@ public class WebServer {
 			    }
 
 				clientSocket.close();
-				ss.close();
 
-
-
-
-				ss = new ServerSocket(8001);
 				
-				clientSocket = ss.accept();
+				clientSocket = serverSocket.accept();
 				BR = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
 			   	clientOut = new PrintWriter(clientSocket.getOutputStream());
@@ -58,10 +59,10 @@ public class WebServer {
 			    while((header2 = BR.readLine()) != null){
 			    	System.out.println(header2);
 			    }
-
+	
 			    BR.close();
 				clientSocket.close();
-				ss.close();
+				*/
 
 			
 		}
@@ -73,11 +74,12 @@ public class WebServer {
 		}
 		finally{
 			try {
-				ss.close();
+				serverSocket.close();
 			}
 			catch(IOException e1) {
 				e1.printStackTrace();
 			}
 		}
+		
 	}
 }
