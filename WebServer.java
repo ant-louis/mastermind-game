@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.*; 
-
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class WebServer {
 	
@@ -12,32 +13,18 @@ public class WebServer {
 
 				serverSocket = new ServerSocket(8001);
 				System.out.println("Server started...");
-			
-			//while(true) {
-				Socket clientSocket = serverSocket.accept() ;
-				Thread t = new Thread(new WebServerWorker(clientSocket));
-				t.start();
-			//}
+				//Creating a threadpool of 5 threads
+		        ExecutorService executor = Executors.newFixedThreadPool(5);
+
+				while(true) {
+					Socket clientSocket = serverSocket.accept() ;
+					Thread t = new Thread(new WebServerWorker(clientSocket));
+					executor.execute(t);			
+					}
+					
+				//executor.shutdown();
 			
 				/*
-				BufferedReader BR = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
-			    PrintWriter clientOut = new PrintWriter(clientSocket.getOutputStream());
-			    
-
-			    String header1;
-			    
-			    clientOut.println("HTTP/1.1 303 See Other");
-			    clientOut.println("Location: /play.html");
-			    clientOut.println("\r\n");
-			    clientOut.flush();
-		
-			    while((header1 = BR.readLine()) != null){
-			    	System.out.println(header1);
-			    }
-
-				clientSocket.close();
-
 				
 				clientSocket = serverSocket.accept();
 				BR = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -62,6 +49,7 @@ public class WebServer {
 	
 			    BR.close();
 				clientSocket.close();
+				
 				*/
 
 			
