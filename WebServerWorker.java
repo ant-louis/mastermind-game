@@ -38,8 +38,14 @@ public class WebServerWorker implements Runnable {
 		    workerOut.print("<p> Hello world" + i + " </p>\r\n");
 		    workerOut.flush();
 
-			readRequest(istream);
-			istream.close();
+		    HttpParser httpparser = new HttpParser(istream);
+
+		    System.out.print("Request type: ");
+			System.out.println(httpparser.getRequestType());
+		    System.out.print("Path: ");
+			System.out.println(httpparser.getPath());
+			httpparser.getMap();
+
 			workerOut.close();
 
 		}
@@ -53,55 +59,5 @@ public class WebServerWorker implements Runnable {
 				e1.printStackTrace();
 			}
 		}
-	}
-
-
-
-
-	private void readRequest(InputStreamReader in) throws IOException {
-		/*
-		String buffer = "";
-		String prevbuf = "";
-		char c;
-
-		do{
-			c = (char) in.read();
-			buffer += c + "";
-			if(c == '\r'){System.out.print("_r");}
-			if(c == '\n'){
-				System.out.print("_n");
-				System.out.print(buffer);
-				if(buffer =="\r\n" && prevbuf =="\r\n"){
-					break;
-				}
-				prevbuf = buffer;
-				buffer = "";
-			}
-		}while(c != -1);
-
-		System.out.print(buffer);
-		*/
-
-		String httpresponse = "";
-		char[] buffer = new char[2];
-		char[] prevbuf = new char[2];
-		char c;
-
-		while(in.read(buffer,0,2) != -1) {
-			httpresponse += String.valueOf(buffer);
-			
-			System.out.print(buffer);
-
-			if(buffer[0] == '\r' && buffer[1] ==  '\n'){
-				if(prevbuf[0] == '\r' && prevbuf[1] ==  '\n'){
-					break;
-				}
-
-				prevbuf[0] = buffer[0];
-				prevbuf[1] = buffer[1];
-			}
-		}
-
-		System.out.println(httpresponse);
 	}
 }
