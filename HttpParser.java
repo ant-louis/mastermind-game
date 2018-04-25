@@ -54,7 +54,7 @@ public class HttpParser {
 		return this.requestType;
 	}
 
-	//Returns the path type of the HTTP request
+	//Returns the path of the HTTP request
 	public String getPath(){
 		return this.path;
 	}
@@ -88,9 +88,9 @@ public class HttpParser {
        			headerLine.delete(0,headerLine.length()-1);
        		}
 
-		    //Check end of header
        		int currentLength = entireHeader.length();
-
+  
+		    //Check end of header
        		if (currentLength > 4 &&
    				entireHeader.charAt(currentLength - 1) == '\n'&&
 				entireHeader.charAt(currentLength - 2) == '\r' &&
