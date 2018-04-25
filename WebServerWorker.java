@@ -20,34 +20,43 @@ public class WebServerWorker implements Runnable {
 			InputStreamReader istream = new InputStreamReader(workerSock.getInputStream());
 			PrintWriter workerOut = new PrintWriter(workerSock.getOutputStream());
 
-			/*
-			System.out.println("Redirecting...");
-			workerOut.print("HTTP/1.1 303 See Other\r\n");
-			workerOut.print("Location: /play.html\r\n");
-		    workerOut.print("Connection: close\r\n");
-
-			workerOut.print("\r\n");
-			workerOut.flush();
-			*/
-
-	    	workerOut.print("HTTP/1.1 200 OK\r\n");
-		    workerOut.print("Content-Type: text/html\r\n");
-		    workerOut.print("Connection: close\r\n");
-		    workerOut.print("Set-Cookie: SESSID=rk64vvmhlbt6rsdfv4f02kc5g0; path=/\r\n");
-		    workerOut.print("\r\n");
-		    workerOut.print("<p> Hello world" + i + " </p>\r\n");
-		    workerOut.flush();
-
 		    HttpParser httpparser = new HttpParser(istream);
-
+		    String requestType = httpparser.getRequestType();
+		    String path = httpparser.getPath();
 		    System.out.print("Request type: ");
-			System.out.println(httpparser.getRequestType());
+			System.out.println(requestType);
 		    System.out.print("Path: ");
-			System.out.println(httpparser.getPath());
+			System.out.println(path);
 			httpparser.getMap();
 
-			workerOut.close();
 
+			if(path.equals("/")){
+				System.out.println("Redirecting...");
+				workerOut.print("HTTP/1.1 303 See Other\r\n");
+				workerOut.print("Location: /play.html\r\n");
+				workerOut.print("Connection: close\r\n");
+				workerOut.print("\r\n");
+				workerOut.flush();
+			}
+
+			    
+			if(requestType.equals("GET") && path.equals("/play.html")){
+				System.out.println("Showing Mastermind interface");
+		    	workerOut.print("HTTP/1.1 200 OK\r\n");
+			    workerOut.print("Content-Type: text/html\r\n");
+			    workerOut.print("Connection: close\r\n");
+			    workerOut.print("Set-Cookie: SESSID=rk64vvmhlbt6rsdfv4f02kc5g0; path=/\r\n");
+			    workerOut.print("\r\n");
+			    workerOut.print("<p> Hello world" + i + " </p>\r\n");
+			    workerOut.flush();
+			}
+
+			if(requestType.equals("POST")){
+
+			}
+
+			istream.close();
+			workerOut.close();
 		}
 		catch(Exception e){
 			e.printStackTrace();

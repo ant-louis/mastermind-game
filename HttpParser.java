@@ -23,12 +23,6 @@ public class HttpParser {
 
 		}catch(IOException ioe){
 			ioe.printStackTrace();
-		}finally{
-			try{
-				parserIn.close();
-			}catch(IOException ioe){
-				ioe.printStackTrace();
-			}
 		}
 	}
 
