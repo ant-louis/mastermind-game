@@ -5,11 +5,12 @@ import java.net.*;
 public class MastermindServer {
 	
 	private static ServerSocket ss;
-	
+
 	
 	public static void main ( String argv[] ) {
 		
 		try {
+
 			ss = new ServerSocket(2140);
 			System.out.println("Server started...");
 			
