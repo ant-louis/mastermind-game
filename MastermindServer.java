@@ -1,37 +1,46 @@
-import java.io.*;
-import java.net.*; 
 
+import java.net.*;
 
 public class MastermindServer {
 	
-	private static ServerSocket ss;
-
+	//private static ServerSocket serversock;
+	//public static ArrayList<Socket> PlayersArray = new ArrayList<Socket>();
 	
-	public static void main ( String argv[] ) {
-		
-		try {
+	public static void main (String[] args){
 
-			ss = new ServerSocket(2140);
-			System.out.println("Server started...");
+		Thread t = new Thread(new Worker());
+		t.start();	
+
+
+		/*
+		try{
+			serversock = new ServerSocket(2416);
+			System.out.println("Server is running");
 			
-			while(true) {
-				Socket client = ss.accept() ;
-				System.out.println("Accepted connection: " + client);
-				Thread t = new Thread(new MastermindServerWorker(client));
-				t.start();
+			while (true){
+				Socket sock = serversock.accept();
+				System.out.println("Connection accepted");
+
+				Thread t1 = new Thread(new Worker(sock));
+				t1.start();			
 			}
+
+
 		}
-		catch(IOException e) {
+		catch(Exception e){
 			e.printStackTrace();
 		}
-		finally {
-			try {
-				ss.close();
+		finally{
+			try{
+				serversock.close();
 			}
-			catch(IOException e1) {
-				e1.printStackTrace();
+			catch(Exception e){
+				e.printStackTrace();
 			}
 		}
+		*/
+
+
 	}
 }
 

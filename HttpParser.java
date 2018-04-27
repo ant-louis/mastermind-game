@@ -1,7 +1,6 @@
 import java.io.*;
 import java.net.*; 
 import java.lang.StringBuilder.*;
-import java.util.regex.*;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -81,10 +80,13 @@ public class HttpParser {
        		if (c == '\n'){
        			String line = headerLine.toString();
        			String[] tokens = line.split(":");
+       			
+       			//Putting into map
        			if(tokens != null && tokens.length == 2){
        				headerMap.put(tokens[0],tokens[1]);
        			}
        			entireHeader.append(line);
+       			//Delete the line once it's mapped
        			headerLine.delete(0,headerLine.length()-1);
        		}
 
@@ -98,8 +100,16 @@ public class HttpParser {
 					break; 
 			}
 
-       	}while(c != -1);
-   }
+   		}while(c != -1);
+	}
+
+	//Extracts the cookie from the header
+	public String getCookie() {
+		return headerMap.get("Cookie");
+	}
+
+	//TODO: Extract a color guess from the request
+	public /*String*/ void getGuess(){}
 }	
 
 
