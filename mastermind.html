@@ -91,7 +91,7 @@
 				height: 100%;
 			}
 
-			.submit-button {
+			#submit-button {
 				width: 80%;
 				height: 70%;
 				border: 1px solid rgb(161,161,161);
@@ -99,12 +99,8 @@
 			    text-align: center;
 			    box-shadow: 2px 2px 2px rgb(161,161,161);
 			    margin:5%;
-			}
-
-			.submit-text {
-				font-size: 1.2em;
-				color: rgb(131,131,131);
-				margin: 3%;
+			    font-size: 1.2em;
+				color: rgb(111,111,111);
 			}
 
 			.selection-box {
@@ -112,40 +108,55 @@
 				height: 90%;
 			}
 
-			.guess{
+			#btn1, #btn2, #btn3, #btn4 {
 				height:80%;
 				width:18%;
 				border-radius: 50%;
 				border: 1px solid rgb(50,50,50);
 				margin-left: 6%;
 				margin-top: 2%;
-				background-color: rgb(240,240,240); 
+				background-color: rgb(250,0,0);
 			}
 
-			.red{
-				background-color: red;
-			}
-
-			.blue{
-				background-color: blue;
-			}
-
-			.yellow{
-				background-color: yellow;
-			}
-
-			.green{
-				background-color: green;
-			}
-
-			.white{
-				background-color: white;
-			}
-
-			.black{
-				background-color: black;
-			}
+			
         </style>
+
+        <script  language="javascript" type="text/javascript">
+
+        	var colorArray = new Array();
+        	colorArray[0] = "red";
+        	colorArray[1] = "blue";
+        	colorArray[2] = "yellow";
+        	colorArray[3] = "green";
+        	colorArray[4] = "white";
+        	colorArray[5] = "black";
+
+        	var count_btn1 = 0;
+        	var count_btn2 = 0;
+        	var count_btn3 = 0;
+        	var count_btn4 = 0;
+
+        	function changeColorBtn1(){
+        		count_btn1 = (count_btn1 + 1) % colorArray.length;
+        		document.getElementById('btn1').style.backgroundColor = colorArray[count_btn1];
+        	}
+
+        	function changeColorBtn2(){
+        		count_btn2 = (count_btn2 + 1) % colorArray.length;
+        		document.getElementById('btn2').style.backgroundColor = colorArray[count_btn2];
+        	}
+
+        	function changeColorBtn3(){
+        		count_btn3 = (count_btn3 + 1) % colorArray.length;
+        		document.getElementById('btn3').style.backgroundColor = colorArray[count_btn3];
+        	}
+
+        	function changeColorBtn4(){
+        		count_btn4 = (count_btn4 + 1) % colorArray.length;
+        		document.getElementById('btn4').style.backgroundColor = colorArray[count_btn4];
+        	}
+
+        </script>
 
     </head>
 
@@ -359,17 +370,16 @@
 			<div class="selection-board flexer">
 			    	<div class="selection-box">
 		    			<div class="guess-box flexer">
-		    				<div class="guess"></div>
-		    				<div class="guess"></div>
-		    				<div class="guess"></div>
-		    				<div class="guess"></div>
+			    			<input type="button" id="btn1" onclick="changeColorBtn1()";/>
+			    			<input type="button" id="btn2" onclick="changeColorBtn2()";/>
+			    			<input type="button" id="btn3" onclick="changeColorBtn3()";/>
+			    			<input type="button" id="btn4" onclick="changeColorBtn4()";/>
+
 		    			</div>
 			    	</div>
 
 			    	<div class="button">
-				    	<div class="submit-button">
-				    		<h3 class="submit-text"> Submit </h3>
-				    	</div>
+			    		<input type="button" id="submit-button" value="Submit" onclick="";/>
 				    </div>
 			</div>
 
