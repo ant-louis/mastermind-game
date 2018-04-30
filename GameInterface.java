@@ -45,6 +45,11 @@ public class GameInterface {
 			currentGamesInput.put(cookie,interfaceIn);
 			t.start();
 
+			//Start the game
+			interfaceOut.write(formatGuessToByte("10"));
+			interfaceOut.flush();
+			
+
 		}catch(IOException ioe){
 			ioe.printStackTrace();
 		}	

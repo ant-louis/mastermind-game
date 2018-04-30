@@ -23,6 +23,7 @@ public class WebServerWorker implements Runnable {
 		    HttpParser httpparser = new HttpParser(istream);
 		    String requestType = httpparser.getRequestType();
 		    String path = httpparser.getPath();
+		    String cookie = httpparser.getCookie();
 		    System.out.print("Request type: ");
 			System.out.println(requestType);
 		    System.out.print("Path: ");
@@ -45,12 +46,16 @@ public class WebServerWorker implements Runnable {
 			//Shows the main page : Normal encoding
 			if(requestType.equals("GET") && path.equals("/play.html")){
 				System.out.println("Showing Mastermind interface");
+				//Starting the game
+				if(!GameInterface.gameExists(cookie)){
+					GameInterface.createGame(cookie);
+				}
 
 				//Headers
 		    	workerOut.print("HTTP/1.1 200 OK\r\n");
 			    workerOut.print("Content-Type: text/html\r\n");
 			    workerOut.print("Connection: close\r\n");
-			    workerOut.print("Set-Cookie: SESSID=rk64vvmhlbt6rsdfv4f02kc5g0; path=/\r\n");
+			    workerOut.print("Set-Cookie: SESSID=rk64vvmhlbt6rsdfv4f02kc5g0; path=/play.html\r\n");
 			    workerOut.print("\r\n");
 
 			    //Body
@@ -76,17 +81,16 @@ public class WebServerWorker implements Runnable {
 			
 
 			if(/*THE REQUEST IS A GUESS*/false){
-				//String cookie = httpparser.getCookie();
+				/*
 				//String guess = httpparser.getGuess();
 				System.out.println("Sending 10 to Worker");
 				String cookie = "1";
 				String guess = "10";
-				if(!GameInterface.gameExists(cookie)){
-					GameInterface.createGame(cookie);
-				}
 				GameInterface.submitGuess(cookie,guess);
 				String response = GameInterface.getResponse(cookie);
 				analyseResponse(response);
+
+				*/
 			}
 			
 			/*
