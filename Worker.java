@@ -18,8 +18,8 @@ public class Worker implements Runnable {
 	/*
 	private Socket workersock;
 	*/
-	private OutputStream serverostream;
-	private InputStream serveristream;
+	private PipedOutputStream workerOut;
+	private PipedInputStream workerIn;
 	
 
 
@@ -34,10 +34,10 @@ public class Worker implements Runnable {
 
 	
 	//Constructor
-	Worker(OutputStream out,InputStream in){
+	Worker(PipedOutputStream out,PipedInputStream in){
 
-		this.serverostream = out;
-		this.serveristream = in;
+		this.workerOut = out;
+		this.workerIn = in;
 		/*workersock = sock;*/
 	}
 	
@@ -45,8 +45,8 @@ public class Worker implements Runnable {
 	public void run(){
 		
 		try {
-			/*serverostream = workersock.getOutputStream();
-			serveristream = workersock.getInputStream();
+			/*workerOut = workersock.getOutputStream();
+			workerIn = workersock.getInputStream();
 			*/
 			boolean playGame = true;
 			
@@ -55,7 +55,7 @@ public class Worker implements Runnable {
 				//Read message from inputStream
 				byte[] incomingmessage = new byte[64];
 				//workersock.setSoTimeout(60000);//Timeout of 1 minute
-				int length = serveristream.read(incomingmessage);
+				int length = workerIn.read(incomingmessage);
 				
 				if(length <= 0){
 					playGame = false;
@@ -64,7 +64,7 @@ public class Worker implements Runnable {
 				
 				//Convert it to string and print it to console
 				String clientMessage = new String(incomingmessage);
-				System.out.println("Client " + workersock.getPort() + ": " + clientMessage);
+				//System.out.println("Client " + workersock.getPort() + ": " + clientMessage);
 				
 				
 				//Starting new game ("10")
@@ -76,6 +76,16 @@ public class Worker implements Runnable {
 				
 				
 				}
+
+				if(clientMessage.startsWith("Hello!")){
+					
+					sendMessage("Hi Interface!");//Tell the client the game started
+				
+					//startGame();
+				
+				
+				}
+				
 				
 				/*
 
@@ -223,7 +233,7 @@ public class Worker implements Runnable {
 		
 			byte[] sendingmessage = new byte[64];
 			sendingmessage = message.getBytes();
-			serverostream.write(sendingmessage);
-			serverostream.flush();
+			workerOut.write(sendingmessage);
+			workerOut.flush();
 		}
 	}

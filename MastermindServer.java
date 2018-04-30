@@ -8,8 +8,8 @@ public class MastermindServer {
 	
 	public static void main (String[] args){
 
-		Thread t = new Thread(new Worker());
-		t.start();	
+		//Thread t = new Thread(new Worker());
+		//t.start();	
 
 
 		/*

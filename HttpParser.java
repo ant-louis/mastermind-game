@@ -109,7 +109,9 @@ public class HttpParser {
 	}
 
 	//TODO: Extract a color guess from the request
-	public /*String*/ void getGuess(){}
+	public String getGuess(){
+		return new String("");
+	}
 }	
 
 

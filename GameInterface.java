@@ -3,32 +3,90 @@ import java.net.*;
 import java.util.Map;
 import java.util.HashMap;
 
-public class GameInterface implements Runnable {
+public class GameInterface {
 
-	private Map<String, Thread> currentGames = new HashMap<>();
-	private Map<String, OutputStream> currentGamesOutput = new HashMap<>();
-	private Map<String, InputStream> currentGamesInput = new HashMap<>();
+	private static Map<String, Thread> currentGames = new HashMap<>();
+	private static Map<String, PipedOutputStream> currentGamesOutput = new HashMap<>();
+	private static Map<String, PipedInputStream> currentGamesInput = new HashMap<>();
 
-	private static int i;
+	public static void submitGuess(String cookie,String guess){
+		System.out.println("Submitting guess");
 
-	public void submitGuess(String cookie,String guess){
-		OutputStream gameOut = currentGamesOutput.get(cookie);
-		InputStream gameIn = currentGamesInput.get(cookie);
+		PipedOutputStream gameOut = currentGamesOutput.get(cookie);
 
-		//byte[] guessFormat = formatGuess(guess);
-		//gameIn.write(guessFormat)
-		//gameOut.read();
-		//
-
+		byte[] formattedGuess = formatGuessToByte(guess);
+		try{
+			gameOut.write(formattedGuess);
+			gameOut.flush();
+		}catch(IOException ioe) {
+			ioe.printStackTrace();
+		}
 	}
-	public void createGame(String cookie){
-		Thread t = new Thread(new Worker(out,in));
-		System.out.println("Game "+ i +"started");
-		currentGames.put(cookie,t);
-		currentGamesOutput.put(cookie,new OutputStream());
-		currentGamesInput.put(cookie,new InputStream());
-		i++; 
-		t.start();	
+	public static void createGame(String cookie){
+		try{
+			//Pipes from the interface to the worker and vice versa
+			//Interface is going to send through interfaceOut and
+			//Worker is going to send through workerOut
+			//Both are going to listen to their respective inputstreams
+			PipedOutputStream interfaceOut =  new PipedOutputStream();
+			PipedInputStream interfaceIn = new PipedInputStream();
+			PipedOutputStream workerOut =  new PipedOutputStream();
+			PipedInputStream workerIn = new PipedInputStream();
+
+			// InterfaceOut <------> WorkerIn
+			// WorkerOut <-------> InterfaceIn
+			interfaceOut.connect(workerIn);
+			workerOut.connect(interfaceIn);
+
+			System.out.println("Creating new game for cookie " + cookie);
+			Thread t = new Thread(new Worker(workerOut,workerIn));
+			currentGames.put(cookie,t);
+			currentGamesOutput.put(cookie,interfaceOut);
+			currentGamesInput.put(cookie,interfaceIn);
+			t.start();
+
+		}catch(IOException ioe){
+			ioe.printStackTrace();
+		}	
+	}
+
+
+	public static boolean gameExists(String cookie){
+		if(currentGames.get(cookie) != null){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	public static String getResponse(String cookie) {
+		System.out.println("Getting response");
+		PipedInputStream gameIn = currentGamesInput.get(cookie);
+		byte[] rawGuess = new byte[128];
+		
+		try{
+			gameIn.read(rawGuess);
+
+		}catch(IOException ioe){
+			ioe.printStackTrace();
+		}	
+		
+		String formattedGuess = formatGuessToString(rawGuess);
+		System.out.println(formattedGuess);
+		return formattedGuess;
+	}
+
+
+	private static byte[] formatGuessToByte(String guess){
+		System.out.println("Formatting String");
+
+		return guess.getBytes();
+	}
+
+	private static String formatGuessToString(byte[] guess){
+		System.out.println("Re-Formatting to String");
+
+		return new String(guess);
 	}
 
 }
