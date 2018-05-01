@@ -180,6 +180,28 @@
         		document.getElementById('btn4').style.backgroundColor = colorArray[count_btn4];
         	}
 
+
+        	function displayResult(){
+        		var xhttp = new XMLHttpRequest();
+
+        		//Data receiving
+				xhttp.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						document.getElementById("demo").innerHTML = this.responseText;
+				    }
+				};
+
+				//Data sending
+				//Parameters of the request
+				var value1 = encodeURIComponent(count_btn1);
+    			var value2 = encodeURIComponent(count_btn2);
+				var value3 = encodeURIComponent(count_btn3);
+				var value4 = encodeURIComponent(count_btn4);
+
+				xhttp.open("GET", 'my/path?param1='+value1+'&param2='+value2+'&param3='+value3+'&param4='+value4, true);
+				xhttp.send();
+        	}
+
         </script>
 
     </head>
@@ -403,7 +425,7 @@
 			    	</div>
 
 			    	<div class="button">
-			    		<input type="button" id="submit-button" value="Submit" onclick="";/>
+			    		<input type="button" id="submit-button" value="Submit" onclick="displayResult()";/>
 				    </div>
 			</div>
 
