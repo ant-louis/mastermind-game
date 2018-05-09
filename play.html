@@ -7,8 +7,8 @@
         	body {
 				font-family: "Times New Roman", Arial, serif;
 				font-weight: normal;
-				background-color: rgb(232,232,232);
-			}
+    			background-image: radial-gradient(ellipse at center, rgb(240,255,240), green);
+    		}
 
 			.flexer {
 				display: flex;
@@ -21,16 +21,16 @@
 			    height:650px;
 			    margin: 0 auto;
 			    margin-top: 20px;
-			    margin-bottom: 10px;
+			    margin-bottom: 20px;
 			}
 
 			.title {
 				width: 100%;
-				height: 10%;
+				height: 12%;
 			}
 
 			.mastermind-text {
-				font-size: 3em;
+				font-size: 4em;
 				color: rgb(131,131,131);
 				text-align: center;
 				margin-top: 10px;
@@ -110,7 +110,7 @@
 				width: 30%;
 				min-width:400px;
 				height: 50px;
-				border: 1px solid rgb(161,161,161);
+				border: 1px solid rgb(111,111,111);
 			    border-radius: 10px;
 			    margin: 0 auto;
 			}
@@ -129,7 +129,8 @@
 			    box-shadow: 2px 2px 2px rgb(161,161,161);
 			    margin:5%;
 			    font-size: 1.2em;
-				color: rgb(111,111,111);
+				background-color: rgb(240,240,240);
+				color:rgb(111,111,111);
 
 			}
 
@@ -420,49 +421,66 @@
 
 		submit_btn.addEventListener("click", function(){
 
-			//Stock new guess
+			/*Stock new guess*/
 			for(var i=0; i<4; i++){
 				var bub = document.getElementById("bub"+nbGuess+i);
 				bub.style.backgroundColor = colorArray[countBtn[i]]
 			}
-			nbGuess--;
 
-			if(nbGuess < 0){
-				alert("GAME OVER");
-				setTimeout(function(){ document.location = "play.html" }, 3000);
-			}
-
-		});
-
-			//New HTTP Request
+			/*New HTTP Request*/
 	        var xhttp = new XMLHttpRequest();
 
-	        //------Send request------
+	        /*---------------Send request----------------*/
 	        var value0 = encodeURIComponent(countBtn[0]);
 	        var value1 = encodeURIComponent(countBtn[1]);
 	        var value1 = encodeURIComponent(countBtn[2]);
 	        var value3 = encodeURIComponent(countBtn[3]);
 
-	        // GET
+	        /* GET */
 	        xhttp.open("GET", '/play.html?param1='+value1+'&param2='+value2+'&param3='+value3+'&param4='+value4, true);
 	        xhttp.send();
 
-	        // // POST
-	        // xhttp.open('POST', '/play.html');
-	        // xhttp.send('param1='+value1 + '&param2='+value2 + '&param3='+value3 + '&param4='+value4);
+	        /* POST
+	        xhttp.open('POST', '/play.html');
+	        xhttp.send('param1='+value1 + '&param2='+value2 + '&param3='+value3 + '&param4='+value4);
+	        */
 
 
-	        // //------Receive data------
-	        // xhttp.onreadystate = function() {
-	        //   if (xhttp.readyState == 4 && xhtpp.status == 200) {
-	        //           //Get the response
-	        //           var response = xhttp.responseText;
-	        //           //Parse the response
-	        //           var responseArray = response.split("");
-	        //           //Change the corresponding row
-	        //           document.getElementById("demo").innerHTML = 
-	        //     }
-	        // };
+	        /*---------------Receive data--------------*/
+	        xhttp.onreadystate = function() {
+				if (xhttp.readyState == 4 && xhtpp.status == 200){
+
+					/*Get the response*/
+					var response = xhttp.responseText;
+
+					/*Parse the response*/
+					var nbWellPlaced = Number(response[0]);
+					var nbNotWellPlaced = Number(response[1]);
+					var len = nbWellPlaced + nbNotWellPlaced;
+
+					/*Display the result*/
+					for(var i=0; i < len; i++){
+
+						var res = document.getElementById("res"+nbGuess+i);
+
+						if(nbWellPlaced > 0){
+							res.style.backgroundColor = "red";
+							nbWellPlaced--;
+						}
+						else{
+							res.style.backgroundColor = "black";
+						}
+					}      
+				}
+	        };
+
+	        nbGuess--;
+
+			if(nbGuess < 0){
+				alert("GAME OVER");
+				setTimeout(function(){ document.location = "play.html" }, 3000);
+			}
+		});
 
 	</script>
    
