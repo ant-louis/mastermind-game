@@ -34,6 +34,7 @@
 				color: rgb(131,131,131);
 				text-align: center;
 				margin-top: 10px;
+				text-shadow: 2px 2px rgb(191,191,191);
 			}
 
 			.guess-container{
@@ -146,102 +147,7 @@
 				background-color: red;
 			}
 
-			
         </style>
-
-        <script  language="javascript" type="text/javascript">
-
-        	var nbGuess = 11;
-
-        	var colorArray = new Array();
-        	colorArray[0] = "red";
-        	colorArray[1] = "blue";
-        	colorArray[2] = "yellow";
-        	colorArray[3] = "green";
-        	colorArray[4] = "white";
-        	colorArray[5] = "black";
-
-        	var countBtn = new Array();
-        	countBtn[0] = 0;
-        	countBtn[1] = 0;
-        	countBtn[2] = 0;
-        	countBtn[3] = 0;
-
-        	function changeGuessBtn(i){
-        		countBtn[i] = (countBtn[i]+1) % colorArray.length;
-        		document.getElementById('btn'+i).style.backgroundColor = colorArray[countBtn[i]];
-        	}
-
-        	// function changeGuessBtn1(){
-        	// 	count_btn1 = (count_btn1 + 1) % colorArray.length;
-        	// 	document.getElementById('btn1').style.backgroundColor = colorArray[count_btn1];
-        	// }
-
-        	// function changeGuessBtn2(){
-        	// 	count_btn2 = (count_btn2 + 1) % colorArray.length;
-        	// 	document.getElementById('btn2').style.backgroundColor = colorArray[count_btn2];
-        	// }
-
-        	// function changeGuessBtn3(){
-        	// 	count_btn3 = (count_btn3 + 1) % colorArray.length;
-        	// 	document.getElementById('btn3').style.backgroundColor = colorArray[count_btn3];
-        	// }
-
-        	// function changeGuessBtn4(){
-        	// 	count_btn4 = (count_btn4 + 1) % colorArray.length;
-        	// 	document.getElementById('btn4').style.backgroundColor = colorArray[count_btn4];
-        	// }
-
-
-        	function changeBubbleColor(bubble){
-
-
-        	}
-
-
-        	// HTTP Request
-        	function displayResult(){
-
-        		var xhttp = new XMLHttpRequest();
-
-
-        		//Stock new guess
-        		for(int i=0; i<4; i++){
-        			id = document.getElementById("bub"+i);
-        			changeBubbleColor(id);
-        		}
-        		nbGuess = nbGuess - 1;
-
-
-				//------Send------
-				var value0 = encodeURIComponent(countBtn[0]);
-    			var value1 = encodeURIComponent(countBtn[1]);
-				var value1 = encodeURIComponent(countBtn[2]);
-				var value3 = encodeURIComponent(countBtn[3]);
-
-				// GET
-				xhttp.open("GET", '/play.html?param1='+value1+'&param2='+value2+'&param3='+value3+'&param4='+value4, true);
-				xhttp.send();
-
-				// // POST
-				// xhttp.open('POST', '/play.html');
-				// xhttp.send('param1='+value1 + '&param2='+value2 + '&param3='+value3 + '&param4='+value4);
-
-
-				//------Receive------
-				xhttp.onreadystate = function() {
-					if (xhttp.readyState == 4 && xhtpp.status == 200) {
-						//Get the response
-						var response = xhttp.responseText;
-						//Parse the response
-						var responseArray = response.split("");
-						//Change the corresponding row
-						document.getElementById("demo").innerHTML = 
-				    }
-				};
-         	}
-
-        </script>
 
     </head>
 
@@ -455,18 +361,110 @@
 			<div class="selection-board flexer">
 			    	<div class="selection-box">
 		    			<div class="guess-box flexer">
-			    			<input type="button" id="btn0" onclick="changeGuessBtn(0)";/>
-			    			<input type="button" id="btn1" onclick="changeGuessBtn(1)";/>
-			    			<input type="button" id="btn2" onclick="changeGuessBtn(2)";/>
-			    			<input type="button" id="btn3" onclick="changeGuessBtn(3)";/>
+			    			<button id="btn0"></button>
+			    			<button id="btn1"></button>
+			    			<button id="btn2"></button>
+			    			<button id="btn3"></button>
 		    			</div>
 			    	</div>
 
 			    	<div class="button">
-			    		<input type="button" id="submit-button" value="Submit" onclick="displayResult()";/>
+			    		<button id="submit-button"> Submit </button>
 				    </div>
 			</div>
 
-    
+
+	<script type="text/javascript">
+
+		var nbGuess = 11;
+
+		var colorArray = new Array();
+    	colorArray[0] = "red";
+    	colorArray[1] = "blue";
+    	colorArray[2] = "yellow";
+    	colorArray[3] = "green";
+    	colorArray[4] = "white";
+    	colorArray[5] = "black";
+
+    	var countBtn = new Array();
+    	countBtn[0] = 0;
+    	countBtn[1] = 0;
+    	countBtn[2] = 0;
+    	countBtn[3] = 0;
+
+    	var btn0 = document.getElementById("btn0");
+		var btn1 = document.getElementById("btn1");
+		var btn2 = document.getElementById("btn2");
+		var btn3 = document.getElementById("btn3");
+		var submit_btn = document.getElementById("submit-button");
+
+		btn0.addEventListener("click", function() {
+			countBtn[0] = (countBtn[0] + 1) % colorArray.length;
+    		btn0.style.backgroundColor = colorArray[countBtn[0]];
+		});
+
+		btn1.addEventListener("click", function() {
+			countBtn[1] = (countBtn[1] + 1) % colorArray.length;
+    		btn1.style.backgroundColor = colorArray[countBtn[1]];
+		});
+
+		btn2.addEventListener("click", function() {
+			countBtn[2] = (countBtn[2] + 1) % colorArray.length;
+    		btn2.style.backgroundColor = colorArray[countBtn[2]];
+		});
+
+		btn3.addEventListener("click", function() {
+			countBtn[3] = (countBtn[3] + 1) % colorArray.length;
+    		btn3.style.backgroundColor = colorArray[countBtn[3]];
+		});
+
+		submit_btn.addEventListener("click", function(){
+
+			//Stock new guess
+			for(var i=0; i<4; i++){
+				var bub = document.getElementById("bub"+nbGuess+i);
+				bub.style.backgroundColor = colorArray[countBtn[i]]
+			}
+			nbGuess--;
+
+			if(nbGuess < 0){
+				alert("GAME OVER");
+				setTimeout(function(){ document.location = "play.html" }, 3000);
+			}
+
+		});
+
+			//New HTTP Request
+	        var xhttp = new XMLHttpRequest();
+
+	        //------Send request------
+	        var value0 = encodeURIComponent(countBtn[0]);
+	        var value1 = encodeURIComponent(countBtn[1]);
+	        var value1 = encodeURIComponent(countBtn[2]);
+	        var value3 = encodeURIComponent(countBtn[3]);
+
+	        // GET
+	        xhttp.open("GET", '/play.html?param1='+value1+'&param2='+value2+'&param3='+value3+'&param4='+value4, true);
+	        xhttp.send();
+
+	        // // POST
+	        // xhttp.open('POST', '/play.html');
+	        // xhttp.send('param1='+value1 + '&param2='+value2 + '&param3='+value3 + '&param4='+value4);
+
+
+	        // //------Receive data------
+	        // xhttp.onreadystate = function() {
+	        //   if (xhttp.readyState == 4 && xhtpp.status == 200) {
+	        //           //Get the response
+	        //           var response = xhttp.responseText;
+	        //           //Parse the response
+	        //           var responseArray = response.split("");
+	        //           //Change the corresponding row
+	        //           document.getElementById("demo").innerHTML = 
+	        //     }
+	        // };
+
+	</script>
+   
     </body>
 </html>
