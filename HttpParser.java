@@ -11,7 +11,6 @@ public class HttpParser {
 	private String path;
 	private Map<String, String> headerMap = new HashMap<>();
 
-
 	public HttpParser(InputStreamReader istream){
 		parserIn = istream;
 
@@ -28,22 +27,33 @@ public class HttpParser {
 	//A method that extract the first line of the header
 	//Must always be called first before the rest of the header methods
 	private void getFirstHeaderLine() throws IOException {
+		// String colors = "GET /play.html?param1=1&param2=2&param3=3&param4=4";
+		// System.out.println(colors);
 
 		String buffer = "";
 		char c;
 
 		//Reading the first line of the header
+		
 		do{
 			c = (char) parserIn.read();
+			int count = 0;//temp
+			count++;
 			buffer += c +"";
 			if(c == '\n'){
 				break;
 			}
-		}while(c != -1);
 
+			if(count == 100) {break;} //temp
+
+		}while(c != -1);
+		
 		//Splitting into tokens, the first one being the request type
 		//The second being the requested path
 		String[] tokens = buffer.split(" ");
+		//String[] tokens = colors.split(" "); //temp
+
+
 		this.requestType = tokens[0];
 		this.path = tokens[1];
 	}
@@ -57,6 +67,7 @@ public class HttpParser {
 	public String getPath(){
 		return this.path;
 	}
+
 
 	public Map<String,String> getMap(){
 		return this.headerMap;
@@ -74,6 +85,7 @@ public class HttpParser {
 
        	do{
        		c = (char) parserIn.read();
+       		//System.out.print(c);
        		headerLine.append(c);
 
 		    //End of line reached, storing as a map
@@ -91,13 +103,13 @@ public class HttpParser {
        		}
 
        		int currentLength = entireHeader.length();
-  
+  			
 		    //Check end of header
        		if (currentLength > 4 &&
    				entireHeader.charAt(currentLength - 1) == '\n'&&
 				entireHeader.charAt(currentLength - 2) == '\r' &&
 				entireHeader.charAt(currentLength - 3) == '\n'){
-					break; 
+				break; 
 			}
 
    		}while(c != -1);
@@ -108,9 +120,18 @@ public class HttpParser {
 		return headerMap.get("Cookie");
 	}
 
-	//TODO: Extract a color guess from the request
+	//Extract a color guess from the request
 	public String getGuess(){
-		return new String("");
+		String path = this.path;
+		char[] colors = new char[4];
+	 	
+		for (int i = 0, j = 0; i < path.length(); i++){
+			if(path.charAt(i) == '='){
+				colors[j++] = path.charAt(i+1);
+			}
+		}
+
+		return new String(colors);
 	}
 }	
 
