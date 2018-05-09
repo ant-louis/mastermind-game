@@ -52,7 +52,20 @@
 				height: 100%;
 			}
 
-			.guess-bubble {
+			
+			#bub00,#bub01,#bub02,#bub03,
+			#bub10,#bub11,#bub12,#bub13,
+			#bub20,#bub21,#bub22,#bub23,
+			#bub30,#bub31,#bub32,#bub33,
+			#bub40,#bub41,#bub42,#bub43,
+			#bub50,#bub51,#bub52,#bub53,
+			#bub60,#bub61,#bub62,#bub63,
+			#bub70,#bub71,#bub72,#bub73,
+			#bub80,#bub81,#bub82,#bub83,
+			#bub90,#bub91,#bub92,#bub93,
+			#bub100,#bub101,#bub102,#bub103,
+			#bub110,#bub111,#bub112,#bub113
+			{
 				height:70%;
 				width:12%;
 				border-radius: 50%;
@@ -61,12 +74,26 @@
 				background-color: rgb(240,240,240); 
 			}
 
+
 			.result-box{
 				width: 30%;
 				height: 100%;
 			}
 
-			.result-bubble {
+
+			#res00,#res01,#res02,#res03,
+			#res10,#res11,#res12,#res13,
+			#res20,#res21,#res22,#res23,
+			#res30,#res31,#res32,#res33,
+			#res40,#res41,#res42,#res43,
+			#res50,#res51,#res52,#res53,
+			#res60,#res61,#res62,#res63,
+			#res70,#res71,#res72,#res73,
+			#res80,#res81,#res82,#res83,
+			#res90,#res91,#res92,#res93,
+			#res100,#res101,#res102,#res103,
+			#res110,#res111,#res112,#res113
+			{
 				height: 30%;
 				width: 12%;
 				border-radius: 50%;
@@ -76,29 +103,6 @@
 				margin-top: 15%;
 			}
 
-			.bubble-red{
-				background-color: red;
-			}
-
-			.bubble-blue{
-				background-color: blue;
-			}
-
-			.bubble-yellow{
-				background-color: yellow;
-			}
-
-			.bubble-green{
-				background-color: green;
-			}
-
-			.bubble-white{
-				background-color: white;
-			}
-
-			.bubble-black{
-				background-color: black;
-			}
 
 			/*************************SELECTION************************/
 			.selection-board {
@@ -132,7 +136,7 @@
 				height: 90%;
 			}
 
-			#btn1, #btn2, #btn3, #btn4 {
+			#btn0, #btn1, #btn2, #btn3 {
 				height:80%;
 				width:18%;
 				border-radius: 50%;
@@ -147,6 +151,8 @@
 
         <script  language="javascript" type="text/javascript">
 
+        	var nbGuess = 11;
+
         	var colorArray = new Array();
         	colorArray[0] = "red";
         	colorArray[1] = "blue";
@@ -155,52 +161,85 @@
         	colorArray[4] = "white";
         	colorArray[5] = "black";
 
-        	var count_btn1 = 0;
-        	var count_btn2 = 0;
-        	var count_btn3 = 0;
-        	var count_btn4 = 0;
+        	var countBtn = new Array();
+        	countBtn[0] = 0;
+        	countBtn[1] = 0;
+        	countBtn[2] = 0;
+        	countBtn[3] = 0;
 
-        	function changeColorBtn1(){
-        		count_btn1 = (count_btn1 + 1) % colorArray.length;
-        		document.getElementById('btn1').style.backgroundColor = colorArray[count_btn1];
+        	function changeGuessBtn(i){
+        		countBtn[i] = (countBtn[i]+1) % colorArray.length;
+        		document.getElementById('btn'+i).style.backgroundColor = colorArray[countBtn[i]];
         	}
 
-        	function changeColorBtn2(){
-        		count_btn2 = (count_btn2 + 1) % colorArray.length;
-        		document.getElementById('btn2').style.backgroundColor = colorArray[count_btn2];
+        	// function changeGuessBtn1(){
+        	// 	count_btn1 = (count_btn1 + 1) % colorArray.length;
+        	// 	document.getElementById('btn1').style.backgroundColor = colorArray[count_btn1];
+        	// }
+
+        	// function changeGuessBtn2(){
+        	// 	count_btn2 = (count_btn2 + 1) % colorArray.length;
+        	// 	document.getElementById('btn2').style.backgroundColor = colorArray[count_btn2];
+        	// }
+
+        	// function changeGuessBtn3(){
+        	// 	count_btn3 = (count_btn3 + 1) % colorArray.length;
+        	// 	document.getElementById('btn3').style.backgroundColor = colorArray[count_btn3];
+        	// }
+
+        	// function changeGuessBtn4(){
+        	// 	count_btn4 = (count_btn4 + 1) % colorArray.length;
+        	// 	document.getElementById('btn4').style.backgroundColor = colorArray[count_btn4];
+        	// }
+
+
+        	function changeBubbleColor(bubble){
+
+
         	}
 
-        	function changeColorBtn3(){
-        		count_btn3 = (count_btn3 + 1) % colorArray.length;
-        		document.getElementById('btn3').style.backgroundColor = colorArray[count_btn3];
-        	}
 
-        	function changeColorBtn4(){
-        		count_btn4 = (count_btn4 + 1) % colorArray.length;
-        		document.getElementById('btn4').style.backgroundColor = colorArray[count_btn4];
-        	}
-
-
+        	// HTTP Request
         	function displayResult(){
+
         		var xhttp = new XMLHttpRequest();
 
-        		//Data receiving
-				xhttp.onreadystatechange = function() {
-					if (this.readyState == 4 && this.status == 200) {
-						document.getElementById("demo").innerHTML = this.responseText;
+
+        		//Stock new guess
+        		for(int i=0; i<4; i++){
+        			id = document.getElementById("bub"+i);
+        			changeBubbleColor(id);
+        		}
+        		nbGuess = nbGuess - 1;
+
+
+				//------Send------
+				var value0 = encodeURIComponent(countBtn[0]);
+    			var value1 = encodeURIComponent(countBtn[1]);
+				var value1 = encodeURIComponent(countBtn[2]);
+				var value3 = encodeURIComponent(countBtn[3]);
+
+				// GET
+				xhttp.open("GET", '/play.html?param1='+value1+'&param2='+value2+'&param3='+value3+'&param4='+value4, true);
+				xhttp.send();
+
+				// // POST
+				// xhttp.open('POST', '/play.html');
+				// xhttp.send('param1='+value1 + '&param2='+value2 + '&param3='+value3 + '&param4='+value4);
+
+
+				//------Receive------
+				xhttp.onreadystate = function() {
+					if (xhttp.readyState == 4 && xhtpp.status == 200) {
+						//Get the response
+						var response = xhttp.responseText;
+						//Parse the response
+						var responseArray = response.split("");
+						//Change the corresponding row
+						document.getElementById("demo").innerHTML = 
 				    }
 				};
-
-				//Data sending
-				//Parameters of the request
-				var value1 = encodeURIComponent(count_btn1);
-    			var value2 = encodeURIComponent(count_btn2);
-				var value3 = encodeURIComponent(count_btn3);
-				var value4 = encodeURIComponent(count_btn4);
-
-				xhttp.open("GET", 'my/path?param1='+value1+'&param2='+value2+'&param3='+value3+'&param4='+value4, true);
-				xhttp.send();
-        	}
+         	}
 
         </script>
 
@@ -211,200 +250,200 @@
 	    	<div class="mastermind-board">
 
 	    		<div class="title">
-	    			<h2 class="mastermind-text"> MASTERMIND </h2>
+	    			<h2 class="mastermind-text"> MASTERMIND</h2>
 	    		</div>
 	    		
 	    		<div class="guess-container">
 
 		    		<div class="guess-row flexer">
 		    			<div class="guess-box flexer">
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
+		    				<div id="bub00"></div>
+		    				<div id="bub01"></div>
+		    				<div id="bub02"></div>
+		    				<div id="bub03"></div>
 		    			</div>
 
 		    			<div class="result-box flexer">
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
+		    				<div id="res00"></div>
+		    				<div id="res01"></div>
+		    				<div id="res02"></div>
+		    				<div id="res03"></div>
 		    			</div>
 		    		</div>
 
 		    		<div class="guess-row flexer">
 		    			<div class="guess-box flexer">
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
+		    				<div id="bub10"></div>
+		    				<div id="bub11"></div>
+		    				<div id="bub12"></div>
+		    				<div id="bub13"></div>
 		    			</div>
 
 		    			<div class="result-box flexer">
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
+		    				<div id="res10"></div>
+		    				<div id="res11"></div>
+		    				<div id="res12"></div>
+		    				<div id="res13"></div>
 		    			</div>
 		    		</div>
 
 		    		<div class="guess-row flexer">
 		    			<div class="guess-box flexer">
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
+		    				<div id="bub20"></div>
+		    				<div id="bub21"></div>
+		    				<div id="bub22"></div>
+		    				<div id="bub23"></div>
 		    			</div>
 
 		    			<div class="result-box flexer">
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
+		    				<div id="res20"></div>
+		    				<div id="res21"></div>
+		    				<div id="res22"></div>
+		    				<div id="res23"></div>
 		    			</div>
 		    		</div>
 
 		    		<div class="guess-row flexer">
 		    			<div class="guess-box flexer">
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
+		    				<div id="bub30"></div>
+		    				<div id="bub31"></div>
+		    				<div id="bub32"></div>
+		    				<div id="bub33"></div>
 		    			</div>
 
 		    			<div class="result-box flexer">
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
+		    				<div id="res30"></div>
+		    				<div id="res31"></div>
+		    				<div id="res32"></div>
+		    				<div id="res33"></div>
 		    			</div>
 		    		</div>
 
 		    		<div class="guess-row flexer">
 		    			<div class="guess-box flexer">
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
+		    				<div id="bub40"></div>
+		    				<div id="bub41"></div>
+		    				<div id="bub42"></div>
+		    				<div id="bub43"></div>
 		    			</div>
 
 		    			<div class="result-box flexer">
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
+		    				<div id="res40"></div>
+		    				<div id="res41"></div>
+		    				<div id="res42"></div>
+		    				<div id="res43"></div>
 		    			</div>
 		    		</div>
 
 		    		<div class="guess-row flexer">
 		    			<div class="guess-box flexer">
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
+		    				<div id="bub50"></div>
+		    				<div id="bub51"></div>
+		    				<div id="bub52"></div>
+		    				<div id="bub53"></div>
 		    			</div>
 
 		    			<div class="result-box flexer">
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
+		    				<div id="res50"></div>
+		    				<div id="res51"></div>
+		    				<div id="res52"></div>
+		    				<div id="res53"></div>
 		    			</div>
 		    		</div>
 
 		    		<div class="guess-row flexer">
 		    			<div class="guess-box flexer">
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
+		    				<div id="bub60"></div>
+		    				<div id="bub61"></div>
+		    				<div id="bub62"></div>
+		    				<div id="bub63"></div>
 		    			</div>
 
 		    			<div class="result-box flexer">
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
+		    				<div id="res60"></div>
+		    				<div id="res61"></div>
+		    				<div id="res62"></div>
+		    				<div id="res63"></div>
 		    			</div>
 		    		</div>
 
 		    		<div class="guess-row flexer">
 		    			<div class="guess-box flexer">
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
+		    				<div id="bub70"></div>
+		    				<div id="bub71"></div>
+		    				<div id="bub72"></div>
+		    				<div id="bub73"></div>
 		    			</div>
 
 		    			<div class="result-box flexer">
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
+		    				<div id="res70"></div>
+		    				<div id="res71"></div>
+		    				<div id="res72"></div>
+		    				<div id="res73"></div>
 		    			</div>
 		    		</div>
 
 		    		<div class="guess-row flexer">
 		    			<div class="guess-box flexer">
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
+		    				<div id="bub80"></div>
+		    				<div id="bub81"></div>
+		    				<div id="bub82"></div>
+		    				<div id="bub83"></div>
 		    			</div>
 
 		    			<div class="result-box flexer">
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
+		    				<div id="res80"></div>
+		    				<div id="res81"></div>
+		    				<div id="res82"></div>
+		    				<div id="res83"></div>
 		    			</div>
 		    		</div>
 
 		    		<div class="guess-row flexer">
 		    			<div class="guess-box flexer">
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
+		    				<div id="bub90"></div>
+		    				<div id="bub91"></div>
+		    				<div id="bub92"></div>
+		    				<div id="bub93"></div>
 		    			</div>
 
 		    			<div class="result-box flexer">
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
+		    				<div id="res90"></div>
+		    				<div id="res91"></div>
+		    				<div id="res92"></div>
+		    				<div id="res93"></div>
 		    			</div>
 		    		</div>
 
 		    		<div class="guess-row flexer">
 		    			<div class="guess-box flexer">
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
+		    				<div id="bub100"></div>
+		    				<div id="bub101"></div>
+		    				<div id="bub102"></div>
+		    				<div id="bub103"></div>
 		    			</div>
 
 		    			<div class="result-box flexer">
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
+		    				<div id="res100"></div>
+		    				<div id="res101"></div>
+		    				<div id="res102"></div>
+		    				<div id="res103"></div>
 		    			</div>
 		    		</div>
 
 		    		<div class="guess-row flexer">
 		    			<div class="guess-box flexer">
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
-		    				<div class="guess-bubble"></div>
+		    				<div id="bub110"></div>
+		    				<div id="bub111"></div>
+		    				<div id="bub112"></div>
+		    				<div id="bub113"></div>
 		    			</div>
 
 		    			<div class="result-box flexer">
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
-		    				<div class="result-bubble"></div>
+		    				<div id="res110"></div>
+		    				<div id="res111"></div>
+		    				<div id="res112"></div>
+		    				<div id="res113"></div>
 		    			</div>
 		    		</div>
 
@@ -416,11 +455,10 @@
 			<div class="selection-board flexer">
 			    	<div class="selection-box">
 		    			<div class="guess-box flexer">
-			    			<input type="button" id="btn1" onclick="changeColorBtn1()";/>
-			    			<input type="button" id="btn2" onclick="changeColorBtn2()";/>
-			    			<input type="button" id="btn3" onclick="changeColorBtn3()";/>
-			    			<input type="button" id="btn4" onclick="changeColorBtn4()";/>
-
+			    			<input type="button" id="btn0" onclick="changeGuessBtn(0)";/>
+			    			<input type="button" id="btn1" onclick="changeGuessBtn(1)";/>
+			    			<input type="button" id="btn2" onclick="changeGuessBtn(2)";/>
+			    			<input type="button" id="btn3" onclick="changeGuessBtn(3)";/>
 		    			</div>
 			    	</div>
 
