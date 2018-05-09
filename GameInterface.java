@@ -83,15 +83,18 @@ public class GameInterface {
 
 
 	private static byte[] formatGuessToByte(String guess){
+		StringBuilder builder = new StringBuilder("12");
+		builder.append(guess);
 		System.out.println("Formatting String");
 
-		return guess.getBytes();
+		return builder.toString().getBytes();
 	}
 
 	private static String formatGuessToString(byte[] guess){
+
+		String rawGuess = new String(guess);
+		String colors = rawGuess.substring(2); //Remove the header
 		System.out.println("Re-Formatting to String");
-
-		return new String(guess);
+		return new String(colors);
 	}
-
 }

@@ -49,7 +49,6 @@ public class WebServerWorker implements Runnable {
 				//if(!GameInterface.gameExists(cookie)){
 					newCookie++;
 					GameInterface.createGame(newCookie);
-					System.out.println("Starting a new game with cookie " + newCookie);
 
 				//}
 
