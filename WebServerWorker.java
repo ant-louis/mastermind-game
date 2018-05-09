@@ -23,7 +23,7 @@ public class WebServerWorker implements Runnable {
 		    HttpParser httpparser = new HttpParser(istream);
 		    String requestType = httpparser.getRequestType();
 		    String path = httpparser.getPath();
-		    String cookie = httpparser.getCookie();
+		    int cookie;
 		    System.out.print("Request type: ");
 			System.out.println(requestType);
 		    System.out.print("Path: ");
@@ -43,14 +43,15 @@ public class WebServerWorker implements Runnable {
 				workerOut.flush();
 			}
 
-			//Shows the main page : Normal encoding
+			//Shows the main page  and starts a game : Normal encoding
 			if(requestType.equals("GET") && path.equals("/play.html")){
-				System.out.println("Showing Mastermind interface");
-				//Starting the game
-				if(!GameInterface.gameExists(cookie)){
+				
+				//if(!GameInterface.gameExists(cookie)){
 					newCookie++;
-					GameInterface.createGame(cookie);
-				}
+					GameInterface.createGame(newCookie);
+					System.out.println("Starting a new game with cookie " + newCookie);
+
+				//}
 
 				//Headers
 		    	workerOut.print("HTTP/1.1 200 OK\r\n");
@@ -81,12 +82,11 @@ public class WebServerWorker implements Runnable {
 		
 			//AJAX Request for guess
 			if(requestType.equals("GET") && path.startsWith("/play.html?")){
-				
+				cookie = httpparser.getCookie();
 				String guess = httpparser.getGuess();
 				GameInterface.submitGuess(cookie,guess);
 				String response = GameInterface.getResponse(cookie);
 				analyseResponse(response);
-
 			}
 			
 			/*

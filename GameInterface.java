@@ -5,11 +5,11 @@ import java.util.HashMap;
 
 public class GameInterface {
 
-	private static Map<String, Thread> currentGames = new HashMap<>();
-	private static Map<String, PipedOutputStream> currentGamesOutput = new HashMap<>();
-	private static Map<String, PipedInputStream> currentGamesInput = new HashMap<>();
+	private static Map<Integer, Thread> currentGames = new HashMap<>();
+	private static Map<Integer, PipedOutputStream> currentGamesOutput = new HashMap<>();
+	private static Map<Integer, PipedInputStream> currentGamesInput = new HashMap<>();
 
-	public static void submitGuess(String cookie,String guess){
+	public static void submitGuess(int cookie,String guess){
 		System.out.println("Submitting guess");
 
 		PipedOutputStream gameOut = currentGamesOutput.get(cookie);
@@ -22,7 +22,7 @@ public class GameInterface {
 			ioe.printStackTrace();
 		}
 	}
-	public static void createGame(String cookie){
+	public static void createGame(int cookie){
 		try{
 			//Pipes from the interface to the worker and vice versa
 			//Interface is going to send through interfaceOut and
@@ -55,7 +55,7 @@ public class GameInterface {
 		}	
 	}
 
-
+	/*
 	public static boolean gameExists(String cookie){
 		if(currentGames.get(cookie) != null){
 			return true;
@@ -63,8 +63,8 @@ public class GameInterface {
 			return false;
 		}
 	}
-
-	public static String getResponse(String cookie) {
+	*/
+	public static String getResponse(int cookie) {
 		System.out.println("Getting response");
 		PipedInputStream gameIn = currentGamesInput.get(cookie);
 		byte[] rawGuess = new byte[128];

@@ -116,8 +116,8 @@ public class HttpParser {
 	}
 
 	//Extracts the cookie from the header
-	public String getCookie() {
-		return headerMap.get("Cookie");
+	public int getCookie() {
+		return Integer.parseInt(headerMap.get("Cookie"));
 	}
 
 	//Extract a color guess from the request
