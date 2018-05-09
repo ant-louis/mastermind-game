@@ -28,6 +28,7 @@ public class WebServerWorker implements Runnable {
 			System.out.println(requestType);
 		    System.out.print("Path: ");
 			System.out.println(path);
+			System.out.println(HTMLCreator.createRow());
 			//httpparser.getMap();
 
 			
