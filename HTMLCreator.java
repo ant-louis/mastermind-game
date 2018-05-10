@@ -9,8 +9,26 @@ public class HTMLCreator {
 		  white,
 		  black;
 	}
-	//START
-	String start = "<!DOCTYPE html><html><head><meta charset=\"utf-8\" /><title>Mastermind</title>";
+
+	/******************************************CREATE PAGE***************************************/
+
+	public static createPage(){
+
+		StringBuilder page = new StringBuilder();
+
+		//Headers
+		page.append("<!DOCTYPE html><html><head><meta charset=\"utf-8\" /><title>Mastermind</title>");
+
+		//CSS
+		page.append("<style>");
+
+		page.append("</style>");
+
+		//HTML 
+		page.append("<body>");
+
+		page.append("</body>");
+	}
 
 
 	/************************************CREATING CSS**********************************************/
@@ -88,6 +106,110 @@ public class HTMLCreator {
 	
 	/**************************************CREATE HTML******************************************/
 
-	public static String 
+	private String createBoard(){
+
+		StringBuilder board = new StringBuilder();
+
+		//Mastermind board
+		String mastermindBoard = createMastermindBoard();
+		board.append(mastermindBoard);
+
+		//Selection board
+		String selectionBoard = createSelectionBoard();
+		board.append(selectionBoard);
+
+		return board.toString();
+	}
+
+
+	private String createMastermindBoard(){
+
+		StringBuilder mastermindBoard = new StringBuilder("<div class=\"mastermind-board\">");
+
+		//Title
+		mastermindBoard.append("<div class=\"title\"><h2 class=\"mastermind-text\"> MASTERMIND</h2></div>");
+
+		//Guess board
+		mastermindBoard.append("<div class=\"guess-container\">");
+
+		for(int nbGuess = 0; nbGuess <= 11; nbGuess++){
+			String row = createRow(nbGuess);
+			mastermindBoard.append(row);
+		}
+		mastermindBoard.append("</div></div>");
+
+		return mastermindBoard.toString();
+	}
+
+
+	private String createRow(int index){
+
+		StringBuilder row = new StringBuilder();
+
+		row.append("<div class=\"guess-row flexer\">");
+
+		// Guess box
+		String guessBox = createGuessBox(index);
+		row.append(guessBox);
+
+		//Result box
+		String resultBox = createResultBox(index);
+		row.append(resultBox);
+
+		row.append("</div>");
+
+		return row.toString();
+	}
+
+
+	private String createGuessBox(int index){
+
+		StringBuilder guessBox = new StringBuilder("<div class=\"guess-box flexer\">");
+
+		//Guess bubbles
+		for(int i=0; i < 4; i++){
+			guessBox.append("<div id=\"bub"+index+i+"\"></div>");
+		}
+
+		guessBox.append("</div>");
+
+		return guessBox.toString();
+	}
+
+
+	private String createResultBox(int index){
+
+		StringBuilder resultBox = new StringBuilder("<div class=\"result-box flexer\">");
+
+		//Result bubbles
+		for(int i=0; i < 4; i++){
+			resultBox.append("<div id=\"res"+index+i+"\"></div>");
+		}
+
+		resultBox.append("</div>");
+
+		return resultBox.toString();
+	}
+
+
+	private String createSelectionBoard(){
+
+		StringBuilder selectionBoard = new StringBuilder();
+		selectionBoard.append("<div class=\"selection-board flexer\"> <div class=\"selection-box\">");
+
+		//Guess buttons
+		selectionBoard.append("<div class=\"guess-box flexer\">");
+		for(int i=0; i<4; i++){
+			selectionBoard.append("<button id=\"btn"+i+"\"></button>");
+		}
+		selectionBoard.append("</div></div>");
+
+		//Submit button
+		selectionBoard.append("<div class=\"button\"><button id=\"submit-button\"> Submit </button></div>");
+
+		selectionBoard.append("</div>");
+
+		return selectionBoard.toString();
+	}
 
 }
