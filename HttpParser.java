@@ -37,6 +37,7 @@ public class HttpParser {
 		
 		do{
 			c = (char) parserIn.read();
+			System.out.print(c);
 			int count = 0;//temp
 			count++;
 			buffer += c +"";
@@ -85,7 +86,7 @@ public class HttpParser {
 
        	do{
        		c = (char) parserIn.read();
-       		//System.out.print(c);
+       		System.out.print(c);
        		headerLine.append(c);
 
 		    //End of line reached, storing as a map
@@ -120,7 +121,7 @@ public class HttpParser {
 		return Integer.parseInt(headerMap.get("Cookie"));
 	}
 
-	//Extract a color guess from the request
+	//Extract a color guess from the request§
 	public String getGuess(){
 		String path = this.path;
 		char[] colors = new char[4];

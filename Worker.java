@@ -43,7 +43,7 @@ public class Worker implements Runnable {
 	
 	
 	public void run(){
-		
+
 		try {
 			/*workerOut = workersock.getOutputStream();
 			workerIn = workersock.getInputStream();
@@ -65,11 +65,11 @@ public class Worker implements Runnable {
 				//Convert it to string and print it to console
 				String clientMessage = new String(incomingmessage);
 				//System.out.println("Client " + workersock.getPort() + ": " + clientMessage);
-				
+				System.out.println("Message from interface to game: " + clientMessage);
+
 				
 				//Starting new game ("10")
 				if(clientMessage.startsWith("10")){
-					
 					sendMessage("11");//Tell the client the game started
 				
 					startGame();
@@ -77,17 +77,6 @@ public class Worker implements Runnable {
 				
 				}
 
-				if(clientMessage.startsWith("Hello!")){
-					
-					sendMessage("Hi Interface!");//Tell the client the game started
-				
-					//startGame();
-				
-				
-				}
-				
-				
-				/*
 
 				//List previous exchanges ("12")
 				else if(clientMessage.startsWith("12") && length == 2){
@@ -107,7 +96,7 @@ public class Worker implements Runnable {
 					sendMessage(builder.toString());
 				}
 
-				*/
+				
 
 				//Guess a combination (ex: "121345")
 				else if(clientMessage.startsWith("12") && length == (2 + 4)){
