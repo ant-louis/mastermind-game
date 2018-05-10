@@ -19,11 +19,11 @@ public class WebServerWorker implements Runnable {
 
 			InputStreamReader istream = new InputStreamReader(workerSock.getInputStream());
 			PrintWriter workerOut = new PrintWriter(workerSock.getOutputStream());
-
+		    
 		    HttpParser httpparser = new HttpParser(istream);
 		    String requestType = httpparser.getRequestType();
 		    String path = httpparser.getPath();
-		    String cookie = httpparser.getCookie();
+		    int cookie;
 		    System.out.print("Request type: ");
 			System.out.println(requestType);
 		    System.out.print("Path: ");
