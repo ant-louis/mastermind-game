@@ -26,7 +26,7 @@ public class HTMLCreator {
 		button.append("margin: 8px;");
 		button.append("background-color:");
 		button.append(colors.values()[color]);
-		button.append(";}");
+		button.append(";}\n");
 
 		return button.toString();
 	}
@@ -42,30 +42,47 @@ public class HTMLCreator {
 		result.append("margin: 5px;");
 		result.append("background-color:");
 		result.append(colors.values()[color]);
-		result.append(";}");
+		result.append(";}\n");
 
 		return result.toString();
 	}
 
 
-	public static String createAllButtonsCSS(int nbGuess){
+	//Creates the CSS template for one row of a given type of button
+	public static String createButtonType(int nbGuess,String type){
 		StringBuilder row = new StringBuilder();
-		for(int i = 0; i < 4; i++){
-			row.append(createBubbleCSS(nbGuess,i,color));
-		}
-		for(int i = 0; i < 4; i++){
-			row.append(createResultCSS(nbGuess,i,color))
+
+		if(type.equals("bubble")){
+
+			for(int i = 0; i < 4; i++){
+				row.append(createBubbleCSS(nbGuess,i,color));
+			}
+
+		}else{
+
+			for(int i = 0; i < 4; i++){
+				row.append(createResultCSS(nbGuess,i,color))
+			}
 		}
 	
 		return row.toString();
 	}
 
-	
-	private String createAllResultsCSS(){
-		StringBuilder box = new StringBuilder();
+	//Creates the CSS template for all buttons
+	private String createButtonsCSS(){
+
+		StringBuilder buttonCSS = new StringBuilder();
+
 		for(int nbGuess = 11,nbGuess >= 0, nbGuess--){
-			box.append(createRow(nbGuess));
+			buttonCSS.append(createButtonType(nbGuess,"bubble"));
 		}
+
+		for(int nbGuess = 11,nbGuess >= 0, nbGuess--){
+			buttonCSS.append(createButtonType(nbGuess,"result"));
+		}
+
+		return buttonCSS.toString();
+
 	}
 	
 
