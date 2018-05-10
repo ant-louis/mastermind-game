@@ -81,17 +81,13 @@ public class WebServerWorker implements Runnable {
 
 			
 
-			if(/*THE REQUEST IS A GUESS*/false){
-				/*
-				//String guess = httpparser.getGuess();
-				System.out.println("Sending 10 to Worker");
-				String cookie = "1";
-				String guess = "10";
+			//AJAX Request for guess
+			if(requestType.equals("GET") && path.startsWith("/play.html?")){
+				cookie = httpparser.getCookie();
+				String guess = httpparser.getGuess();
 				GameInterface.submitGuess(cookie,guess);
 				String response = GameInterface.getResponse(cookie);
 				analyseResponse(response);
-
-				*/
 			}
 			
 			/*
