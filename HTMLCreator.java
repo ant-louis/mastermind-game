@@ -4,17 +4,17 @@
 public class HTMLCreator {
 
 	private  enum colors {
-		  RED,
-		  BLUE,
-		  YELLOW,
-		  GREEN,
-		  WHITE,
-		  BLACK;
+		  red,
+		  blue,
+		  yellow,
+		  green,
+		  white,
+		  black;
 	}
 	//START
 	String start = "<!DOCTYPE html><html><head><meta charset=\"utf-8\" /><title>Mastermind</title>";
 
-
+	//CSS style for the bubbles
 	private static String createBubbleCSS(int nbGuess, int i, int color){
 		StringBuilder button = new StringBuilder("#bub");
 		button.append(nbGuess);
@@ -30,7 +30,7 @@ public class HTMLCreator {
 
 		return button.toString();
 	}
-
+	//CSS style for the results
 	private static String createResultCSS(int nbGuess, int i, int color){
 		StringBuilder result = new StringBuilder("#res");
 		result.append(nbGuess);
@@ -48,18 +48,26 @@ public class HTMLCreator {
 	}
 
 
-	public static String createRow(){
-		return createResultCSS(1,2,3);
+	public static String createAllButtonsCSS(int nbGuess){
+		StringBuilder row = new StringBuilder();
+		for(int i = 0; i < 4; i++){
+			row.append(createBubbleCSS(nbGuess,i,color));
+		}
+		for(int i = 0; i < 4; i++){
+			row.append(createResultCSS(nbGuess,i,color))
+		}
+	
+		return row.toString();
 	}
 
-	/*
-	private String createBox(){
-		for(var i=0; i<4; i++){
-			createBubble(i,nbGuess,color);
-
-
+	
+	private String createAllResultsCSS(){
+		StringBuilder box = new StringBuilder();
+		for(int nbGuess = 11,nbGuess >= 0, nbGuess--){
+			box.append(createRow(nbGuess));
+		}
 	}
-	*/
+	
 
 
 }
