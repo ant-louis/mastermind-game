@@ -82,15 +82,15 @@ public class GameInterface {
 	private static String getResponse(int cookie) {
 		PipedInputStream gameIn = currentGamesInput.get(cookie);
 		byte[] rawGuess = new byte[128];
-		
+		int length = 0;
 		try{
-			gameIn.read(rawGuess);
+			length = gameIn.read(rawGuess);
 
 		}catch(IOException ioe){
 			ioe.printStackTrace();
 		}	
 		
-		String formattedGuess = formatGuessToString(rawGuess);
+		String formattedGuess = formatGuessToString(length, rawGuess);
 		System.out.println("Response: " + formattedGuess);
 		return formattedGuess;
 	}
@@ -103,9 +103,9 @@ public class GameInterface {
 		return builder.toString().getBytes();
 	}
 
-	private static String formatGuessToString(byte[] guess){
-
+	private static String formatGuessToString(int length, byte[] guess){
 		String rawGuess = new String(guess);
+		rawGuess = rawGuess.substring(0, length);
 		String colors = rawGuess.substring(2); //Remove the header
 		return new String(colors);
 	}

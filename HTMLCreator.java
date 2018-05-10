@@ -1,6 +1,9 @@
 
 public class HTMLCreator {
 
+
+	private static final int BLANK = 10;
+
 	private  enum colors {
 		  red,
 		  blue,
@@ -16,7 +19,7 @@ public class HTMLCreator {
 	public HTMLCreator(String prevExchanges){
 		this.previousexchanges = prevExchanges;
 		this.nbofexchanges = Character.getNumericValue(prevExchanges.charAt(0));
-
+		System.out.println(createPage());
 
 
 	}
@@ -24,7 +27,7 @@ public class HTMLCreator {
 
 	/******************************************CREATE PAGE***************************************/
 
-	public static createPage(){
+	private String createPage(){
 
 		StringBuilder page = new StringBuilder();
 
@@ -33,24 +36,24 @@ public class HTMLCreator {
 
 		//CSS
 		page.append("<style>");
-
+		page.append(staticCSS);
+		page.append(createAllButtons());
 		page.append("</style>");
 
 		//HTML 
 		page.append("<body>");
 
 		page.append("</body>");
+
+		return page.toString();
 	}
 
 
 	/************************************CREATING CSS**********************************************/
 
-	
+	private static String staticCSS = "body{font-family: Times New Roman, Arial, serif;font-weight: normal; background-image: radial-gradient(ellipse at center, rgb(180,255,160), rgb(10,50,0));}.flexer{display: flex;}/********************GUESSES_AND_SCORES*********************/.mastermind-board{width: 30%;min-width:400px; height:650px; margin: 0 auto; margin-top: 20px; margin-bottom: 20px;}.title{width: 100%;height: 12%;}.mastermind-text{font-size: 4em;color: rgb(10,50,0);text-align: center;margin-top: 10px;text-shadow: 1px 1px rgb(220,255,215);}.guess-container{width:100%;height:90%;}.guess-row{box-sizing: border-box;height: 8.2%;width: 100%;}.guess-box{width: 70%;height: 100%;}.result-box{width: 28%;height: 100%;}/*************************SELECTION************************/.selection-board{width: 30%;min-width:400px;height: 50px;border: 1px solid rgb(10,50,0); border-radius: 10px; margin: 0 auto;}.button{width: 30%;height: 100%;}#submit-button{width: 80%;height: 70%;border: 1px solid rgb(161,161,161); border-radius: 10px; text-align: center; box-shadow: 2px 2px 2px rgb(161,161,161); margin:5%; font-size: 1.2em;background-color: rgb(240,240,240);color:rgb(10,50,0);}.selection-box{width: 70%;height: 90%;}#btn0, #btn1, #btn2, #btn3{height:80%;width:16.5%;border-radius: 50%;border: 1px solid rgb(50,50,50);margin-left: 3%;margin-right: 4.5%;margin-top: 2%;background-color: red;}";
 
-
-	private String blankbubble ;
-
-	//CSS style for the bubbles
+	//CSS style for one bubble 
 	private String createBubbleCSS(int nbGuess, int i, int color){
 		StringBuilder button = new StringBuilder("#bub");
 		button.append(nbGuess);
@@ -61,12 +64,17 @@ public class HTMLCreator {
 		button.append("border: 1px solid rgb(50,50,50);");
 		button.append("margin: 8px;");
 		button.append("background-color:");
-		button.append(colors.values()[color]);
+		if(color == BLANK){
+			button.append("rgb(240,240,240)");
+		}else{
+			button.append(colors.values()[color]);
+		}
 		button.append(";}\n");
 
 		return button.toString();
 	}
-	//CSS style for the results
+
+	//CSS style for one result
 	private String createResultCSS(int nbGuess, int i, int color){
 		StringBuilder result = new StringBuilder("#res");
 		result.append(nbGuess);
@@ -77,14 +85,18 @@ public class HTMLCreator {
 		result.append("border: 1px solid rgb(50,50,50);");
 		result.append("margin: 5px;");
 		result.append("background-color:");
-		result.append(colors.values()[color]);
+		if(color == BLANK){
+			result.append("rgb(240,240,240)");
+		}else{
+			result.append(colors.values()[color]);
+		}		
 		result.append(";}\n");
 
 		return result.toString();
 	}
 
 
-	//Creates the CSS template for one row of bubbles buttons
+	//Creates the CSS template for one row of bubble buttons
 	private String createBubble(int nbGuess, String combination){
 
 		StringBuilder row = new StringBuilder();
@@ -104,19 +116,27 @@ public class HTMLCreator {
 		StringBuilder row = new StringBuilder();
 		int i;
 		
+
+		//Correctly placed bubbles
 		for(i = 0; i < placedright; i++){
 			row.append(createResultCSS(nbGuess,i,0));
 		}
 
-		for(;i < ispresent; i++){
+		//Bubbles in the sequence but not at the correct place
+		for(;i < ispresent + placedright; i++){
 			row.append(createResultCSS(nbGuess,i,5));
+		}
+
+		//Blank results
+		for(; i < 4 ; i++) {
+			row.append(createResultCSS(nbGuess,i,BLANK));
 		}
 
 		return row.toString();
 	}
 
 	//Creates the CSS template for all buttons
-	private String createButtonsCSS(){
+	private String createAllButtons(){
 		int nbGuess = 11;
 		StringBuilder buttonCSS = new StringBuilder();
 
@@ -137,17 +157,21 @@ public class HTMLCreator {
 			buttonCSS.append(createResult(nbGuess,placedright,ispresent));
 
 		}
-		//The rest of the button must remain blank
-		for(; nbGuess >= 0; nbGuess--){
 
+		//The rest of the buttons must remain blank
+		for(; nbGuess >= 0; nbGuess--){
+			for(int i = 0; i < 4 ; i++) {
+				buttonCSS.append(createBubbleCSS(nbGuess,i,BLANK));
+				buttonCSS.append(createResultCSS(nbGuess,i,BLANK));
+			}
 		}
 
-
-		System.out.println(buttonCSS.toString());
 		return buttonCSS.toString();
 
 	}
 	
+
+
 	/**************************************CREATE HTML******************************************/
 
 	private String createBoard(){
