@@ -1,6 +1,4 @@
 
-
-
 public class HTMLCreator {
 
 	private  enum colors {
@@ -13,6 +11,9 @@ public class HTMLCreator {
 	}
 	//START
 	String start = "<!DOCTYPE html><html><head><meta charset=\"utf-8\" /><title>Mastermind</title>";
+
+
+	/************************************CREATING CSS**********************************************/
 
 	//CSS style for the bubbles
 	private static String createBubbleCSS(int nbGuess, int i, int color){
@@ -85,6 +86,8 @@ public class HTMLCreator {
 
 	}
 	
+	/**************************************CREATE HTML******************************************/
 
+	public static String 
 
 }
