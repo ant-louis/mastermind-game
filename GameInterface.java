@@ -9,7 +9,7 @@ public class GameInterface {
 	private static Map<Integer, PipedOutputStream> currentGamesOutput = new HashMap<>();
 	private static Map<Integer, PipedInputStream> currentGamesInput = new HashMap<>();
 
-	public static void submitGuess(int cookie,String guess){
+	public static String submitGuess(int cookie,String guess){
 		System.out.println("Submitting guess");
 
 		PipedOutputStream gameOut = currentGamesOutput.get(cookie);
@@ -21,7 +21,21 @@ public class GameInterface {
 		}catch(IOException ioe) {
 			ioe.printStackTrace();
 		}
+
+
+		return getResponse(cookie);
 	}
+
+	public static String getPreviousExchanges(int cookie){
+
+		System.out.println("Getting previous exchanges");
+		submitGuess(cookie,"");
+
+		return getResponse(cookie);
+	}
+
+
+	
 	public static void createGame(int cookie){
 		try{
 			//Pipes from the interface to the worker and vice versa
@@ -32,6 +46,7 @@ public class GameInterface {
 			PipedInputStream interfaceIn = new PipedInputStream();
 			PipedOutputStream workerOut =  new PipedOutputStream();
 			PipedInputStream workerIn = new PipedInputStream();
+
 
 			// InterfaceOut <------> WorkerIn
 			// WorkerOut <-------> InterfaceIn
@@ -46,7 +61,7 @@ public class GameInterface {
 			t.start();
 
 			//Start the game
-			interfaceOut.write(formatGuessToByte("10"));
+			interfaceOut.write("10".getBytes());
 			interfaceOut.flush();
 			
 
@@ -64,8 +79,7 @@ public class GameInterface {
 		}
 	}
 	*/
-	public static String getResponse(int cookie) {
-		System.out.println("Getting response");
+	private static String getResponse(int cookie) {
 		PipedInputStream gameIn = currentGamesInput.get(cookie);
 		byte[] rawGuess = new byte[128];
 		
@@ -77,7 +91,7 @@ public class GameInterface {
 		}	
 		
 		String formattedGuess = formatGuessToString(rawGuess);
-		System.out.println(formattedGuess);
+		System.out.println("Response: " + formattedGuess);
 		return formattedGuess;
 	}
 
@@ -85,7 +99,6 @@ public class GameInterface {
 	private static byte[] formatGuessToByte(String guess){
 		StringBuilder builder = new StringBuilder("12");
 		builder.append(guess);
-		System.out.println("Formatting String");
 
 		return builder.toString().getBytes();
 	}
@@ -94,7 +107,6 @@ public class GameInterface {
 
 		String rawGuess = new String(guess);
 		String colors = rawGuess.substring(2); //Remove the header
-		System.out.println("Re-Formatting to String");
 		return new String(colors);
 	}
 }
