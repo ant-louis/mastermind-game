@@ -61,7 +61,7 @@ public class HTMLCreator {
 		}else{
 
 			for(int i = 0; i < 4; i++){
-				row.append(createResultCSS(nbGuess,i,color))
+				row.append(createResultCSS(nbGuess,i,color));
 			}
 		}
 	
@@ -73,11 +73,11 @@ public class HTMLCreator {
 
 		StringBuilder buttonCSS = new StringBuilder();
 
-		for(int nbGuess = 11,nbGuess >= 0, nbGuess--){
+		for(int nbGuess = 11; nbGuess >= 0; nbGuess--){
 			buttonCSS.append(createButtonType(nbGuess,"bubble"));
 		}
 
-		for(int nbGuess = 11,nbGuess >= 0, nbGuess--){
+		for(int nbGuess = 11; nbGuess >= 0; nbGuess--){
 			buttonCSS.append(createButtonType(nbGuess,"result"));
 		}
 
