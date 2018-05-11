@@ -19,7 +19,7 @@ public class HTMLCreator {
 	public HTMLCreator(String prevExchanges){
 		this.previousexchanges = prevExchanges;
 		this.nbofexchanges = Character.getNumericValue(prevExchanges.charAt(0));
-		System.out.println(createPage());
+		//System.out.println(createPage());
 
 
 	}

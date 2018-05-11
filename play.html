@@ -438,8 +438,11 @@
 	        var value3 = encodeURIComponent(countBtn[3]);
 
 	        /* GET */
+	        alert(value0);
 	        xhttp.open("GET", '/play.html?param1='+value1+'&param2='+value2+'&param3='+value3+'&param4='+value4, true);
+	        alert("Opened");
 	        xhttp.send();
+	        alert("Sent");
 
 	        /* POST
 	        xhttp.open('POST', '/play.html');
@@ -474,6 +477,8 @@
 					}      
 				}
 	        };
+
+	        alert("Onreadystate");
 
 	        nbGuess--;
 
