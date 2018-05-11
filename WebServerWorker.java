@@ -23,12 +23,13 @@ public class WebServerWorker implements Runnable {
 		    HttpParser httpparser = new HttpParser(istream);
 		    String requestType = httpparser.getRequestType();
 		    String path = httpparser.getPath();
-		    int cookie;
-		    /*System.out.print("Request type: ");
+		    System.out.print("Request type: ");
 			System.out.println(requestType);
 		    System.out.print("Path: ");
 			System.out.println(path);
-			*/
+		    System.out.println("Cookie :" + httpparser.getCookie());
+		    int cookie;
+			
 			
 
 			//When the path requested is "/", we're redirecting to "/play.html"

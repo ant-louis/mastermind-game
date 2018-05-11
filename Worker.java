@@ -64,9 +64,6 @@ public class Worker implements Runnable {
 				
 				//Convert it to string and print it to console
 				String clientMessage = new String(incomingmessage);
-				//System.out.println("Client " + workersock.getPort() + ": " + clientMessage);
-				System.out.println("Message from interface to game: " + clientMessage);
-
 				
 				//Starting new game ("10")
 				if(clientMessage.startsWith("10")){
