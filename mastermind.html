@@ -523,10 +523,11 @@
 			/*Receive data*/ 
 			xhr.onreadystatechange = function(){
 				if (xhr.readyState == 4 && xhr.status == 200){
-					alert("Get a response !");
-
+					
 					/*Get the response*/
 					var response = xhr.responseText;
+					alert("Response: "+response);
+
 
 					/*Parse the response*/
 					var nbWellPlaced = Number(response[0]);
