@@ -31,6 +31,7 @@ public class HttpParser {
 	private void getFirstHeaderLine() throws IOException {
 		// String colors = "GET /play.html?param1=1&param2=2&param3=3&param4=4";
 		// System.out.println(colors);
+		System.out.println("Getting first HEADER line");
 
 		String buffer = "";
 		char c;
@@ -39,7 +40,7 @@ public class HttpParser {
 		
 		do{
 			c = (char) parserIn.read();
-			System.out.print(c);
+			//System.out.print(c);
 			buffer += c +"";
 			if(c == '\n'){
 				break;
@@ -75,12 +76,14 @@ public class HttpParser {
 	//where the key is the first keywords (before ':') and the 
 	//value is the rest
 	private void getRemainingHeader() throws IOException {
+		System.out.println("Getting remaining HEADER");
 
        	StringBuilder headerLine = new StringBuilder();
        	StringBuilder entireHeader = new StringBuilder();
        	char c;
 
        	do{
+
        		c = (char) parserIn.read();
        		System.out.print(c);
        		headerLine.append(c);
@@ -108,7 +111,7 @@ public class HttpParser {
 				entireHeader.charAt(currentLength - 3) == '\n'){
 				break; 
 			}
-
+			
    		}while(c != -1);
 	}
 
@@ -134,10 +137,15 @@ public class HttpParser {
 
 	//Extracts the cookie from the header
 	public int getCookie() {
-		return Integer.parseInt(headerMap.get("Cookie"));
+		if(headerMap.get("Cookie") == null){
+			return -1;
+		}
+		else {
+			return Integer.parseInt(headerMap.get("Cookie"));
+		}
 	}
 
-	//Extract a color guess from the request§
+	//Extract a color guess from the request
 	public String getGuess(){
 		String path = this.path;
 		char[] colors = new char[4];
