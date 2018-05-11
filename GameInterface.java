@@ -92,6 +92,7 @@ public class GameInterface {
 		
 		String formattedGuess = formatGuessToString(length, rawGuess);
 		System.out.println("Response: " + formattedGuess);
+		
 		return formattedGuess;
 	}
 
