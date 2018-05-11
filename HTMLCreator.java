@@ -142,6 +142,7 @@ public class HTMLCreator {
 		for(int i = 1; i < this.previousexchanges.length(); i += 6, nbGuess--){
 
 			//Dividing into substrings
+			System.out.println("StartIndex:" + i + " EndIndex:" + (i+6) + " Length:" + this.previousexchanges.length());
 			String guess = this.previousexchanges.substring(i, i + 6);
 			String combination = guess.substring(0,4);
 			

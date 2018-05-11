@@ -14,7 +14,6 @@ public class WebServerWorker implements Runnable {
 		workerSock = clientSocket;
 	}
 
-
 	public void run() {
 		try{
 
@@ -39,7 +38,6 @@ public class WebServerWorker implements Runnable {
 			
 			
 			//When the path requested is "/", we're redirecting to "/play.html"
-
 			if(path.equals("/")){
 				System.out.println("Redirecting...");
 				//Headers
@@ -103,7 +101,7 @@ public class WebServerWorker implements Runnable {
 				String guess = httpparser.getGuess_POST();
 				System.out.println("Guess:" + guess);
 				//System.out.println("Cookie:" + cookie);
-				//String result = GameInterface.submitGuess(cookie,guess);
+				GameInterface.submitGuess(cookie,guess);
 				String result = "12";
 		    	workerOut.print("HTTP/1.1 200 OK\r\n");
 			    workerOut.print("Content-Type: text/html\r\n");
@@ -112,14 +110,12 @@ public class WebServerWorker implements Runnable {
 
 			    workerOut.print("\r\n");
 
-			    // Body - Consists only of the result
-			   	String previousexchanges = ("1123412"); //temp
+			    // Body
 
+			    //POST request needs to recreate the whole page, so we're getting 
+			    //all the previous guesses and results
+			   	String previousexchanges = GameInterface.getPreviousExchanges(cookie);
 		    	encodeChunks(workerOut,previousexchanges);
-
-			    workerOut.print(result);
-
-			    workerOut.flush();
 			}
 
 

@@ -36,6 +36,8 @@ public class Worker implements Runnable {
 	//Constructor
 	Worker(PipedOutputStream out,PipedInputStream in){
 
+		System.out.println("Worker created");
+
 		this.workerOut = out;
 		this.workerIn = in;
 		/*workersock = sock;*/
@@ -77,7 +79,8 @@ public class Worker implements Runnable {
 
 				//List previous exchanges ("12")
 				else if(clientMessage.startsWith("12") && length == 2){
-					
+					System.out.println("Worker listing exchanges");
+
 					StringBuilder builder = new StringBuilder("13");
 					
 					//Add the number of previous exchanges
@@ -97,6 +100,8 @@ public class Worker implements Runnable {
 
 				//Guess a combination (ex: "121345")
 				else if(clientMessage.startsWith("12") && length == (2 + 4)){
+					System.out.println("Worker guessing combination");
+
 					String guessedcombination = clientMessage.substring(2, length);
 					guessCombination(guessedcombination);
 				}
@@ -149,7 +154,7 @@ public class Worker implements Runnable {
 		//Choose a given amount of colors for the secret combination
 		Random rand = new Random();
 		
-		System.out.println("Secret combination: ");
+		System.out.print("Secret combination: ");
 		for(int i =0; i < 4 ;i++) {
 			int randomcolor = rand.nextInt(colors.values().length);
 			secretcombination[i] = randomcolor;
