@@ -20,14 +20,14 @@ public class HTMLCreator {
 	//Constructor
 	public HTMLCreator(String prevExchanges){
 		this.previousexchanges = prevExchanges;
-		this.nbExchanges = Character.getNumericValue(prevExchanges.charAt(0));
+		//this.nbExchanges = Character.getNumericValue(prevExchanges.charAt(0));
 	}
 
 
 
 	/******************************************CREATE PAGE***************************************/
 
-	private String createPage(){
+	public String createPage(){
 
 		StringBuilder page = new StringBuilder();
 
@@ -42,8 +42,7 @@ public class HTMLCreator {
 
 		//HTML 
 		page.append("<body>");
-		String board = createBoard();
-		page.append(board);
+		page.append(createBoard());
 
 		//Javascript
 		page.append("<script type=\"text/javascript\">var nbGuess=11;var colorArray=new Array(); colorArray[0]=\"red\"; colorArray[1]=\"blue\"; colorArray[2]=\"yellow\"; colorArray[3]=\"green\"; colorArray[4]=\"white\"; colorArray[5]=\"black\"; var countBtn=new Array(); countBtn[0]=0; countBtn[1]=0; countBtn[2]=0; countBtn[3]=0; var btn0=document.getElementById(\"btn0\");var btn1=document.getElementById(\"btn1\");var btn2=document.getElementById(\"btn2\");var btn3=document.getElementById(\"btn3\");var submit_btn=document.getElementById(\"submit-button\");btn0.addEventListener(\"click\", function(){countBtn[0]=(countBtn[0] + 1) % colorArray.length; btn0.style.backgroundColor=colorArray[countBtn[0]];});btn1.addEventListener(\"click\", function(){countBtn[1]=(countBtn[1] + 1) % colorArray.length; btn1.style.backgroundColor=colorArray[countBtn[1]];});btn2.addEventListener(\"click\", function(){countBtn[2]=(countBtn[2] + 1) % colorArray.length; btn2.style.backgroundColor=colorArray[countBtn[2]];});btn3.addEventListener(\"click\", function(){countBtn[3]=(countBtn[3] + 1) % colorArray.length; btn3.style.backgroundColor=colorArray[countBtn[3]];});submit_btn.addEventListener(\"click\", function(){/*Stock new guess*/for(var i=0; i<4; i++){var bub=document.getElementById(\"bub\"+nbGuess+i);bub.style.backgroundColor=colorArray[countBtn[i]]}/*New HTTP Request*/ var xhttp=new XMLHttpRequest(); /*---------------Send request----------------*/ var value0=encodeURIComponent(countBtn[0]); var value1=encodeURIComponent(countBtn[1]); var value1=encodeURIComponent(countBtn[2]); var value3=encodeURIComponent(countBtn[3]); /* GET */ xhttp.open(\"GET\", '/play.html?param1='+value1+'&param2='+value2+'&param3='+value3+'&param4='+value4, true); xhttp.send(); /* POST xhttp.open('POST', '/play.html'); xhttp.send('param1='+value1 + '&param2='+value2 + '&param3='+value3 + '&param4='+value4); */ /*---------------Receive data--------------*/ xhttp.onreadystate=function(){if (xhttp.readyState==4 && xhtpp.status==200){/*Get the response*/var response=xhttp.responseText;/*Parse the response*/var nbWellPlaced=Number(response[0]);var nbNotWellPlaced=Number(response[1]);var len=nbWellPlaced + nbNotWellPlaced;/*Display the result*/for(var i=0; i < len; i++){var res=document.getElementById(\"res\"+nbGuess+i);if(nbWellPlaced > 0){res.style.backgroundColor=\"red\";nbWellPlaced--;}else{res.style.backgroundColor=\"black\";}}}}; nbGuess--;if(nbGuess < 0){alert(\"GAME OVER\");setTimeout(function(){document.location=\"play.html\"}, 3000);}});</script>");

@@ -32,7 +32,7 @@ public class WebServerWorker implements Runnable {
 
 			
 
-			//When the path requested is "/", we're redirecting to /play.html
+			//When the path requested is "/", we're redirecting to "/play.html"
 			if(path.equals("/")){
 				System.out.println("Redirecting...");
 				//Headers
@@ -43,7 +43,7 @@ public class WebServerWorker implements Runnable {
 				workerOut.flush();
 			}
 
-			/*
+			
 			//Shows the main page : chunked encoding
 			else if(requestType.equals("GET") && path.equals("/play.html")){
 				
@@ -59,23 +59,50 @@ public class WebServerWorker implements Runnable {
 			    workerOut.print("Set-Cookie: SESSID=" + newCookie + "; path=/play.html\r\n");
 			    workerOut.print("\r\n");
 
-											    
+				//Body					    
 			    
-			    //Body
-				String line1 = "Voici les donnees du premier morceau";
-				String hexLength1 = Integer.toHexString(line1.length());
-			    workerOut.println(hexLength1);
-			    workerOut.println(line1);
-			    
+			    //String previousexchanges = GameInterface.getPreviousExchanges(newCookie);
+			    String previousexchanges = ("1123412");
+			    HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges);
+			    String createdwebpage = myhtmlcreator.createPage();
+			    //System.out.println(createdwebpage);
+
+			    int chunkSize = 128;
+			    int startIndex = 0;
+			    int endIndex = startIndex + chunkSize;
+			    String pageChunk;
+
+			    while(createdwebpage.length() >= endIndex){
+
+			    	//Cut the webpage into chunks of size chunkSize
+			    	pageChunk = createdwebpage.substring(startIndex,endIndex);
+			    	startIndex += chunkSize;
+			    	endIndex = startIndex + chunkSize;
+
+			    	//Get chunkSize in hexadecimal
+					String hexLength = Integer.toHexString(chunkSize);
+			    	workerOut.println(hexLength);
+			    	workerOut.println(pageChunk);
+			    }
+
+
+			    //If the wepage length is not a multiple of chunkSize, 
+			    //there are some characters left
+		    	pageChunk = createdwebpage.substring(startIndex,createdwebpage.length());
+				String hexLength = Integer.toHexString(createdwebpage.length() - startIndex);
+		    	workerOut.println(hexLength);
+		    	workerOut.println(pageChunk);
+
+		    	//End the chunked enconding
 			    workerOut.print("0\r\n");
 			    workerOut.print("\r\n");
 			    
 
 			    workerOut.flush();
 			}
-			*/
-
 			
+
+			/*
 			//Shows the main page and starts a game : Normal encoding
 			else if(requestType.equals("GET") && path.equals("/play.html")){
 				
@@ -93,12 +120,10 @@ public class WebServerWorker implements Runnable {
 
 			    //Body
 
-			    workerOut.print(webpage);
-			    workerOut.flush();
 			    
 
-				System.out.println(GameInterface.submitGuess(newCookie,"1234"));
-				/*TimeUnit.SECONDS.sleep(1);
+				//System.out.println(GameInterface.submitGuess(newCookie,"1234"));
+				TimeUnit.SECONDS.sleep(1);
 				GameInterface.submitGuess(newCookie,"1144");
 				TimeUnit.SECONDS.sleep(1);
 				GameInterface.submitGuess(newCookie,"1111");
@@ -109,13 +134,20 @@ public class WebServerWorker implements Runnable {
 				TimeUnit.SECONDS.sleep(1);
 				
 
-			    String previousexchanges = GameInterface.getPreviousExchanges(newCookie);
+
+
+			    //String previousexchanges = GameInterface.getPreviousExchanges(newCookie);
+			    String previousexchanges = ("1123412");
 			    HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges);
-			    
+			    String createdwebpage = myhtmlcreator.createPage();
+			    //System.out.println(createdwebpage);
+
+			    workerOut.print(createdwebpage);
+			    workerOut.flush();
 
 			}
 
-			
+			*/
 
 			//AJAX Request 
 			else if(requestType.equals("GET") && path.startsWith("/play.html?")){
