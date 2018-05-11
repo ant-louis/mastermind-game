@@ -74,7 +74,19 @@ public class WebServerWorker implements Runnable {
 			    workerOut.print(webpage);
 			    workerOut.flush();
 				GameInterface.submitGuess(newCookie,"1234");
+				TimeUnit.SECONDS.sleep(1);
+				GameInterface.submitGuess(newCookie,"1144");
+				TimeUnit.SECONDS.sleep(1);
+				GameInterface.submitGuess(newCookie,"1111");
+				TimeUnit.SECONDS.sleep(1);
+				GameInterface.submitGuess(newCookie,"3454");
+				TimeUnit.SECONDS.sleep(1);
+				GameInterface.submitGuess(newCookie,"0451");
+				TimeUnit.SECONDS.sleep(1);
+
+
 			    String previousexchanges = GameInterface.getPreviousExchanges(newCookie);
+			    HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges);
 
 			}
 
