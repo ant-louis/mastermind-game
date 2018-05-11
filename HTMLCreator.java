@@ -1,7 +1,6 @@
 
 public class HTMLCreator {
 
-
 	private enum colors {
 		  red,
 		  blue,
@@ -10,8 +9,8 @@ public class HTMLCreator {
 		  white,
 		  black;
 	}
+
 	//Class variables
-	int nbExchanges;
 	String previousexchanges;
 	private static final int BLANK = 10;
 	private static String staticCSS = "body{font-family: \"Times New Roman\", Arial, serif;font-weight: normal; background-image: radial-gradient(ellipse at center, rgb(180,255,160), rgb(10,50,0));}.flexer{display: flex;}/********************GUESSES_AND_SCORES*********************/.mastermind-board{width: 30%;min-width:400px; height:650px; margin: 0 auto; margin-top: 20px; margin-bottom: 20px;}.title{width: 100%;height: 12%;}.mastermind-text{font-size: 4em;color: rgb(10,50,0);text-align: center;margin-top: 10px;text-shadow: 1px 1px rgb(220,255,215);}.guess-container{width:100%;height:90%;}.guess-row{box-sizing: border-box;height: 8.2%;width: 100%;}.guess-box{width: 70%;height: 100%;}.result-box{width: 28%;height: 100%;}/*************************SELECTION************************/#js{display: none;}.selection-board{width: 30%;min-width:400px;height: 50px;border: 1px solid rgb(10,50,0); border-radius: 10px; margin: 0 auto;}.button{width: 30%;height: 100%;}.submit-button{width: 80%;height: 70%;border: 1px solid rgb(161,161,161); border-radius: 10px; text-align: center; box-shadow: 2px 2px 2px rgb(161,161,161); margin: 5%; font-size: 1.2em;background-color: rgb(240,240,240);color:rgb(10,50,0);}.selection-box{width: 70%;height: 90%;}#btn0, #btn1, #btn2, #btn3{height:80%;width:16.5%;border-radius: 50%;border: 1px solid rgb(50,50,50);margin-left: 3%;margin-right: 4.5%;margin-top: 2%;background-color: red;}.list{margin-top: 3%;margin-left: 4%;}.list select{border-radius: 10%;}.list option{font-family: \"Times New Roman\", Arial, serif;font-size: 1.2em;text-align: center;}";
@@ -20,7 +19,6 @@ public class HTMLCreator {
 	//Constructor
 	public HTMLCreator(String prevExchanges){
 		this.previousexchanges = prevExchanges;
-		//this.nbExchanges = Character.getNumericValue(prevExchanges.charAt(0));
 	}
 
 

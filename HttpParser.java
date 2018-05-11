@@ -31,7 +31,6 @@ public class HttpParser {
 	private void getFirstHeaderLine() throws IOException {
 		// String colors = "GET /play.html?param1=1&param2=2&param3=3&param4=4";
 		// System.out.println(colors);
-		System.out.println("Getting first HEADER line");
 
 		String buffer = "";
 		char c;
@@ -40,7 +39,7 @@ public class HttpParser {
 		
 		do{
 			c = (char) parserIn.read();
-			//System.out.print(c);
+			System.out.print(c);
 			buffer += c +"";
 			if(c == '\n'){
 				break;
@@ -73,11 +72,9 @@ public class HttpParser {
 
 
 	//Gets the remaining header and stores each line in a map, 
-	//where the key is the first keywords (before ':') and the 
-	//value is the rest
+	//where the key is the first keyword (before ':') and the 
+	//value is the rest of the line
 	private void getRemainingHeader() throws IOException {
-		System.out.println("Getting remaining HEADER");
-
        	StringBuilder headerLine = new StringBuilder();
        	StringBuilder entireHeader = new StringBuilder();
        	char c;
@@ -85,19 +82,24 @@ public class HttpParser {
        	do{
 
        		c = (char) parserIn.read();
-       		System.out.print(c);
-       		headerLine.append(c);
+       		//Appending to the line buffering the current line we're parsing
+   			headerLine.append(c);
 
 		    //End of line reached, storing as a map
-       		if (c == '\n'){
+       		if (c == '\n' && headerLine != null){
        			String line = headerLine.toString();
        			String[] tokens = line.split(":");
        			
        			//Putting into map
        			if(tokens != null && tokens.length == 2){
+       				//Small manipulation because the stored key is "\nCookie" otherwise
+       				tokens[0] = tokens[0].substring(1,tokens[0].length());
        				headerMap.put(tokens[0],tokens[1]);
        			}
+
+       			//Append to the string containing the whole header
        			entireHeader.append(line);
+
        			//Delete the line once it's mapped
        			headerLine.delete(0,headerLine.length()-1);
        		}
@@ -116,8 +118,6 @@ public class HttpParser {
 	}
 
 	public String getGuess_POST() throws IOException{
-
-		System.out.println("Getting body of POST request");
 		char[] colors = new char[4];
 		char c;
 		int j = 0;
@@ -125,13 +125,18 @@ public class HttpParser {
 		//Reading the body and extracting the guess		
 		do{
 			c = (char) parserIn.read();
-			System.out.print(c);
 			//The value follows the '='
 			if(c == '='){
 				c = (char) parserIn.read();
 				colors[j] = c;
 				j++;
+
+				//All the colors extracted
+				if(j == 4) {
+					break;
+				}
 			}
+
 		}while(c != -1);
 
 		return new String(colors);
@@ -142,11 +147,15 @@ public class HttpParser {
 
 	//Extracts the cookie from the header
 	public int getCookie() {
-		if(headerMap.get("Cookie") == null){
+		String cookieField;
+		if((cookieField = headerMap.get("Cookie")) == null){
 			return -1;
 		}
 		else {
-			return Integer.parseInt(headerMap.get("Cookie"));
+			//Map value of "Cookie" is stored as "SESSID=1"
+			int index = cookieField.indexOf("=");
+			char value = cookieField.charAt(index+1);
+			return Character.getNumericValue(value);
 		}
 	}
 
