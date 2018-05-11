@@ -11,6 +11,7 @@ public class HttpParser {
 	private String path;
 	private Map<String, String> headerMap = new HashMap<>();
 
+	
 	public HttpParser(InputStreamReader istream){
 		parserIn = istream;
 
