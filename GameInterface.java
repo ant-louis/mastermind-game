@@ -22,13 +22,13 @@ public class GameInterface {
 			ioe.printStackTrace();
 		}
 
-
 		return getResponse(cookie);
 	}
 
 	public static String getPreviousExchanges(int cookie){
 
 		System.out.println("Getting previous exchanges");
+		//The submitGuess function automatically prepends "12"
 		submitGuess(cookie,"");
 
 		return getResponse(cookie);
@@ -63,6 +63,9 @@ public class GameInterface {
 			//Start the game
 			interfaceOut.write("10".getBytes());
 			interfaceOut.flush();
+
+			//Getting response to flush the inputStream
+			getResponse(cookie);
 			
 
 		}catch(IOException ioe){
@@ -70,15 +73,7 @@ public class GameInterface {
 		}	
 	}
 
-	/*
-	public static boolean gameExists(String cookie){
-		if(currentGames.get(cookie) != null){
-			return true;
-		}else{
-			return false;
-		}
-	}
-	*/
+
 	private static String getResponse(int cookie) {
 		PipedInputStream gameIn = currentGamesInput.get(cookie);
 		byte[] rawGuess = new byte[128];
