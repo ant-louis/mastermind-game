@@ -115,21 +115,25 @@ public class HttpParser {
    		}while(c != -1);
 	}
 
-	public String getBody() throws IOException{
+	public String getGuess_POST() throws IOException{
 
 		System.out.println("Getting body of POST request");
-		String buffer = "";
+		char[] colors = new char[4];
 		char c;
+		int j = 0;
 
-		//Reading the body		
+		//Reading the body and extracting the guess		
 		do{
 			c = (char) parserIn.read();
-			System.out.print(c);
-			buffer += c +"";
-
+			System.out.println(c);
+			//The value follows the '='
+			if(c == '='){
+				System.out.println("Enter");
+				c = (char) parserIn.read();
+				colors[j++] = c;
+			}
 		}while(c != -1);
-
-		return buffer;
+		return new String(colors);
 	}
 
 
@@ -145,8 +149,8 @@ public class HttpParser {
 		}
 	}
 
-	//Extract a color guess from the request
-	public String getGuess(){
+	//Extract a color guess from the AJAX/GET request
+	public String getGuess_GET(){
 		String path = this.path;
 		char[] colors = new char[4];
 	 	

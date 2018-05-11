@@ -154,7 +154,7 @@ public class WebServerWorker implements Runnable {
 			else if(requestType.equals("GET") && path.startsWith("/play.html?")){
 
 				cookie = httpparser.getCookie();
-				String guess = httpparser.getGuess();
+				String guess = httpparser.getGuess_GET();
 				String result = GameInterface.submitGuess(cookie,guess);
 
 
@@ -176,8 +176,8 @@ public class WebServerWorker implements Runnable {
 
 			//POST request - may need to separate normal post and guess POST
 			else if(requestType.equals("POST") && path.equals("/play.html")){
-				String body = httpparser.getBody();
-				System.out.println(body);
+				String guess = httpparser.getGuess_POST();
+				System.out.println(guess);
 			}
 
 
