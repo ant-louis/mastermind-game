@@ -22,10 +22,10 @@ public class HTMLCreator {
 		this.previousexchanges = prevExchanges;
 
 		//Get either a single or double digit number of exchanges
-		if(prevEchanges.charAt(0) == '1' && prevExchanges.length() < 8){
+		if(prevExchanges.charAt(0) == '1' && prevExchanges.length() < 8){
 			this.nbExchanges = prevExchanges.charAt(0);
 		}else{
-			this.nbExchanges = prevExchanges.substring(0,2);
+			this.nbExchanges = Integer.parseInt(prevExchanges.substring(0,2));
 		}
 
 		System.out.println("Creating htmlcreator");
@@ -150,7 +150,7 @@ public class HTMLCreator {
 		StringBuilder buttonCSS = new StringBuilder();
 
 		//All the previous exchanges of the game
-		if(this.nbExchanges.length() == 2){
+		if(this.nbExchanges >= 10){
 			i = 2;
 		}else{
 			i = 1;
