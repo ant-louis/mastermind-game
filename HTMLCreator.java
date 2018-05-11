@@ -11,7 +11,7 @@ public class HTMLCreator {
 	}
 
 	//Class variables
-	String previousexchanges;
+	String previousExchanges;
 	int nbExchanges;
 	int result;
 	private static final int BLANK = 10;
@@ -22,21 +22,29 @@ public class HTMLCreator {
 	//Constructor
 	public HTMLCreator(String prevExchanges){
 
-		this.previousexchanges = prevExchanges;
+		this.previousExchanges = prevExchanges;
 
 		//Get either a single or double digit number of exchanges
-		if(prevExchanges.length() > 0 && prevExchanges.length() <= 55){
+		if(previousExchanges.length() > 0 && previousExchanges.length() <= 55){
 
-			this.nbExchanges = Character.getNumericValue(prevExchanges.charAt(0));
+			this.nbExchanges = Character.getNumericValue(previousExchanges.charAt(0));
+		}
+		else if(previousExchanges.length() > 55){
 
-		}else if(prevExchanges.length() > 55){
-
-			this.nbExchanges = Integer.parseInt(prevExchanges.substring(0,2));
+			this.nbExchanges = Integer.parseInt(previousExchanges.substring(0,2));
+		}
+		else{
+			this.nbExchanges = 0;
 		}
 
 		//Get the result of the guess
-		this.result = Character.getNumericValue(prevExchanges.charAt(prevExchanges.length()-2));
-		System.out.println("Result of previous guess :" + this.result);
+		if(previousExchanges.length() != 0){
+			this.result = Character.getNumericValue(prevExchanges.charAt(previousExchanges.length()-2));
+			System.out.println("Result of previous guess :" + this.result);
+		}
+		else{
+			this.result = 0;
+		}
 
 	}
 
@@ -187,10 +195,10 @@ public class HTMLCreator {
 		}else{
 			i = 1;
 		}
-		for(; i < this.previousexchanges.length(); i += 6, nbGuess--){
+		for(; i < this.previousExchanges.length(); i += 6, nbGuess--){
 
 			//Dividing into substrings
-			String guess = this.previousexchanges.substring(i, i + 6);
+			String guess = this.previousExchanges.substring(i, i + 6);
 			String combination = guess.substring(0,4);
 			
 			//Result of the guess

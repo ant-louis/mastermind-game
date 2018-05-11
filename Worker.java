@@ -174,40 +174,46 @@ public class Worker implements Runnable {
 	 */
 	private void guessCombination(String guessedcombination) throws Exception{
 		int length = guessedcombination.length();
-		int isPresent = 0;
-		int isRightplace = 0;
+		int guessedcolor;
+		int badlyPlacedGoodColors = 0;
+		int wellPlacedColors = 0;
 		
 		NBGUESS--;
 			
-
 		//Copy the colorOccurence array
 		int[] temp_coloroccurence = Arrays.copyOf(coloroccurrence,coloroccurrence.length);
 		
-		//Check each color at a time
+		//Check the well placed colors
 		for(int i = 0; i < length; i++){
-			
 			//Extract the color and convert it to int
-			int guessedcolor = Character.getNumericValue(guessedcombination.charAt(i));
+			guessedcolor = Character.getNumericValue(guessedcombination.charAt(i));
 			
 			//If color is at the right place
 			if(guessedcolor == secretcombination[i]){
-				isRightplace++;
-				
+				wellPlacedColors++;
+				temp_coloroccurence[guessedcolor]--;
+			}
+		}
+
+		//Check the badly placed good colors
+		for(int i = 0; i < length; i++){
+			//Extract the color and convert it to int
+			guessedcolor = Character.getNumericValue(guessedcombination.charAt(i));
+
 			//If the color is present somewhere in the secret combination
-			}else if(temp_coloroccurence[guessedcolor] > 0){
-				
-				isPresent++;
+			if(temp_coloroccurence[guessedcolor] > 0){
+				badlyPlacedGoodColors++;
 				temp_coloroccurence[guessedcolor]--;
 			}
 		}
 		
 		//Create a string for the client-server exchange and add it to a list
-		String exchange = String.format("%s%d%d",guessedcombination,isRightplace,isPresent);
+		String exchange = String.format("%s%d%d",guessedcombination, wellPlacedColors, badlyPlacedGoodColors);
 		previousexchanges.add(exchange);
 		nbexchanges++;
 		
 		//Send the result of the guess to the client
-		String guessresult = String.format("12%d%d",isRightplace,isPresent);
+		String guessresult = String.format("12%d%d",wellPlacedColors,badlyPlacedGoodColors);
 		sendMessage(guessresult);
 				
 	}
