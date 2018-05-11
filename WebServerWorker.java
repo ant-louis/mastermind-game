@@ -100,9 +100,7 @@ public class WebServerWorker implements Runnable {
 				cookie = httpparser.getCookie();
 				String guess = httpparser.getGuess_POST();
 				System.out.println("Guess:" + guess);
-				//System.out.println("Cookie:" + cookie);
 				GameInterface.submitGuess(cookie,guess);
-				String result = "12";
 		    	workerOut.print("HTTP/1.1 200 OK\r\n");
 			    workerOut.print("Content-Type: text/html\r\n");
 			    workerOut.print("Connection: close\r\n");

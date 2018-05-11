@@ -22,12 +22,14 @@ public class HTMLCreator {
 		this.previousexchanges = prevExchanges;
 
 		//Get either a single or double digit number of exchanges
-		if(prevExchanges.charAt(0) == '1' && prevExchanges.length() < 8){
-			this.nbExchanges = prevExchanges.charAt(0);
+		System.out.println("PrevExchanges length is :" + prevExchanges.length());
+
+		if(prevExchanges.length() <= 55){
+			this.nbExchanges = Character.getNumericValue(prevExchanges.charAt(0));
 		}else{
 			this.nbExchanges = Integer.parseInt(prevExchanges.substring(0,2));
 		}
-
+		System.out.println("Nbexchanges is :" + this.nbExchanges);
 		System.out.println("Creating htmlcreator");
 	}
 
