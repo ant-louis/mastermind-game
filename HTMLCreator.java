@@ -289,7 +289,7 @@ public class HTMLCreator {
 
 		for(int i=0; i < 4; i++){
 			selectionBoard.append("<div class=\"list\">");
-			selectionBoard.append("<select id=\"choice"+i+"\">");
+			selectionBoard.append("<select name=\"choice"+i+"\">");
 
 			selectionBoard.append("<option value=\"0\">red</option>");	
 			selectionBoard.append("<option value=\"1\">blue</option>");
