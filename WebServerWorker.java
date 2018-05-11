@@ -193,12 +193,10 @@ public class WebServerWorker implements Runnable {
 				workerOut.print("\r\n");
 
 				//Body
-				workerOut.print("<!DOCTYPE html>\r\n");
-				workerOut.print("<html lang=en>\r\n");
-				workerOut.print("<meta charset=utf-8>\r\n");
-  				workerOut.print("<title>Error 404 (Not Found)!!1</title>\r\n");
- 				workerOut.print("<p><b>404.</b> <ins>That’s an error.</ins>\r\n");
-  				workerOut.print("<p>The requested URL was not found on this server.\r\n");
+				workerOut.print("<!DOCTYPE html><html>\r\n");
+				workerOut.print("<head><meta charset=\"utf-8\"><title>Error 404</title></head>\r\n");
+ 				workerOut.print("<body><p><b>404.</b> <ins>That’s an error.</ins></p>\r\n");
+  				workerOut.print("<p>The requested URL was not found on this server.</p></body></html>\r\n");
 
 				workerOut.flush();
 
