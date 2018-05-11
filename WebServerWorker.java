@@ -43,6 +43,39 @@ public class WebServerWorker implements Runnable {
 				workerOut.flush();
 			}
 
+			/*
+			//Shows the main page : chunked encoding
+			else if(requestType.equals("GET") && path.equals("/play.html")){
+				
+				//Creating new game
+				newCookie++;
+				GameInterface.createGame(newCookie);
+
+				//Headers
+		    	workerOut.print("HTTP/1.1 200 OK\r\n");
+			    workerOut.print("Content-Type: text/html\r\n");
+			    workerOut.print("Connection: close\r\n");
+			    workerOut.print("Transfer-Encoding: chunked\r\n");
+			    workerOut.print("Set-Cookie: SESSID=" + newCookie + "; path=/play.html\r\n");
+			    workerOut.print("\r\n");
+
+											    
+			    
+			    //Body
+				String line1 = "Voici les donnees du premier morceau";
+				String hexLength1 = Integer.toHexString(line1.length());
+			    workerOut.println(hexLength1);
+			    workerOut.println(line1);
+			    
+			    workerOut.print("0\r\n");
+			    workerOut.print("\r\n");
+			    
+
+			    workerOut.flush();
+			}
+			*/
+
+			
 			//Shows the main page and starts a game : Normal encoding
 			else if(requestType.equals("GET") && path.equals("/play.html")){
 				
@@ -59,18 +92,6 @@ public class WebServerWorker implements Runnable {
 			    workerOut.print("\r\n");
 
 			    //Body
-
-			    //Printing base64 image --> WORKS
-
-			    /*
-			    workerOut.print("<!DOCTYPE html>"+
-								"<html>"+
-								"<body>"+
-								"<img style=\'display:block;\' id=\'base64image\'"+               
-       							"src=" + base64image + ">"+
-								"</body>"+
-								"</html>");
-			    */
 
 			    workerOut.print(webpage);
 			    workerOut.flush();
@@ -90,9 +111,12 @@ public class WebServerWorker implements Runnable {
 
 			    String previousexchanges = GameInterface.getPreviousExchanges(newCookie);
 			    HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges);
-			    */
+			    
 
 			}
+
+			
+
 			//AJAX Request 
 			else if(requestType.equals("GET") && path.startsWith("/play.html?")){
 				cookie = httpparser.getCookie();
@@ -124,47 +148,8 @@ public class WebServerWorker implements Runnable {
 
 		
 			
-			/*
-			//Shows the main page : chunked encoding
-			if(requestType.equals("GET") && path.equals("/play.html")){
-				System.out.println("Showing Mastermind interface");
-
-				//Headers
-		    	workerOut.print("HTTP/1.1 200 OK\r\n");
-			    workerOut.print("Content-Type: text/html\r\n");
-			    workerOut.print("Transfer-Encoding: chunked\r\n");
-			    workerOut.print("Connection: close\r\n");
-			    workerOut.print("Set-Cookie: SESSID=rk64vvmhlbt6rsdfv4f02kc5g0; path=/play.html\r\n");
-			    workerOut.print("\r\n");
-
-			    //Body
-				String line1 = "Voici les données du premier morceau\r\n";
-				String hexLength1 = Integer.toHexString(line1.length());
-			    workerOut.print(hexLength1);
-			    workerOut.print(line1);
-			    
-			    String line2 = "et voici un second morceau\r\n";
-				String hexLength2 = Integer.toHexString(line2.length());
-			    workerOut.print(hexLength2);
-			    workerOut.print(line2);
-
-				String line3 = "et voici deux derniers morceaux\r\n";
-				String hexLength3 = Integer.toHexString(line3.length());
-			    workerOut.print(hexLength3);
-			    workerOut.print(line3);
-
-				String line4 = "sans saut de ligne\r\n";
-				String hexLength4 = Integer.toHexString(line4.length());
-			    workerOut.print(hexLength4);
-			    workerOut.print(line4);
-				
-			    workerOut.print("0\r\n");
-			    workerOut.print("\r\n");
-
-			    workerOut.flush();
-			}
 			 
-			*/
+			
 
 
 			if(requestType.equals("POST")){

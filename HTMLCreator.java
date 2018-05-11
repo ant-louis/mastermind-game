@@ -151,7 +151,8 @@ public class HTMLCreator {
 			//Dividing into substrings
 			String guess = this.previousexchanges.substring(i, i + 6);
 			String combination = guess.substring(0,4);
-
+			
+			//Result of the guess
 			int placedright = Character.getNumericValue(guess.charAt(4));
 			int ispresent= Character.getNumericValue(guess.charAt(5));
 
