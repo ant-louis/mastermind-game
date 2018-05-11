@@ -282,14 +282,14 @@ public class HTMLCreator {
 
 		//-------If JS disabled-----------
 		selectionBoard.append("<noscript>");
-		selectionBoard.append("<form class=\"selection-board flexer\" method=\"post\" action=\"/play.html\">");
+		selectionBoard.append("<form class=\"selection-board flexer\" method=\"post\" action=\"play.html\">");
 
 		//Guess scrolling lists
 		selectionBoard.append("<div class=\"selection-box flexer\">");
 
 		for(int i=0; i < 4; i++){
 			selectionBoard.append("<div class=\"list\">");
-			selectionBoard.append("<select id=\"choice"+i+"\">");
+			selectionBoard.append("<select name=\"choice"+i+"\">");
 
 			selectionBoard.append("<option value=\"0\">red</option>");	
 			selectionBoard.append("<option value=\"1\">blue</option>");
