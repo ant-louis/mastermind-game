@@ -19,18 +19,17 @@ public class HTMLCreator {
 	
 	//Constructor
 	public HTMLCreator(String prevExchanges){
+
 		this.previousexchanges = prevExchanges;
 
 		//Get either a single or double digit number of exchanges
-		System.out.println("PrevExchanges length is :" + prevExchanges.length());
+		if(prevExchanges.length() > 0 && prevExchanges.length() <= 55){
 
-		if(prevExchanges.length() <= 55){
 			this.nbExchanges = Character.getNumericValue(prevExchanges.charAt(0));
-		}else{
+		}else if(prevExchanges.length() > 55){
+			
 			this.nbExchanges = Integer.parseInt(prevExchanges.substring(0,2));
 		}
-		System.out.println("Nbexchanges is :" + this.nbExchanges);
-		System.out.println("Creating htmlcreator");
 	}
 
 

@@ -28,8 +28,17 @@ public class GameInterface {
 	public static String getPreviousExchanges(int cookie){
 
 		System.out.println("Getting previous exchanges");
-		//The submitGuess function automatically prepends "12"
-		submitGuess(cookie,"");
+		PipedOutputStream gameOut = currentGamesOutput.get(cookie);
+
+		//The formatGuessTobyte function automatically prepends "12"
+		byte[] formattedPrevExchanges = formatGuessToByte("");
+
+		try{
+			gameOut.write(formattedPrevExchanges);
+			gameOut.flush();
+		}catch(IOException ioe) {
+			ioe.printStackTrace();
+		}
 
 		return getResponse(cookie);
 	}

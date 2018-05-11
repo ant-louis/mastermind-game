@@ -66,8 +66,7 @@ public class WebServerWorker implements Runnable {
 
 				//Body					    
 			    
-			    //String previousexchanges = GameInterface.getPreviousExchanges(newCookie);
-			    String previousexchanges = ("2123412555511"); //temp
+			    String previousexchanges = ""; //Empty previous exchanges to create blank page
 			    encodeChunks(workerOut,previousexchanges);
 			}
 			
@@ -79,7 +78,7 @@ public class WebServerWorker implements Runnable {
 				cookie = httpparser.getCookie();
 				String guess = httpparser.getGuess_GET();
 				String result = GameInterface.submitGuess(cookie,guess);
-
+				System.out.println("Result:" +result);
 
 		    	workerOut.print("HTTP/1.1 200 OK\r\n");
 			    workerOut.print("Content-Type: text/html\r\n");
@@ -100,7 +99,7 @@ public class WebServerWorker implements Runnable {
 				cookie = httpparser.getCookie();
 				String guess = httpparser.getGuess_POST();
 				System.out.println("Guess:" + guess);
-				GameInterface.submitGuess(cookie,guess);
+				String result = GameInterface.submitGuess(cookie,guess); //Result not used
 		    	workerOut.print("HTTP/1.1 200 OK\r\n");
 			    workerOut.print("Content-Type: text/html\r\n");
 			    workerOut.print("Connection: close\r\n");
@@ -157,9 +156,9 @@ public class WebServerWorker implements Runnable {
 
 	private void encodeChunks(PrintWriter workerOut,String previousexchanges){
 		System.out.println("Encoding chunks");
+
 		HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges);
 	    String createdwebpage = myhtmlcreator.createPage();
-	    //System.out.println(createdwebpage);
 
 	    int chunkSize = 128;
 	    int startIndex = 0;
