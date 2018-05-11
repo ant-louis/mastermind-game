@@ -26,9 +26,7 @@ public class HTMLCreator {
 	}
 
 
-
-
-	//CREATE PAGE
+	//Create the page
 	private String createPage(){
 
 		StringBuilder page = new StringBuilder();
@@ -41,6 +39,7 @@ public class HTMLCreator {
 		page.append(staticCSS);
 		page.append(createAllButtons());
 		page.append("</style>");
+		page.append("</head>");
 
 		//HTML 
 		page.append("<body>");
