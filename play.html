@@ -106,6 +106,11 @@
 
 
 			/*************************SELECTION************************/
+
+			#js {
+				display: none;
+			}
+
 			.selection-board {
 				width: 30%;
 				min-width:400px;
@@ -120,7 +125,7 @@
 				height: 100%;
 			}
 
-			#submit-button {
+			.submit-button {
 				width: 80%;
 				height: 70%;
 				border: 1px solid rgb(161,161,161);
@@ -150,233 +155,310 @@
 				background-color: red;
 			}
 
+			.list {
+				margin-top: 3%;
+				margin-left: 4%;
+			}
+
+			select {
+				border-radius: 10%;
+			}
+
+			option {
+				font-family: "Times New Roman", Arial, serif;
+				font-size: 1.2em;
+				text-align: center;
+			}
+
         </style>
     </head>
 
     <body>
 
-	    	<div class="mastermind-board">
+    	<div class="mastermind-board">
 
-	    		<div class="title">
-	    			<h2 class="mastermind-text"> MASTERMIND</h2>
+    		<div class="title">
+    			<h2 class="mastermind-text"> MASTERMIND</h2>
+    		</div>
+    		
+    		<div class="guess-container">
+
+	    		<div class="guess-row flexer">
+	    			<div class="guess-box flexer">
+	    				<div id="bub00"></div>
+	    				<div id="bub01"></div>
+	    				<div id="bub02"></div>
+	    				<div id="bub03"></div>
+	    			</div>
+
+	    			<div class="result-box flexer">
+	    				<div id="res00"></div>
+	    				<div id="res01"></div>
+	    				<div id="res02"></div>
+	    				<div id="res03"></div>
+	    			</div>
 	    		</div>
-	    		
-	    		<div class="guess-container">
 
-		    		<div class="guess-row flexer">
-		    			<div class="guess-box flexer">
-		    				<div id="bub00"></div>
-		    				<div id="bub01"></div>
-		    				<div id="bub02"></div>
-		    				<div id="bub03"></div>
-		    			</div>
+	    		<div class="guess-row flexer">
+	    			<div class="guess-box flexer">
+	    				<div id="bub10"></div>
+	    				<div id="bub11"></div>
+	    				<div id="bub12"></div>
+	    				<div id="bub13"></div>
+	    			</div>
 
-		    			<div class="result-box flexer">
-		    				<div id="res00"></div>
-		    				<div id="res01"></div>
-		    				<div id="res02"></div>
-		    				<div id="res03"></div>
-		    			</div>
-		    		</div>
+	    			<div class="result-box flexer">
+	    				<div id="res10"></div>
+	    				<div id="res11"></div>
+	    				<div id="res12"></div>
+	    				<div id="res13"></div>
+	    			</div>
+	    		</div>
 
-		    		<div class="guess-row flexer">
-		    			<div class="guess-box flexer">
-		    				<div id="bub10"></div>
-		    				<div id="bub11"></div>
-		    				<div id="bub12"></div>
-		    				<div id="bub13"></div>
-		    			</div>
+	    		<div class="guess-row flexer">
+	    			<div class="guess-box flexer">
+	    				<div id="bub20"></div>
+	    				<div id="bub21"></div>
+	    				<div id="bub22"></div>
+	    				<div id="bub23"></div>
+	    			</div>
 
-		    			<div class="result-box flexer">
-		    				<div id="res10"></div>
-		    				<div id="res11"></div>
-		    				<div id="res12"></div>
-		    				<div id="res13"></div>
-		    			</div>
-		    		</div>
+	    			<div class="result-box flexer">
+	    				<div id="res20"></div>
+	    				<div id="res21"></div>
+	    				<div id="res22"></div>
+	    				<div id="res23"></div>
+	    			</div>
+	    		</div>
 
-		    		<div class="guess-row flexer">
-		    			<div class="guess-box flexer">
-		    				<div id="bub20"></div>
-		    				<div id="bub21"></div>
-		    				<div id="bub22"></div>
-		    				<div id="bub23"></div>
-		    			</div>
+	    		<div class="guess-row flexer">
+	    			<div class="guess-box flexer">
+	    				<div id="bub30"></div>
+	    				<div id="bub31"></div>
+	    				<div id="bub32"></div>
+	    				<div id="bub33"></div>
+	    			</div>
 
-		    			<div class="result-box flexer">
-		    				<div id="res20"></div>
-		    				<div id="res21"></div>
-		    				<div id="res22"></div>
-		    				<div id="res23"></div>
-		    			</div>
-		    		</div>
+	    			<div class="result-box flexer">
+	    				<div id="res30"></div>
+	    				<div id="res31"></div>
+	    				<div id="res32"></div>
+	    				<div id="res33"></div>
+	    			</div>
+	    		</div>
 
-		    		<div class="guess-row flexer">
-		    			<div class="guess-box flexer">
-		    				<div id="bub30"></div>
-		    				<div id="bub31"></div>
-		    				<div id="bub32"></div>
-		    				<div id="bub33"></div>
-		    			</div>
+	    		<div class="guess-row flexer">
+	    			<div class="guess-box flexer">
+	    				<div id="bub40"></div>
+	    				<div id="bub41"></div>
+	    				<div id="bub42"></div>
+	    				<div id="bub43"></div>
+	    			</div>
 
-		    			<div class="result-box flexer">
-		    				<div id="res30"></div>
-		    				<div id="res31"></div>
-		    				<div id="res32"></div>
-		    				<div id="res33"></div>
-		    			</div>
-		    		</div>
+	    			<div class="result-box flexer">
+	    				<div id="res40"></div>
+	    				<div id="res41"></div>
+	    				<div id="res42"></div>
+	    				<div id="res43"></div>
+	    			</div>
+	    		</div>
 
-		    		<div class="guess-row flexer">
-		    			<div class="guess-box flexer">
-		    				<div id="bub40"></div>
-		    				<div id="bub41"></div>
-		    				<div id="bub42"></div>
-		    				<div id="bub43"></div>
-		    			</div>
+	    		<div class="guess-row flexer">
+	    			<div class="guess-box flexer">
+	    				<div id="bub50"></div>
+	    				<div id="bub51"></div>
+	    				<div id="bub52"></div>
+	    				<div id="bub53"></div>
+	    			</div>
 
-		    			<div class="result-box flexer">
-		    				<div id="res40"></div>
-		    				<div id="res41"></div>
-		    				<div id="res42"></div>
-		    				<div id="res43"></div>
-		    			</div>
-		    		</div>
+	    			<div class="result-box flexer">
+	    				<div id="res50"></div>
+	    				<div id="res51"></div>
+	    				<div id="res52"></div>
+	    				<div id="res53"></div>
+	    			</div>
+	    		</div>
 
-		    		<div class="guess-row flexer">
-		    			<div class="guess-box flexer">
-		    				<div id="bub50"></div>
-		    				<div id="bub51"></div>
-		    				<div id="bub52"></div>
-		    				<div id="bub53"></div>
-		    			</div>
+	    		<div class="guess-row flexer">
+	    			<div class="guess-box flexer">
+	    				<div id="bub60"></div>
+	    				<div id="bub61"></div>
+	    				<div id="bub62"></div>
+	    				<div id="bub63"></div>
+	    			</div>
 
-		    			<div class="result-box flexer">
-		    				<div id="res50"></div>
-		    				<div id="res51"></div>
-		    				<div id="res52"></div>
-		    				<div id="res53"></div>
-		    			</div>
-		    		</div>
+	    			<div class="result-box flexer">
+	    				<div id="res60"></div>
+	    				<div id="res61"></div>
+	    				<div id="res62"></div>
+	    				<div id="res63"></div>
+	    			</div>
+	    		</div>
 
-		    		<div class="guess-row flexer">
-		    			<div class="guess-box flexer">
-		    				<div id="bub60"></div>
-		    				<div id="bub61"></div>
-		    				<div id="bub62"></div>
-		    				<div id="bub63"></div>
-		    			</div>
+	    		<div class="guess-row flexer">
+	    			<div class="guess-box flexer">
+	    				<div id="bub70"></div>
+	    				<div id="bub71"></div>
+	    				<div id="bub72"></div>
+	    				<div id="bub73"></div>
+	    			</div>
 
-		    			<div class="result-box flexer">
-		    				<div id="res60"></div>
-		    				<div id="res61"></div>
-		    				<div id="res62"></div>
-		    				<div id="res63"></div>
-		    			</div>
-		    		</div>
+	    			<div class="result-box flexer">
+	    				<div id="res70"></div>
+	    				<div id="res71"></div>
+	    				<div id="res72"></div>
+	    				<div id="res73"></div>
+	    			</div>
+	    		</div>
 
-		    		<div class="guess-row flexer">
-		    			<div class="guess-box flexer">
-		    				<div id="bub70"></div>
-		    				<div id="bub71"></div>
-		    				<div id="bub72"></div>
-		    				<div id="bub73"></div>
-		    			</div>
+	    		<div class="guess-row flexer">
+	    			<div class="guess-box flexer">
+	    				<div id="bub80"></div>
+	    				<div id="bub81"></div>
+	    				<div id="bub82"></div>
+	    				<div id="bub83"></div>
+	    			</div>
 
-		    			<div class="result-box flexer">
-		    				<div id="res70"></div>
-		    				<div id="res71"></div>
-		    				<div id="res72"></div>
-		    				<div id="res73"></div>
-		    			</div>
-		    		</div>
+	    			<div class="result-box flexer">
+	    				<div id="res80"></div>
+	    				<div id="res81"></div>
+	    				<div id="res82"></div>
+	    				<div id="res83"></div>
+	    			</div>
+	    		</div>
 
-		    		<div class="guess-row flexer">
-		    			<div class="guess-box flexer">
-		    				<div id="bub80"></div>
-		    				<div id="bub81"></div>
-		    				<div id="bub82"></div>
-		    				<div id="bub83"></div>
-		    			</div>
+	    		<div class="guess-row flexer">
+	    			<div class="guess-box flexer">
+	    				<div id="bub90"></div>
+	    				<div id="bub91"></div>
+	    				<div id="bub92"></div>
+	    				<div id="bub93"></div>
+	    			</div>
 
-		    			<div class="result-box flexer">
-		    				<div id="res80"></div>
-		    				<div id="res81"></div>
-		    				<div id="res82"></div>
-		    				<div id="res83"></div>
-		    			</div>
-		    		</div>
+	    			<div class="result-box flexer">
+	    				<div id="res90"></div>
+	    				<div id="res91"></div>
+	    				<div id="res92"></div>
+	    				<div id="res93"></div>
+	    			</div>
+	    		</div>
 
-		    		<div class="guess-row flexer">
-		    			<div class="guess-box flexer">
-		    				<div id="bub90"></div>
-		    				<div id="bub91"></div>
-		    				<div id="bub92"></div>
-		    				<div id="bub93"></div>
-		    			</div>
+	    		<div class="guess-row flexer">
+	    			<div class="guess-box flexer">
+	    				<div id="bub100"></div>
+	    				<div id="bub101"></div>
+	    				<div id="bub102"></div>
+	    				<div id="bub103"></div>
+	    			</div>
 
-		    			<div class="result-box flexer">
-		    				<div id="res90"></div>
-		    				<div id="res91"></div>
-		    				<div id="res92"></div>
-		    				<div id="res93"></div>
-		    			</div>
-		    		</div>
+	    			<div class="result-box flexer">
+	    				<div id="res100"></div>
+	    				<div id="res101"></div>
+	    				<div id="res102"></div>
+	    				<div id="res103"></div>
+	    			</div>
+	    		</div>
 
-		    		<div class="guess-row flexer">
-		    			<div class="guess-box flexer">
-		    				<div id="bub100"></div>
-		    				<div id="bub101"></div>
-		    				<div id="bub102"></div>
-		    				<div id="bub103"></div>
-		    			</div>
+	    		<div class="guess-row flexer">
+	    			<div class="guess-box flexer">
+	    				<div id="bub110"></div>
+	    				<div id="bub111"></div>
+	    				<div id="bub112"></div>
+	    				<div id="bub113"></div>
+	    			</div>
 
-		    			<div class="result-box flexer">
-		    				<div id="res100"></div>
-		    				<div id="res101"></div>
-		    				<div id="res102"></div>
-		    				<div id="res103"></div>
-		    			</div>
-		    		</div>
+	    			<div class="result-box flexer">
+	    				<div id="res110"></div>
+	    				<div id="res111"></div>
+	    				<div id="res112"></div>
+	    				<div id="res113"></div>
+	    			</div>
+	    		</div>
 
-		    		<div class="guess-row flexer">
-		    			<div class="guess-box flexer">
-		    				<div id="bub110"></div>
-		    				<div id="bub111"></div>
-		    				<div id="bub112"></div>
-		    				<div id="bub113"></div>
-		    			</div>
+	    	</div>
 
-		    			<div class="result-box flexer">
-		    				<div id="res110"></div>
-		    				<div id="res111"></div>
-		    				<div id="res112"></div>
-		    				<div id="res113"></div>
-		    			</div>
-		    		</div>
+		</div>
 
-		    	</div>
+		<!-- If JS enabled -->
+			<div class="selection-board flexer" id="js">
+	    	<div class="selection-box">
+    			<div class="guess-box flexer">
+	    			<button id="btn0"></button>
+	    			<button id="btn1"></button>
+	    			<button id="btn2"></button>
+	    			<button id="btn3"></button>
+    			</div>
+    		</div>
 
-			</div>
+    		<div class="button">
+	    		<button class="submit-button"> Submit </button>
+		    </div>
 
+		</div>
+    	
 
-			<div class="selection-board flexer">
-			    	<div class="selection-box">
-		    			<div class="guess-box flexer">
-			    			<button id="btn0"></button>
-			    			<button id="btn1"></button>
-			    			<button id="btn2"></button>
-			    			<button id="btn3"></button>
-		    			</div>
-			    	</div>
+		<!-- If JS disabled -->
+    	<noscript>
+		
+    			
+			<form class="selection-board flexer" method="POST" action="play.html">
+				
+				<div class="list">
+					<select id="choice0">
+						<option value="red">red</option>
+						<option value="blue">blue</option>
+						<option value="yellow">yellow</option>
+						<option value="green">green</option>
+						<option value="white">white</option>
+						<option value="black">black</option>
+					</select>
+				</div>
+				
+				<div class="list">
+					<select id="choice1">
+						<option value="red">red</option>
+						<option value="blue">blue</option>
+						<option value="yellow">yellow</option>
+						<option value="green">green</option>
+						<option value="white">white</option>
+						<option value="black">black</option>
+					</select>
+				</div>
+					
+				<div class="list">
+					<select id="choice2">
+						<option value="red">red</option>
+						<option value="blue">blue</option>
+						<option value="yellow">yellow</option>
+						<option value="green">green</option>
+						<option value="white">white</option>
+						<option value="black">black</option>
+					</select>
+				</div>
+				
+				<div class="list">
+					<select id="choice3">
+						<option value="red">red</option>
+						<option value="blue">blue</option>
+						<option value="yellow">yellow</option>
+						<option value="green">green</option>
+						<option value="white">white</option>
+						<option value="black">black</option>
+					</select>
+				</div>
 
-			    	<div class="button">
-			    		<button id="submit-button"> Submit </button>
-				    </div>
-			</div>
+				<input class="submit-button" type="submit" value="Submit" />
+				
+			</form>
+				
+		
+		</noscript>
+
 
 
 	<script type="text/javascript">
+
+		document.getElementById("js").style.display = "flex";
 
 		var nbGuess = 11;
 
@@ -440,11 +522,6 @@
 	        /* GET */
 	        xhttp.open("GET", '/play.html?param1='+value1+'&param2='+value2+'&param3='+value3+'&param4='+value4, true);
 	        xhttp.send();
-
-	        /* POST
-	        xhttp.open('POST', '/play.html');
-	        xhttp.send('param1='+value1 + '&param2='+value2 + '&param3='+value3 + '&param4='+value4);
-	        */
 
 
 	        /*---------------Receive data--------------*/
