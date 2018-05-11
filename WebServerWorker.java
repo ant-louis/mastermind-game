@@ -24,16 +24,15 @@ public class WebServerWorker implements Runnable {
 		    String requestType = httpparser.getRequestType();
 		    String path = httpparser.getPath();
 		    int cookie;
-		    System.out.print("Request type: ");
+		    /*System.out.print("Request type: ");
 			System.out.println(requestType);
 		    System.out.print("Path: ");
 			System.out.println(path);
-			//httpparser.getMap();
-
+			*/
 			
 
 			//When the path requested is "/", we're redirecting to "/play.html"
-			if(path.equals("/")){
+			if(requestType.equals("GET") && path.equals("/")){
 				System.out.println("Redirecting...");
 				//Headers
 				workerOut.print("HTTP/1.1 303 See Other\r\n");
@@ -140,7 +139,6 @@ public class WebServerWorker implements Runnable {
 			    String previousexchanges = ("1123412");
 			    HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges);
 			    String createdwebpage = myhtmlcreator.createPage();
-			    //System.out.println(createdwebpage);
 
 			    workerOut.print(createdwebpage);
 			    workerOut.flush();
@@ -169,6 +167,20 @@ public class WebServerWorker implements Runnable {
 			    workerOut.flush();
 			}
 
+
+
+
+			//POST request - may need to separate normal post and guess POST
+			else if(requestType.equals("POST") && path.equals("/play.html")){
+				String body = httpparser.getBody();
+				System.out.println(body);
+			}
+
+
+
+
+
+
 			//All others paths, these are wrong
 			else if(requestType.equals("GET")){
 
@@ -189,17 +201,6 @@ public class WebServerWorker implements Runnable {
 
 			}
 
-
-
-		
-			
-			 
-			
-
-
-			if(requestType.equals("POST")){
-
-			}
 
 			istream.close();
 			workerOut.close();
