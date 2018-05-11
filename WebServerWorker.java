@@ -73,7 +73,6 @@ public class WebServerWorker implements Runnable {
 			    String pageChunk;
 
 			    while(createdwebpage.length() >= endIndex){
-
 			    	//Cut the webpage into chunks of size chunkSize
 			    	pageChunk = createdwebpage.substring(startIndex,endIndex);
 			    	startIndex += chunkSize;
@@ -89,6 +88,7 @@ public class WebServerWorker implements Runnable {
 			    //If the wepage length is not a multiple of chunkSize, 
 			    //there are some characters left
 		    	pageChunk = createdwebpage.substring(startIndex,createdwebpage.length());
+
 				String hexLength = Integer.toHexString(createdwebpage.length() - startIndex);
 		    	workerOut.println(hexLength);
 		    	workerOut.println(pageChunk);
@@ -149,14 +149,27 @@ public class WebServerWorker implements Runnable {
 
 			*/
 
-			//AJAX Request 
+			//AJAX Request -- sending result
 			else if(requestType.equals("GET") && path.startsWith("/play.html?")){
 				cookie = httpparser.getCookie();
 				String guess = httpparser.getGuess();
-				GameInterface.submitGuess(cookie,guess);
+				String result = GameInterface.submitGuess(cookie,guess);
+
+
+		    	workerOut.print("HTTP/1.1 200 OK\r\n");
+			    workerOut.print("Content-Type: text/html\r\n");
+			    workerOut.print("Connection: close\r\n");
+			    workerOut.print("Access-Control-Allow-Origin: *\r\n");
+			    workerOut.print("Set-Cookie: SESSID=" + newCookie + "; path=/play.html\r\n");
+			    workerOut.print("\r\n");
+
+			    // Body - Consists only of the result
+			    workerOut.print(result);
+
+			    workerOut.flush();
 			}
 
-			//All others apths, these are wrong
+			//All others paths, these are wrong
 			else if(requestType.equals("GET")){
 
 				System.out.println("Redirecting...");
