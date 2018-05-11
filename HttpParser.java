@@ -39,7 +39,6 @@ public class HttpParser {
 		
 		do{
 			c = (char) parserIn.read();
-			System.out.print(c);
 			buffer += c +"";
 			if(c == '\n'){
 				break;
