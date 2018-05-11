@@ -512,7 +512,7 @@
 		submit_btn.addEventListener("click", function(){
 
 			/*New HTTP Request*/ 
-			var xhttp = new XMLHttpRequest();    
+			var xhr = new XMLHttpRequest();    
 
 			/*Stock new guess*/
 			for(var i = 0; i < 4; i++){
@@ -521,13 +521,12 @@
 			}
 
 			/*Receive data*/ 
-			xhttp.onreadystatechange = function(){
-				if (xhttp.readyState =  = 4 && xhtpp.status =  = 200){
-
+			xhr.onreadystatechange = function(){
+				if (xhr.readyState == 4 && xhr.status == 200){
 					alert("Get a response !");
 
 					/*Get the response*/
-					var response = xhttp.responseText;
+					var response = xhr.responseText;
 
 					/*Parse the response*/
 					var nbWellPlaced = Number(response[0]);
@@ -553,6 +552,10 @@
 						setTimeout(function(){document.location = "play.html"}, 3000);
 					}
 				}
+				else if (xhr.readyState === 4 && xhr.status != 200) {
+        			alert('An error occured !\n\nCode :' + xhr.status + '\nText : ' + xhr.statusText);
+
+    			}
 			};
 
 			/*Encode parameters*/
@@ -562,8 +565,8 @@
 		    var value3 = encodeURIComponent(countBtn[3]);
 
 		    /*Send request with GET*/ 
-		    xhttp.open("GET", 'play.html?choice0='+value0 + '&choice1='+value1 + '&choice2='+value2 + '&choice3='+value3, true);
-		    xhttp.send();
+		    xhr.open("GET", 'play.html?choice0='+value0 + '&choice1='+value1 + '&choice2='+value2 + '&choice3='+value3, true);
+		    xhr.send(null);
 
 			/*Decrease number of guesses left*/
 			nbGuess--;
