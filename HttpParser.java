@@ -125,7 +125,6 @@ public class HttpParser {
 		//Reading the body and extracting the guess		
 		do{
 			c = (char) parserIn.read();
-
 			//The value follows the '='
 			if(c == '='){
 				c = (char) parserIn.read();
