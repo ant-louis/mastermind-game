@@ -125,14 +125,15 @@ public class HttpParser {
 		//Reading the body and extracting the guess		
 		do{
 			c = (char) parserIn.read();
-			System.out.println(c);
+			System.out.print(c);
 			//The value follows the '='
 			if(c == '='){
-				System.out.println("Enter");
 				c = (char) parserIn.read();
-				colors[j++] = c;
+				colors[j] = c;
+				j++;
 			}
 		}while(c != -1);
+
 		return new String(colors);
 	}
 
