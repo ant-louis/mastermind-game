@@ -22,7 +22,9 @@ public class HttpParser {
 		}catch(IOException ioe){
 			ioe.printStackTrace();
 		}
-	}
+	}	
+
+
 
 	//A method that extract the first line of the header
 	//Must always be called first before the rest of the header methods
@@ -38,22 +40,16 @@ public class HttpParser {
 		do{
 			c = (char) parserIn.read();
 			System.out.print(c);
-			int count = 0;//temp
-			count++;
 			buffer += c +"";
 			if(c == '\n'){
 				break;
 			}
-
-			if(count == 100) {break;} //temp
 
 		}while(c != -1);
 		
 		//Splitting into tokens, the first one being the request type
 		//The second being the requested path
 		String[] tokens = buffer.split(" ");
-		//String[] tokens = colors.split(" "); //temp
-
 
 		this.requestType = tokens[0];
 		this.path = tokens[1];
@@ -78,7 +74,7 @@ public class HttpParser {
 	//Gets the remaining header and stores each line in a map, 
 	//where the key is the first keywords (before ':') and the 
 	//value is the rest
-	public void getRemainingHeader() throws IOException {
+	private void getRemainingHeader() throws IOException {
 
        	StringBuilder headerLine = new StringBuilder();
        	StringBuilder entireHeader = new StringBuilder();
@@ -115,6 +111,26 @@ public class HttpParser {
 
    		}while(c != -1);
 	}
+
+	public String getBody() throws IOException{
+
+		System.out.println("Getting body of POST request");
+		String buffer = "";
+		char c;
+
+		//Reading the body		
+		do{
+			c = (char) parserIn.read();
+			System.out.print(c);
+			buffer += c +"";
+
+		}while(c != -1);
+
+		return buffer;
+	}
+
+
+
 
 	//Extracts the cookie from the header
 	public int getCookie() {
