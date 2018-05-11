@@ -12,6 +12,7 @@ public class HTMLCreator {
 
 	//Class variables
 	String previousexchanges;
+	int nbExchanges;
 	private static final int BLANK = 10;
 	private static String staticCSS = "body{font-family: \"Times New Roman\", Arial, serif;font-weight: normal; background-image: radial-gradient(ellipse at center, rgb(180,255,160), rgb(10,50,0));}.flexer{display: flex;}/********************GUESSES_AND_SCORES*********************/.mastermind-board{width: 30%;min-width:400px; height:650px; margin: 0 auto; margin-top: 20px; margin-bottom: 20px;}.title{width: 100%;height: 12%;}.mastermind-text{font-size: 4em;color: rgb(10,50,0);text-align: center;margin-top: 10px;text-shadow: 1px 1px rgb(220,255,215);}.guess-container{width:100%;height:90%;}.guess-row{box-sizing: border-box;height: 8.2%;width: 100%;}.guess-box{width: 70%;height: 100%;}.result-box{width: 28%;height: 100%;}/*************************SELECTION************************/#js{display: none;}.selection-board{width: 30%;min-width:400px;height: 50px;border: 1px solid rgb(10,50,0); border-radius: 10px; margin: 0 auto;}.button{width: 30%;height: 100%;}.submit-button{width: 80%;height: 70%;border: 1px solid rgb(161,161,161); border-radius: 10px; text-align: center; box-shadow: 2px 2px 2px rgb(161,161,161); margin: 5%; font-size: 1.2em;background-color: rgb(240,240,240);color:rgb(10,50,0);}.selection-box{width: 70%;height: 90%;}#btn0, #btn1, #btn2, #btn3{height:80%;width:16.5%;border-radius: 50%;border: 1px solid rgb(50,50,50);margin-left: 3%;margin-right: 4.5%;margin-top: 2%;background-color: red;}.list{margin-top: 3%;margin-left: 4%;}.list select{border-radius: 10%;}.list option{font-family: \"Times New Roman\", Arial, serif;font-size: 1.2em;text-align: center;}";
 	private static String javascript = "<script type=\"text/javascript\">document.getElementById(\"js\").style.display=\"flex\";var nbGuess=11;var colorArray=new Array();colorArray[0]=\"red\";colorArray[1]=\"blue\";colorArray[2]=\"yellow\";colorArray[3]=\"green\";colorArray[4]=\"white\";colorArray[5]=\"black\";var countBtn=new Array();countBtn[0]=0;countBtn[1]=0;countBtn[2]=0;countBtn[3]=0;var btn0=document.getElementById(\"btn0\");var btn1=document.getElementById(\"btn1\");var btn2=document.getElementById(\"btn2\");var btn3=document.getElementById(\"btn3\");var submit_btn=document.getElementById(\"submit-js\");/*Change color btn0*/btn0.addEventListener(\"click\", function(){countBtn[0]=(countBtn[0] + 1) % colorArray.length;btn0.style.backgroundColor=colorArray[countBtn[0]];});/*Change color btn1*/btn1.addEventListener(\"click\", function(){countBtn[1]=(countBtn[1] + 1) % colorArray.length;btn1.style.backgroundColor=colorArray[countBtn[1]];});/*Change color btn2*/btn2.addEventListener(\"click\", function(){countBtn[2]=(countBtn[2] + 1) % colorArray.length;btn2.style.backgroundColor=colorArray[countBtn[2]];});/*Change color btn3*/btn3.addEventListener(\"click\", function(){countBtn[3]=(countBtn[3] + 1) % colorArray.length;btn3.style.backgroundColor=colorArray[countBtn[3]];});/*Click on submit button*/submit_btn.addEventListener(\"click\", function(){/*New HTTP Request*/ var xhttp=new XMLHttpRequest(); /*Stock new guess*/for(var i=0; i < 4; i++){var bub=document.getElementById(\"bub\" + nbGuess + i);bub.style.backgroundColor=colorArray[countBtn[i]];}/*Receive data*/ xhttp.onreadystatechange=function(){if (xhttp.readyState==4 && xhttp.status==200){alert(\"Get a response !\");/*Get the response*/var response=xhttp.responseText;/*Parse the response*/var nbWellPlaced=Number(response[0]);var nbNotWellPlaced=Number(response[1]);var len=nbWellPlaced + nbNotWellPlaced;/*Display the result*/for(var i=0; i < len; i++){var res=document.getElementById(\"res\"+ nbGuess + i);if(nbWellPlaced > 0){res.style.backgroundColor=\"red\";nbWellPlaced--;}elseres.style.backgroundColor=\"black\";}/*Check if user won*/if(nbWellPlaced==4 && nbNotWellPlaced==0){alert(\"YOU WIN !\");setTimeout(function(){document.location=\"play.html\"}, 3000);}}};/*Encode parameters*/ var value0=encodeURIComponent(countBtn[0]); var value1=encodeURIComponent(countBtn[1]); var value2=encodeURIComponent(countBtn[2]); var value3=encodeURIComponent(countBtn[3]); /*Send request with GET*/ xhttp.open(\"GET\", 'play.html?choice0='+value0 + '&choice1='+value1 + '&choice2='+value2 + '&choice3='+value3, true); xhttp.send();/*Decrease number of guesses left*/nbGuess--;/*Check if user lost*/if(nbGuess < 0){alert(\"GAME OVER\");setTimeout(function(){document.location=\"play.html\"}, 3000);}});</script>";
@@ -19,6 +20,15 @@ public class HTMLCreator {
 	//Constructor
 	public HTMLCreator(String prevExchanges){
 		this.previousexchanges = prevExchanges;
+
+		//Get either a single or double digit number of exchanges
+		if(prevEchanges.charAt(0) == '1' && prevExchanges.length() < 8){
+			this.nbExchanges = prevExchanges.charAt(0);
+		}else{
+			this.nbExchanges = prevExchanges.substring(0,2);
+		}
+
+		System.out.println("Creating htmlcreator");
 	}
 
 
@@ -136,10 +146,16 @@ public class HTMLCreator {
 	//Creates the CSS template for all buttons
 	private String createAllButtons(){
 		int nbGuess = 11;
+		int i;
 		StringBuilder buttonCSS = new StringBuilder();
 
 		//All the previous exchanges of the game
-		for(int i = 1; i < this.previousexchanges.length(); i += 6, nbGuess--){
+		if(this.nbExchanges.length() == 2){
+			i = 2;
+		}else{
+			i = 1;
+		}
+		for(; i < this.previousexchanges.length(); i += 6, nbGuess--){
 
 			//Dividing into substrings
 			System.out.println("StartIndex:" + i + " EndIndex:" + (i+6) + " Length:" + this.previousexchanges.length());
@@ -160,7 +176,7 @@ public class HTMLCreator {
 
 		//The rest of the buttons must remain blank
 		for(; nbGuess >= 0; nbGuess--){
-			for(int i = 0; i < 4 ; i++) {
+			for(i = 0; i < 4 ; i++) {
 				buttonCSS.append(createBubbleCSS(nbGuess,i,BLANK));
 				buttonCSS.append(createResultCSS(nbGuess,i,BLANK));
 			}

@@ -67,7 +67,7 @@ public class WebServerWorker implements Runnable {
 				//Body					    
 			    
 			    //String previousexchanges = GameInterface.getPreviousExchanges(newCookie);
-			    String previousexchanges = ("1123412"); //temp
+			    String previousexchanges = ("2123412555511"); //temp
 			    encodeChunks(workerOut,previousexchanges);
 			}
 			
@@ -158,7 +158,7 @@ public class WebServerWorker implements Runnable {
 	}
 
 	private void encodeChunks(PrintWriter workerOut,String previousexchanges){
-
+		System.out.println("Encoding chunks");
 		HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges);
 	    String createdwebpage = myhtmlcreator.createPage();
 	    //System.out.println(createdwebpage);
