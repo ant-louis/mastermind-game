@@ -22,8 +22,9 @@ public class HTMLCreator {
 	//Constructor
 	public HTMLCreator(String prevExchanges){
 		this.previousexchanges = prevExchanges;
-		this.nbExchanges = Character.getNumericValue(prevExchanges.charAt(0));
+		//this.nbExchanges = Character.getNumericValue(prevExchanges.charAt(0));
 	}
+
 
 
 
@@ -43,8 +44,7 @@ public class HTMLCreator {
 
 		//HTML 
 		page.append("<body>");
-		String board = createBoard();
-		page.append(board);
+		page.append(createBoard());
 
 		//Javascript
 		page.append(javascript);
@@ -149,7 +149,8 @@ public class HTMLCreator {
 			//Dividing into substrings
 			String guess = this.previousexchanges.substring(i, i + 6);
 			String combination = guess.substring(0,4);
-
+			
+			//Result of the guess
 			int placedright = Character.getNumericValue(guess.charAt(4));
 			int ispresent= Character.getNumericValue(guess.charAt(5));
 
