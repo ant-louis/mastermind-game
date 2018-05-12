@@ -8,7 +8,7 @@ public class WebServerWorker implements Runnable {
 
 	private Socket workerSock;
 	private static int newCookie = 0;
-	private boolean gzipEnabled = false;
+	private boolean gzipEnabled = true;
 
 	public WebServerWorker(Socket clientSocket){
 		workerSock = clientSocket;
