@@ -190,12 +190,7 @@ public class WebServerWorker implements Runnable {
 				//Body
 				StringBuilder page = new StringBuilder();
 
-				page.append("<!DOCTYPE html><html>");
-				page.append("<head><meta charset=\"utf-8\"/><title>Error 404</title>");
-				page.append("<style>body{font-family: \"Times New Roman\", Arial, serif;font-weight: normal; background-image: radial-gradient(circle at center, rgb(180,255,160), rgb(10,50,0));} .message{font-size: 5em; text-align: center; color: rgb(10,50,0);} .explain{margin: 10%; font-size: 2em; text-align: center; color: rgb(10,50,0);}</style>");
-				page.append("</head>");
-				page.append("<body><div class=\"message\"><p> <b> 404 NOT FOUND ! b></</p></div> <div class=\"explain\"> <p>The requested URL was not found on this server.</p></div></body>");
-				page.append("</html>");
+				
 
   				workerOut.print(page.toString());
 				workerOut.flush();
@@ -220,47 +215,16 @@ public class WebServerWorker implements Runnable {
 		}
 	}
 
-	/*
-	private void encodeChunks(PrintWriter workerOut,String previousexchanges){
-		System.out.println("Encoding chunks");
+	// 
+	private String generateError(String error){
 
-		HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges);
-	    String createdwebpage = myhtmlcreator.createPage(workerOut);
+		StringBuilder page = new StringBuilder();
 
-	    int chunkSize = 128;
-	    int startIndex = 0;
-	    int endIndex = startIndex + chunkSize;
-	    String pageChunk;
-
-	    while(createdwebpage.length() >= endIndex){
-	    	//Cut the webpage into chunks of size chunkSize
-	    	pageChunk = createdwebpage.substring(startIndex,endIndex);
-	    	startIndex += chunkSize;
-	    	endIndex = startIndex + chunkSize;
-
-	    	//Get chunkSize in hexadecimal
-			String hexLength = Integer.toHexString(chunkSize);
-	    	workerOut.println(hexLength);
-	    	workerOut.println(pageChunk);
-	    }
-
-
-	    //If the wepage length is not a multiple of chunkSize, 
-	    //there are some characters left
-    	pageChunk = createdwebpage.substring(startIndex,createdwebpage.length());
-
-		String hexLength = Integer.toHexString(createdwebpage.length() - startIndex);
-    	workerOut.println(hexLength);
-    	workerOut.println(pageChunk);
-
-    	//End the chunked enconding
-	    workerOut.print("0\r\n");
-	    workerOut.print("\r\n");
-	    
-	    workerOut.flush();
-
+		page.append("<!DOCTYPE html><html>");
+		page.append("<head><meta charset=\"utf-8\"/><title>Error 404</title>");
+		page.append("<style>body{font-family: \"Times New Roman\", Arial, serif;font-weight: normal; background-image: radial-gradient(circle at center, rgb(180,255,160), rgb(10,50,0));} .message{font-size: 3.5em; text-align: center; color: rgb(10,50,0);}</style>");
+		page.append("</head>");
+		page.append("<body><div class=\"message\"><p> <b>"+ error +"</b></p></div></body>");
+		page.append("</html>");
 	}
-
-	*/
-
 }
