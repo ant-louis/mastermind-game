@@ -1,6 +1,6 @@
 import java.io.*;
 import java.net.*; 
-
+import java.util.zip.GZIPOutputStream;
 
 public class HTMLCreator {
 
@@ -15,10 +15,11 @@ public class HTMLCreator {
 
 	//Class variables
 	String previousExchanges;
+	StringBuilder compress;
 	int nbExchanges;
 	int result;
 	boolean gzipEnabled;
-	PrintWriter chunkedOut;
+	OutputStream socketOut;
 	String header;
 
 	private static final int BLANK = 10;
@@ -27,15 +28,18 @@ public class HTMLCreator {
 
 	
 	//Constructor
-	public HTMLCreator(String prevExchanges, PrintWriter workerOut,String header, boolean gzipEnabled){
+	public HTMLCreator(String prevExchanges, OutputStream workerOut, String header, boolean gzipEnabled){
 
 		//Enable compression or not
 		this.gzipEnabled = gzipEnabled;
+		if(gzipEnabled){
+			compress = new StringBuilder();
+		}
 		//Get the header of the response
 		this.header = header;
 
-		//Get the PrintWriter of the current worker
-		this.chunkedOut = workerOut;
+		//Get the socketOutputsream
+		this.socketOut = workerOut;
 
 		//Get the previous exchanges of the current game
 		this.previousExchanges = prevExchanges;
@@ -74,7 +78,7 @@ public class HTMLCreator {
 
 		try{
 			//HTTP Header
-			chunkedOut.print(header);
+			socketOut.write(header.getBytes());
 
 			//Generate page if user won
 			if(result == 4){
@@ -119,22 +123,32 @@ public class HTMLCreator {
 				sendChunkLine("</body></html>");
 			}
 
-	    	//End the chunked enconding
-		    chunkedOut.print("0\r\n");
-		    chunkedOut.print("\r\n");
-		    chunkedOut.flush();
+			if(gzipEnabled){
+				GZIPOutputStream gzipOut = new GZIPOutputStream(socketOut);
+				gzipOut.write(compress.toString().getBytes(),0,compress.toString().length());
+				gzipOut.finish();
+				gzipOut.close();
+			}else{
+
+		    	//End the chunked enconding
+			    socketOut.write("0\r\n".getBytes());
+			    socketOut.write("\r\n".getBytes());
+			    socketOut.flush();
+
+			}
 		    
 		}catch(Exception e){
 			e.printStackTrace();
 		}finally{
 			try{
-				chunkedOut.close();
+				socketOut.close();
 			}catch(Exception e){
 				e.printStackTrace();
 			}
 		}
 		
 	}
+
 
 	/********************************************************************************
 	 * Sends parts of HTML code by chunked encoding
@@ -144,23 +158,26 @@ public class HTMLCreator {
 	 *
 	 * RETURNS : /
 	 ********************************************************************************/
-	public void sendChunkLine(String line){
+	public void sendChunkLine(String line) throws IOException{
 
 		//If compression is enabled, we only compress instead of chunking
 		if(gzipEnabled){
-			chunkedOut.println(line);
-			chunkedOut.flush();
+			compress.append(line);
+
 		}else{
 			String hexLength = Integer.toHexString(line.length());
-	    	chunkedOut.println(hexLength);
-	    	chunkedOut.println(line);
+			hexLength = hexLength + "\r\n";
+	    	socketOut.write(hexLength.getBytes());
+			line = line + "\r\n";
+	    	socketOut.write(line.getBytes());
+
 		}
 	}
 
 
 	/************************************CREATING CSS**********************************************/
 	//CSS style for one bubble 
-	private void createBubbleCSS(int nbGuess, int i, int color){
+	private void createBubbleCSS(int nbGuess, int i, int color)throws IOException{
 
 		sendChunkLine("#bub"+Integer.toString(nbGuess)+Integer.toString(i));
 		sendChunkLine("{height:70%;");
@@ -179,7 +196,7 @@ public class HTMLCreator {
 	}
 
 	//CSS style for one result
-	private void createResultCSS(int nbGuess, int i, int color){
+	private void createResultCSS(int nbGuess, int i, int color) throws IOException{
 
 		sendChunkLine("#res"+Integer.toString(nbGuess)+Integer.toString(i));
 		sendChunkLine("{height:30%;");
@@ -199,7 +216,7 @@ public class HTMLCreator {
 
 
 	//Creates the CSS template for one row of bubble buttons
-	private void createBubble(int nbGuess, String combination){
+	private void createBubble(int nbGuess, String combination) throws IOException{
 
 		//Creating buttons according to each color
 		for(int j = 0; j < combination.length(); j++) {
@@ -209,7 +226,9 @@ public class HTMLCreator {
 	}
 
 	//Creates the CSS template for one row of result buttons
-	private void createResult(int nbGuess, int placedright, int ispresent){
+
+	private void createResult(int nbGuess, int placedright, int ispresent) throws IOException{
+
 		int i;
 
 		//Correctly placed bubbles
@@ -229,7 +248,8 @@ public class HTMLCreator {
 	}
 
 	//Creates the CSS template for all buttons
-	private void createAllButtons(){
+	private void createAllButtons() throws IOException{
+
 		int nbGuess = 11;
 		int i;
 
@@ -268,8 +288,10 @@ public class HTMLCreator {
 
 
 	/**************************************CREATE HTML******************************************/
+
 	//Creates all the board
-	private void createBoard(){
+	private void createBoard() throws IOException{
+
 		//Mastermind board
 		createMastermindBoard();
 
@@ -277,8 +299,9 @@ public class HTMLCreator {
 		createSelectionBoard();
 	}
 
+
 	//Creates the mastermind board (guesses and results)
-	private void createMastermindBoard(){
+	private void createMastermindBoard() throws IOException{
 
 		sendChunkLine("<div class=\"mastermind-board\">");
 
@@ -296,8 +319,9 @@ public class HTMLCreator {
 
 	}
 
+
 	//Creates a row (one guess and its result)
-	private void createRow(int index){
+	private void createRow(int index) throws IOException{
 
 		sendChunkLine("<div class=\"guess-row flexer\">");
 
@@ -312,8 +336,7 @@ public class HTMLCreator {
 	}
 
 	//Creates a guess box
-	private void createGuessBox(int index){
-
+	private void createGuessBox(int index) throws IOException{
 
 		sendChunkLine("<div class=\"guess-box flexer\">");
 
@@ -327,7 +350,7 @@ public class HTMLCreator {
 	}
 
 	//Creates a result box
-	private void createResultBox(int index){
+	private void createResultBox(int index) throws IOException{
 
 		sendChunkLine("<div class=\"result-box flexer\">");
 
@@ -341,7 +364,7 @@ public class HTMLCreator {
 	}
 
 	//Creates the selection board
-	private void createSelectionBoard(){
+	private void createSelectionBoard() throws IOException{
 
 		//-------If JS enabled-----------
 		sendChunkLine("<div class=\"selection-board flexer\" id=\"js\"> <div class=\"selection-box\">");

@@ -1,8 +1,6 @@
 import java.io.*;
 import java.net.*; 
-import java.util.concurrent.TimeUnit;
-import java.util.AbstractMap.*;
-import java.util.concurrent.ConcurrentHashMap;
+
 
 public class WebServerWorker implements Runnable {
 
@@ -20,7 +18,7 @@ public class WebServerWorker implements Runnable {
 		try{
 
 			InputStreamReader istream = new InputStreamReader(workerSock.getInputStream());
-			PrintWriter workerOut = new PrintWriter(workerSock.getOutputStream());
+			OutputStream socketOut = workerSock.getOutputStream();
 
 			//Parses the request and stores the important information
 		    HttpParser httpparser = new HttpParser(istream);
@@ -36,21 +34,22 @@ public class WebServerWorker implements Runnable {
 
 		    //Check if http version is valid
 			if(!httpVersion.equals("HTTP/1.1")){
-				generateError("505 HTTP Version Not Supported", workerOut);
+				generateError("505 HTTP Version Not Supported", socketOut);
 			}
 
-		    //boolean acceptGzip = httpparser.acceptGzipEncoding();
+		    boolean acceptsGzip = httpparser.acceptGzipEncoding();
 		    
 			
 			//When the path requested is "/", we're redirecting to "/play.html"
 			if(path.equals("/")){
 				System.out.println("Redirecting...");
 				//Headers
-				workerOut.print("HTTP/1.1 303 See Other\r\n");
-				workerOut.print("Location: /play.html\r\n");
-				workerOut.print("Connection: close\r\n");
-				workerOut.print("\r\n");
-				workerOut.flush();
+				socketOut.write("HTTP/1.1 303 See Other\r\n".getBytes());
+				socketOut.write("Location: /play.html\r\n".getBytes());
+			    socketOut.write("Content-Type: text/html; charset=utf-8\r\n".getBytes());
+				socketOut.write("Connection: close\r\n".getBytes());
+				socketOut.write("\r\n".getBytes());
+				socketOut.flush();
 			}
 
 			
@@ -65,18 +64,20 @@ public class WebServerWorker implements Runnable {
 				//Headers
 				StringBuilder header = new StringBuilder();
 		    	header.append("HTTP/1.1 200 OK\r\n");
-			    header.append("Content-Type: text/html\r\n");
+			    header.append("Content-Type: text/html; charset=utf-8\r\n");
 			    header.append("Connection: close\r\n");
 			    //If gzip is not enabled, we chunk
 			    if(!gzipEnabled){
 			    	header.append("Transfer-Encoding: chunked\r\n");
+			    }else if(acceptsGzip){
+			    	header.append("Content-Encoding: gzip\r\n");
 			    }
 			    header.append("Set-Cookie: SESSID=" + newCookie + "; path=/\r\n");
 			    header.append("\r\n");
 
 				//Body
 			    String previousexchanges = ""; //Empty previous exchanges to create blank page
-    			HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges,workerOut,header.toString(),gzipEnabled);
+    			HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges,socketOut,header.toString(),gzipEnabled);
 				myhtmlcreator.createPage();			
 			}
 			
@@ -87,7 +88,7 @@ public class WebServerWorker implements Runnable {
 				//Get the guess from the header and submit it
 				int cookie = httpparser.getCookie();
 				if(cookie == -1){
-					generateError("405 Method Not Allowed", workerOut);
+					generateError("405 Method Not Allowed", socketOut);
 				}
 
 				String guess = httpparser.getGuess_GET();
@@ -109,21 +110,22 @@ public class WebServerWorker implements Runnable {
 				}
 
 				//HTTP Header
-		    	workerOut.print("HTTP/1.1 200 OK\r\n");
-			    workerOut.print("Content-Type: text/html\r\n");
-			    workerOut.print("Connection: close\r\n");
+		    	socketOut.write("HTTP/1.1 200 OK\r\n".getBytes());
+			    socketOut.write("Content-Type: text/html; charset=utf-8\r\n".getBytes());
+			    socketOut.write("Connection: close\r\n".getBytes());
+
 		   		//If we won or lost, we must delete the cookie and delete the game
 			   	if(numberOfGuesses == 12 || wellPlacedColor == 4){
-			    	workerOut.print("Set-Cookie: SESSID=deleted; path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT\r\n");
+			    	socketOut.write("Set-Cookie: SESSID=deleted; path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT\r\n".getBytes());
 			    	GameInterface.deleteGame(cookie);
 			   	}
-			    workerOut.print("\r\n");
+			    socketOut.write("\r\n".getBytes());
 		
 				//HTTP Body
 				//Body consists only of the result, no need to chunk or compress
-			    workerOut.print(result); 
-			    workerOut.flush();
-			    workerOut.close();
+			    socketOut.write(result.getBytes()); 
+			    socketOut.flush();
+			    socketOut.close();
 			}
 
 
@@ -132,13 +134,13 @@ public class WebServerWorker implements Runnable {
 
 				//Check http version
 				if(!httpparser.checkIfContentLength()){
-					generateError("411 Length Required", workerOut);
+					generateError("411 Length Required", socketOut);
 				}
 
 				//Submit the guess received in the body
 				int cookie = httpparser.getCookie();
 				if(cookie == -1){
-					generateError("405 Method Not Allowed", workerOut);
+					generateError("405 Method Not Allowed", socketOut);
 				}
 
 				String guess = httpparser.getGuess_POST();
@@ -164,9 +166,13 @@ public class WebServerWorker implements Runnable {
 		    	header.append("HTTP/1.1 200 OK\r\n");
 			    header.append("Content-Type: text/html\r\n");
 			    header.append("Connection: close\r\n");
-			    //If gzip is not enabled, we chunk
+			    header.append("Content-Type: text/html; charset=utf-8\r\n");
+
+			    //If gzip is not enabled, we chunk. Else we compress if the client allows it
 			    if(!gzipEnabled){
 			    	header.append("Transfer-Encoding: chunked\r\n");
+			    }else if(acceptsGzip){
+			    	header.append("Content-Encoding: gzip\r\n");
 			    }		   		
 			    //If we won or lost, we must delete the cookie.
 			   	if(numberOfGuesses == 12 || wellPlacedColor == 4){
@@ -176,23 +182,23 @@ public class WebServerWorker implements Runnable {
 			  
 				//HTTP Body
 			    //POST request needs to recreate the whole page, so we're passing all the previous guesses as argument
-	    		HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges,workerOut,header.toString(),gzipEnabled);
+	    		HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges,socketOut,header.toString(),gzipEnabled);
 				myhtmlcreator.createPage();			
 			}
 
 			//All others paths are wrong
 			else if(requestType.equals("GET")){
-				generateError("404 Not Found", workerOut);
+				generateError("404 Not Found", socketOut);
 			}
 
 			//If request type different from GET or POST
 			else if(!requestType.equals("GET") && !requestType.equals("POST")){
-				generateError("501 Not Implemented", workerOut);
+				generateError("501 Not Implemented", socketOut);
 			}
 			
 			//In all other cases
 			else{
-				generateError("400 Bad Request", workerOut);
+				generateError("400 Bad Request", socketOut);
 			}
 
 			istream.close();
@@ -204,7 +210,7 @@ public class WebServerWorker implements Runnable {
 
 
 	// Generate the HTML error pages
-	private void generateError(String error, PrintWriter workerOut){
+	private void generateError(String error, OutputStream socketOut) throws IOException{
 
 		StringBuilder pageError = new StringBuilder();
 
@@ -217,12 +223,13 @@ public class WebServerWorker implements Runnable {
 		pageError.append("</html>");
 
 		//Headers
-		workerOut.print("HTTP/1.1 "+ error +"\r\n");
-		workerOut.print("\r\n");
+		String firstHeaderLine = "HTTP/1.1 "+ error +"\r\n";
+		socketOut.write(firstHeaderLine.getBytes());
+		socketOut.write("\r\n".getBytes());
 
 		//Print the HTML page
-		workerOut.print(pageError.toString());
-		workerOut.flush();
-		workerOut.close();
+		socketOut.write(pageError.toString().getBytes());
+		socketOut.flush();
+		socketOut.close();
 	}
 }
