@@ -62,8 +62,7 @@ public class WebServerWorker implements Runnable {
 			    header.append("Set-Cookie: SESSID=" + newCookie + "; path=/\r\n");
 			    header.append("\r\n");
 
-				//Body					    
-
+				//Body
 			    String previousexchanges = ""; //Empty previous exchanges to create blank page
     			HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges,workerOut,header.toString(),gzipEnabled);
 				myhtmlcreator.createPage();			
@@ -76,6 +75,10 @@ public class WebServerWorker implements Runnable {
 
 				//Get the guess from the header and submit it
 				cookie = httpparser.getCookie();
+				if(cookie == -1){
+					generateError("405 Method Not Allowed", workerOut);
+				}
+
 				String guess = httpparser.getGuess_GET();
 				String result = GameInterface.submitGuess(cookie,guess);
 
@@ -118,6 +121,10 @@ public class WebServerWorker implements Runnable {
 
 				//Submit the guess received in the body
 				cookie = httpparser.getCookie();
+				if(cookie == -1){
+					generateError("405 Method Not Allowed", workerOut);
+				}
+
 				String guess = httpparser.getGuess_POST();
 				String result = GameInterface.submitGuess(cookie,guess); 
 
@@ -151,7 +158,6 @@ public class WebServerWorker implements Runnable {
 			   	}
 			    header.append("\r\n");
 			  
-
 				//HTTP Body
 			    //POST request needs to recreate the whole page, so we're passing all the previous guesses as argument
 	    		HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges,workerOut,header.toString(),gzipEnabled);
@@ -161,40 +167,47 @@ public class WebServerWorker implements Runnable {
 
 			//All others paths, these are wrong
 			else if(requestType.equals("GET")){
-
-				//Headers
-				workerOut.print("HTTP/1.1 404 Not Found\r\n");
-				workerOut.print("\r\n");
-
-				//Generate the HTML error page
-				String error404 = generateError("404 NOT FOUND");
-				
-  				workerOut.print(error404.toString());
-				workerOut.flush();
-				workerOut.close();
-
+				generateError("404 Not Found", workerOut);
 			}
 
 
+			//If request type different from GET or POST
+			else if(!requestType.equals("GET") && !requestType.equals("POST")){
+				generateError("501 Not Implemented", workerOut);
+			}
+
+			//In all other cases
+			else{
+				generateError("400 Bad Request", workerOut);
+			}
+
 			istream.close();
 
-		}
-
-		catch(Exception e){
+		}catch(Exception e){
 			e.printStackTrace();
 		}
 	}
 
+
 	// Generate the HTML error pages
-	private String generateError(String error){
+	private void generateError(String error, PrintWriter workerOut){
 
-		StringBuilder page = new StringBuilder();
+		StringBuilder pageError = new StringBuilder();
 
-		page.append("<!DOCTYPE html><html>");
-		page.append("<head><meta charset=\"utf-8\"/><title>Error 404</title>");
-		page.append("<style>body{font-family: \"Times New Roman\", Arial, serif;font-weight: normal; background-image: radial-gradient(circle at center, rgb(180,255,160), rgb(10,50,0));} .message{font-size: 3.5em; text-align: center; color: rgb(10,50,0);}</style>");
-		page.append("</head>");
-		page.append("<body><div class=\"message\"><p> <b>"+ error +"</b></p></div></body>");
-		page.append("</html>");
+		pageError.append("<!DOCTYPE html><html>");
+		pageError.append("<head><meta charset=\"utf-8\"/><title>Error</title>");
+		pageError.append("<style>body{font-family: \"Times New Roman\", Arial, serif;font-weight: normal; background-image: radial-gradient(circle at center, rgb(180,255,160), rgb(10,50,0));} .message{font-size: 3.5em; text-align: center; color: rgb(10,50,0);}</style>");
+		pageError.append("</head>");
+		pageError.append("<body><div class=\"message\"><p> <b>"+ error +".</b></p></div></body>");
+		pageError.append("</html>");
+
+		//Headers
+		workerOut.print("HTTP/1.1 "+ error +"\r\n");
+		workerOut.print("\r\n");
+
+		//Body
+		workerOut.print(pageError.toString());
+		workerOut.flush();
+		workerOut.close();
 	}
 }
