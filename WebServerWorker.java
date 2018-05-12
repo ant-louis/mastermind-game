@@ -1,8 +1,8 @@
 import java.io.*;
 import java.net.*; 
 import java.util.concurrent.TimeUnit;
-import java.util.Map;
-import java.util.HashMap;	
+import java.util.AbstractMap.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WebServerWorker implements Runnable {
 

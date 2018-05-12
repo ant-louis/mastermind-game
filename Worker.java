@@ -70,7 +70,6 @@ public class Worker implements Runnable {
 
 				//List previous exchanges ("12")
 				else if(clientMessage.startsWith("12") && length == 2){
-					System.out.println("Worker listing exchanges");
 
 					StringBuilder builder = new StringBuilder("13");
 					
@@ -91,7 +90,6 @@ public class Worker implements Runnable {
 
 				//Guess a combination (ex: "121345")
 				else if(clientMessage.startsWith("12") && length == (2 + 4)){
-					System.out.println("Worker guessing combination");
 
 					String guessedcombination = clientMessage.substring(2, length);
 					guessCombination(guessedcombination);

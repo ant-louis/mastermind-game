@@ -1,13 +1,13 @@
 import java.io.*;
 import java.net.*; 
-import java.util.Map;
-import java.util.HashMap;
+import java.util.AbstractMap.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GameInterface {
 
-	private static Map<Integer, Thread> currentGames = new HashMap<>();
-	private static Map<Integer, PipedOutputStream> currentGamesOutput = new HashMap<>();
-	private static Map<Integer, PipedInputStream> currentGamesInput = new HashMap<>();
+	private static ConcurrentHashMap<Integer, Thread> currentGames = new ConcurrentHashMap<>();
+	private static ConcurrentHashMap<Integer, PipedOutputStream> currentGamesOutput = new ConcurrentHashMap<>();
+	private static ConcurrentHashMap<Integer, PipedInputStream> currentGamesInput = new ConcurrentHashMap<>();
 
 	public static String submitGuess(int cookie,String guess){
 
