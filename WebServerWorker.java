@@ -83,8 +83,7 @@ public class WebServerWorker implements Runnable {
 				int wellPlacedColor = Character.getNumericValue(result.charAt(0));
 				int numberOfGuesses = 0;
 
-				//Get the result of the guess and all the exchanges ,
-				// including the number of total exchanges
+				//Get the result of the guess and all the exchanges, including the number of total exchanges
 			   	String previousexchanges = GameInterface.getPreviousExchanges(cookie);
 
 	   			if(previousexchanges.length() > 0 && previousexchanges.length() <= 55){
@@ -95,9 +94,7 @@ public class WebServerWorker implements Runnable {
 					numberOfGuesses = Integer.parseInt(previousexchanges.substring(0,2));
 				}
 
-
-				/**************HTTP Header**************/
-
+				//HTTP Header
 		    	workerOut.print("HTTP/1.1 200 OK\r\n");
 			    workerOut.print("Content-Type: text/html\r\n");
 			    workerOut.print("Connection: close\r\n");
@@ -107,9 +104,8 @@ public class WebServerWorker implements Runnable {
 			    	GameInterface.deleteGame(cookie);
 			   	}
 			    workerOut.print("\r\n");
-				/*************************************/
-
-				/**************HTTP Body**************/
+		
+				//HTTP Body
 				//Body consists only of the result, no need to chunk or compress
 			    workerOut.print(result); 
 			    workerOut.flush();
@@ -117,9 +113,7 @@ public class WebServerWorker implements Runnable {
 			}
 
 
-
-
-			//POST request - may need to separate normal post and guess POST
+			//POST request
 			else if(requestType.equals("POST") && path.equals("/play.html")){
 
 				//Submit the guess received in the body
@@ -131,21 +125,17 @@ public class WebServerWorker implements Runnable {
 				int wellPlacedColor = Character.getNumericValue(result.charAt(0));
 				int numberOfGuesses = 0;
 
-				//Get the result of the guess and all the exchanges ,
-				//including the number of total exchanges
+				//Get the result of the guess and all the exchanges, including the number of total exchanges
 			   	String previousexchanges = GameInterface.getPreviousExchanges(cookie);
 
 	   			if(previousexchanges.length() > 0 && previousexchanges.length() <= 55){
-
 					numberOfGuesses = Character.getNumericValue(previousexchanges.charAt(0));
 				}
 				else if(previousexchanges.length() > 55){
 					numberOfGuesses = Integer.parseInt(previousexchanges.substring(0,2));
 				}
 
-
-
-				/**************HTTP Header**************/
+				//HTTP Header
 				StringBuilder header = new StringBuilder();
 
 		    	header.append("HTTP/1.1 200 OK\r\n");
@@ -160,17 +150,13 @@ public class WebServerWorker implements Runnable {
 			    	header.append("Set-Cookie: SESSID=deleted; path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT\r\n");
 			   	}
 			    header.append("\r\n");
-			    /**************************************/
+			  
 
-				/**************HTTP Body**************/
-
-			    //POST request needs to recreate the whole page, so we're passing 
-			    //all the previous guesses as argument
+				//HTTP Body
+			    //POST request needs to recreate the whole page, so we're passing all the previous guesses as argument
 	    		HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges,workerOut,header.toString(),gzipEnabled);
 				myhtmlcreator.createPage();			
 			}
-
-
 
 
 			//All others paths, these are wrong
@@ -180,7 +166,8 @@ public class WebServerWorker implements Runnable {
 				workerOut.print("HTTP/1.1 404 Not Found\r\n");
 				workerOut.print("\r\n");
 
-				//Body
+				//Generate the HTML error page
+				String error404 = generateError("404 NOT FOUND");
 				
   				workerOut.print(error404.toString());
 				workerOut.flush();
