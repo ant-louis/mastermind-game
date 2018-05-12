@@ -15,14 +15,33 @@
     			text-align: center;
     			color: rgb(10,50,0);
     		}
+
+            .submit-btn {
+                border-radius: 10px;
+                background-color: rgb(10,50,0);
+                color: white;
+                text-align: center;
+                font-size: 28px;
+                padding: 20px;
+                width: 200px;
+                cursor: pointer;
+                margin-left: 43%;
+            }
+
+            
     	</style>
     </head>
 
     <body>
 
     	<div class="message">
-    		<p>  </p>
+    		<p> GAME OVER ! </p>
     	</div>
-    	
+
+        <form method="post" action="replay.html">
+            <input class="submit-btn" type="submit" value="Replay"/>
+        </form>     
+
     </body>
 </html>
+

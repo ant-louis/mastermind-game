@@ -44,7 +44,7 @@ public class WebServerWorker implements Runnable {
 
 			
 			//Shows the main page and create new game : chunked encoding
-			else if(requestType.equals("GET") && path.equals("/play.html")){
+			else if((requestType.equals("GET") && path.equals("/play.html")) || (requestType.equals("POST") && path.equals("/replay.html"))){
 				
 				//Creating new game
 				newCookie++;
