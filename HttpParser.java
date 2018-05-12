@@ -27,8 +27,15 @@ public class HttpParser {
 	}	
 
 
-	//A method that extracts the first line of the header
-	//Must always be called first before the rest of the header methods
+	
+	/********************************************************************************
+	 * Extracts the first line of the header
+	 * Must always be called first before the rest of the header methods
+	 *
+	 * ARGUMENTS : /
+	 *
+	 * RETURNS : /
+	 ********************************************************************************/
 	private void getFirstHeaderLine() throws IOException {
 
 		String buffer = "";
@@ -55,38 +62,81 @@ public class HttpParser {
 	}
 
 
-	//Returns the request type of the HTTP request
+	/********************************************************************************
+	 * Returns the request type of the HTTP request
+	 *
+	 * ARGUMENTS : /
+	 *
+	 * RETURNS : /
+	 ********************************************************************************/
 	public String getRequestType(){
 		return this.requestType;
 	}
 
-	//Returns the path of the HTTP request
+	
+	/********************************************************************************
+	 * Returns the path of the HTTP request
+	 *
+	 * ARGUMENTS : /
+	 *
+	 * RETURNS : /
+	 ********************************************************************************/
 	public String getPath(){
 		return this.path;
 	}
 
-	//Returns the http version of the request
+	
+	/********************************************************************************
+	 * Returns the http version of the request
+	 *
+	 * ARGUMENTS : /
+	 *
+	 * RETURNS : /
+	 ********************************************************************************/
 	public String getHttpVersion(){
 		return this.httpVersion;
 	}
 
-	//Check if there is Content-Length
+
+	/********************************************************************************
+	 * Check if there is Content-Length
+	 *
+	 * ARGUMENTS : /
+	 *
+	 * RETURNS : /
+	 ********************************************************************************/
 	public boolean checkIfContentLength(){
 		return (headerMap.get("Content-Length") != null);
 	}
 
+
+	/********************************************************************************
+	 * Checks in the header if it accepts the gzip encoding
+	 *
+	 * ARGUMENTS : /
+	 *
+	 * RETURNS : returns true if it accepts the gzip encoding, false otherwise
+	 ********************************************************************************/
 	public boolean acceptGzipEncoding() {
 		String acceptEncoding;
+
 		if((acceptEncoding = headerMap.get("Accept-Encoding")) == null){
 			return false;
 		}
+
 		return acceptEncoding.contains("gzip");
 	}
 
 
-	//Gets the remaining header and stores each line in a map, 
-	//where the key is the first keyword (before ':') and the 
-	//value is the rest of the line
+	
+	/********************************************************************************
+	 * Gets the remaining header and stores each line in a map, where the key is the 
+	 * first keyword (before ':') and the value is the rest of the line
+	 *
+	 * ARGUMENTS : /
+	 *
+	 * RETURNS : /
+	 ********************************************************************************/
 	private void getRemainingHeader() throws IOException {
        	StringBuilder headerLine = new StringBuilder();
        	StringBuilder entireHeader = new StringBuilder();
@@ -132,7 +182,13 @@ public class HttpParser {
 	}
 
 
-	//Extracts a color guess from the POST request
+	/********************************************************************************
+	 * Extracts the color guess from the POST request
+	 *
+	 * ARGUMENTS : /
+	 *
+	 * RETURNS : the string containing the color combination of the guess
+	 ********************************************************************************/
 	public String getGuess_POST() throws IOException{
 		char[] colors = new char[4];
 		char c;
@@ -159,9 +215,16 @@ public class HttpParser {
 	}
 
 
-	//Extracts the cookie from the header
+	/********************************************************************************
+	 * Extracts the cookie from the header
+	 *
+	 * ARGUMENTS : /
+	 *
+	 * RETURNS : an integer corresponding to the cookie of the request
+	 ********************************************************************************/
 	public int getCookie() {
 		String cookieField;
+
 		if((cookieField = headerMap.get("Cookie")) == null){
 			return -1;
 		}
@@ -174,7 +237,13 @@ public class HttpParser {
 	}
 
 
-	//Extracts a color guess from the AJAX/GET request
+	/********************************************************************************
+	 * Extracts a color guess from the AJAX/GET request
+	 *
+	 * ARGUMENTS :
+	 *
+	 * RETURNS : the string containing the color combination of the guess
+	 ********************************************************************************/
 	public String getGuess_GET(){
 		String path = this.path;
 		char[] colors = new char[4];
