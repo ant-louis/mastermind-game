@@ -11,7 +11,7 @@ public class WebServerWorker implements Runnable {
 	private boolean gzipEnabled = false;
 
 	public WebServerWorker(Socket clientSocket){
-		workerSock = clientSocket;
+		this.workerSock = clientSocket;
 	}
 
 	public void run() {
@@ -22,14 +22,22 @@ public class WebServerWorker implements Runnable {
 
 			//Parses the request and stores the important information
 		    HttpParser httpparser = new HttpParser(istream);
+
 		    //Gets the type of the request (GET or POST here)
 		    String requestType = httpparser.getRequestType();
+
 		    //Gets the path that is requested
 		    String path = httpparser.getPath();
+
+		    //Gets the http version of the request
+		    String httpVersion = httpparser.getHttpVersion();
+		    //Check if http version is valid
+			if(!httpVersion.equals("HTTP/1.1")){
+				generateError("505 HTTP Version Not Supported", workerOut);
+			}
+
 		    //boolean acceptGzip = httpparser.acceptGzipEncoding();
-		    //Get the cookie associated with the request
-		    int cookie = httpparser.getCookie();
-			
+		    
 			
 			//When the path requested is "/", we're redirecting to "/play.html"
 			if(path.equals("/")){
@@ -75,7 +83,7 @@ public class WebServerWorker implements Runnable {
 			else if(requestType.equals("GET") && path.startsWith("/play.html?")){
 
 				//Get the guess from the header and submit it
-				cookie = httpparser.getCookie();
+				int cookie = httpparser.getCookie();
 				if(cookie == -1){
 					generateError("405 Method Not Allowed", workerOut);
 				}
@@ -120,8 +128,13 @@ public class WebServerWorker implements Runnable {
 			//POST request
 			else if(requestType.equals("POST") && path.equals("/play.html")){
 
+				//Check http version
+				if(!httpparser.checkIfContentLength()){
+					generateError("411 Length Required", workerOut);
+				}
+
 				//Submit the guess received in the body
-				cookie = httpparser.getCookie();
+				int cookie = httpparser.getCookie();
 				if(cookie == -1){
 					generateError("405 Method Not Allowed", workerOut);
 				}
@@ -165,8 +178,6 @@ public class WebServerWorker implements Runnable {
 				myhtmlcreator.createPage();			
 			}
 
-
-
 			//All others paths, these are wrong
 			else if(requestType.equals("GET")){
 				generateError("404 Not Found", workerOut);
@@ -177,8 +188,6 @@ public class WebServerWorker implements Runnable {
 				generateError("501 Not Implemented", workerOut);
 			}
 			
-	
-
 			//In all other cases
 			else{
 				generateError("400 Bad Request", workerOut);
@@ -199,9 +208,9 @@ public class WebServerWorker implements Runnable {
 
 		pageError.append("<!DOCTYPE html><html>");
 		pageError.append("<head><meta charset=\"utf-8\"/><title>Error</title>");
-		pageError.append("<style>body{font-family: \"Times New Roman\", Arial, serif;font-weight: normal; background-image: radial-gradient(circle at center, rgb(180,255,160), rgb(10,50,0));} .message{font-size: 3.5em; text-align: center; color: rgb(10,50,0);}</style>");
+		pageError.append("<style>body{font-family: \"Times New Roman\", Arial, serif;font-weight: normal; background-image: radial-gradient(circle at center, rgb(180,255,160), rgb(10,50,0));} .message{font-size: 3.5em; text-align: center; color: rgb(10,50,0);margin:20%;}</style>");
 		pageError.append("</head>");
-		pageError.append("<body><div class=\"message\"><p> <b>"+ error +".</b></p></div></body>");
+		pageError.append("<body><div class=\"message\"><p> <b>"+ error +"</b></p></div></body>");
 		pageError.append("</html>");
 
 		//Headers
