@@ -1,6 +1,6 @@
 import java.io.*;
 import java.net.*; 
-
+import java.util.zip.GZIPOutputStream;
 
 public class HTMLCreator {
 
@@ -39,7 +39,6 @@ public class HTMLCreator {
 
 		//Get the socketOutputsream
 		this.socketOut = workerOut;
-
 
 		//Get the previous exchanges of the current game
 		this.previousExchanges = prevExchanges;
@@ -124,7 +123,10 @@ public class HTMLCreator {
 			}
 
 			if(gzipEnabled){
-
+				GZIPOutputStream gzipOut = new GZIPOutputStream(socketOut);
+				gzipOut.write(compress.toString().getBytes(),0,compress.toString().length());
+				gzipOut.finish();
+				gzipOut.close();
 			}else{
 
 		    	//End the chunked enconding
@@ -149,7 +151,7 @@ public class HTMLCreator {
 	public void sendChunkLine(String line) throws IOException{ //NEED TO CLOSE IT SOMEWHERE
 		//If compression is enabled, we only compress instead of chunking
 		if(gzipEnabled){
-			socketOut.write(line.getBytes());
+			compress.append(line);
 
 		}else{
 			String hexLength = Integer.toHexString(line.length());

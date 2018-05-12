@@ -34,7 +34,7 @@ public class WebServerWorker implements Runnable {
 				generateError("505 HTTP Version Not Supported", socketOut);
 			}
 
-		    //boolean acceptGzip = httpparser.acceptGzipEncoding();
+		    boolean acceptsGzip = httpparser.acceptGzipEncoding();
 		    
 			
 			//When the path requested is "/", we're redirecting to "/play.html"
@@ -43,6 +43,7 @@ public class WebServerWorker implements Runnable {
 				//Headers
 				socketOut.write("HTTP/1.1 303 See Other\r\n".getBytes());
 				socketOut.write("Location: /play.html\r\n".getBytes());
+			    socketOut.write("Content-Type: text/html; charset=utf-8\r\n".getBytes());
 				socketOut.write("Connection: close\r\n".getBytes());
 				socketOut.write("\r\n".getBytes());
 				socketOut.flush();
@@ -60,11 +61,13 @@ public class WebServerWorker implements Runnable {
 				//Headers
 				StringBuilder header = new StringBuilder();
 		    	header.append("HTTP/1.1 200 OK\r\n");
-			    header.append("Content-Type: text/html\r\n");
+			    header.append("Content-Type: text/html; charset=utf-8\r\n");
 			    header.append("Connection: close\r\n");
 			    //If gzip is not enabled, we chunk
 			    if(!gzipEnabled){
 			    	header.append("Transfer-Encoding: chunked\r\n");
+			    }else if(acceptsGzip){
+			    	header.append("Content-Encoding: gzip\r\n");
 			    }
 			    header.append("Set-Cookie: SESSID=" + newCookie + "; path=/\r\n");
 			    header.append("\r\n");
@@ -106,8 +109,9 @@ public class WebServerWorker implements Runnable {
 
 				//HTTP Header
 		    	socketOut.write("HTTP/1.1 200 OK\r\n".getBytes());
-			    socketOut.write("Content-Type: text/html\r\n".getBytes());
+			    socketOut.write("Content-Type: text/html; charset=utf-8\r\n".getBytes());
 			    socketOut.write("Connection: close\r\n".getBytes());
+
 		   		//If we won or lost, we must delete the cookie and delete the game
 			   	if(numberOfGuesses == 12 || wellPlacedColor == 4){
 			    	socketOut.write("Set-Cookie: SESSID=deleted; path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT\r\n".getBytes());
@@ -160,9 +164,13 @@ public class WebServerWorker implements Runnable {
 		    	header.append("HTTP/1.1 200 OK\r\n");
 			    header.append("Content-Type: text/html\r\n");
 			    header.append("Connection: close\r\n");
-			    //If gzip is not enabled, we chunk
+			    header.append("Content-Type: text/html; charset=utf-8\r\n");
+
+			    //If gzip is not enabled, we chunk. Else we compress if the client allows it
 			    if(!gzipEnabled){
 			    	header.append("Transfer-Encoding: chunked\r\n");
+			    }else if(acceptsGzip){
+			    	header.append("Content-Encoding: gzip\r\n");
 			    }		   		
 			    //If we won or lost, we must delete the cookie.
 			   	if(numberOfGuesses == 12 || wellPlacedColor == 4){

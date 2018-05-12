@@ -72,6 +72,14 @@ public class HttpParser {
 		return (headerMap.get("Content-Length") != null);
 	}
 
+	public boolean acceptGzipEncoding() {
+		String acceptEncoding;
+		if((acceptEncoding = headerMap.get("Accept-Encoding")) == null){
+			return false;
+		}
+		return acceptEncoding.contains("gzip");
+	}
+
 
 	//Gets the remaining header and stores each line in a map, 
 	//where the key is the first keyword (before ':') and the 
