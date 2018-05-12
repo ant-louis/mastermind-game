@@ -26,6 +26,17 @@ public class WebServerWorker implements Runnable {
 		    String requestType = httpparser.getRequestType();
 		    //Gets the path that is requested
 		    String path = httpparser.getPath();
+		    boolean acceptGzip = httpparser.acceptGzipEncoding();
+		    //Get the cookie associated with the request
+		    int cookie = httpparser.getCookie();
+		    System.out.println("Cookie: " + cookie);
+		    //Get the previous exchanges and the number of guesses already made
+		    String previousexchanges;
+		    int nbExchanges = 0;
+		    if(cookie != -1){
+		   		previousexchanges = GameInterface.getPreviousExchanges(cookie);
+				nbExchanges = Character.getNumericValue(previousexchanges.charAt(0));
+		   	}
 
 
 
@@ -33,9 +44,7 @@ public class WebServerWorker implements Runnable {
 			System.out.println(requestType);
 		    System.out.print("Path: ");
 			System.out.println(path);
-		    System.out.println("Cookie :" + httpparser.getCookie());
-		    int cookie;
-			
+
 			
 			//When the path requested is "/", we're redirecting to "/play.html"
 			if(path.equals("/")){
@@ -61,13 +70,14 @@ public class WebServerWorker implements Runnable {
 			    workerOut.print("Content-Type: text/html\r\n");
 			    workerOut.print("Connection: close\r\n");
 			    workerOut.print("Transfer-Encoding: chunked\r\n");
+			    //Assign a cookie to the newly created page
 			    workerOut.print("Set-Cookie: SESSID=" + newCookie + "; path=/\r\n");
 			    workerOut.print("\r\n");
 
 				//Body					    
 			    
-			    String previousexchanges = ""; //Empty previous exchanges to create blank page
-			    encodeChunks(workerOut,previousexchanges);
+			    //Empty previous exchanges to create blank page
+			    encodeChunks(workerOut,"",acceptGzip);
 			}
 			
 
@@ -75,19 +85,24 @@ public class WebServerWorker implements Runnable {
 			//AJAX Request 
 			else if(requestType.equals("GET") && path.startsWith("/play.html?")){
 
-				cookie = httpparser.getCookie();
 				String guess = httpparser.getGuess_GET();
 				String result = GameInterface.submitGuess(cookie,guess);
+				int wellPlacedColors = Character.getNumericValue(result.charAt(0));
+
 				System.out.println("Result:" +result);
 
 		    	workerOut.print("HTTP/1.1 200 OK\r\n");
 			    workerOut.print("Content-Type: text/html\r\n");
 			    workerOut.print("Connection: close\r\n");
+
+			    //Deleting the cookie if the game is won OR lost
+			    if(wellPlacedColors == 4 || nbExchanges+1 == 12){
+			    	workerOut.print("Set-Cookie: SESSID=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT\r\n");
+			    }
 			    workerOut.print("\r\n");
 
 			    // Body - Consists only of the result
 			    workerOut.print(result);
-
 			    workerOut.flush();
 			}
 
@@ -96,10 +111,11 @@ public class WebServerWorker implements Runnable {
 
 			//POST request - may need to separate normal post and guess POST
 			else if(requestType.equals("POST") && path.equals("/play.html")){
-				cookie = httpparser.getCookie();
 				String guess = httpparser.getGuess_POST();
-				System.out.println("Guess:" + guess);
+
 				String result = GameInterface.submitGuess(cookie,guess); //Result not used
+				int wellPlaced = Character.getNumericValue(result.charAt(0));
+		    	
 		    	workerOut.print("HTTP/1.1 200 OK\r\n");
 			    workerOut.print("Content-Type: text/html\r\n");
 			    workerOut.print("Connection: close\r\n");
@@ -111,8 +127,8 @@ public class WebServerWorker implements Runnable {
 
 			    //POST request needs to recreate the whole page, so we're getting 
 			    //all the previous guesses and results
-			   	String previousexchanges = GameInterface.getPreviousExchanges(cookie);
-		    	encodeChunks(workerOut,previousexchanges);
+			   	previousexchanges = GameInterface.getPreviousExchanges(cookie);
+		    	encodeChunks(workerOut,previousexchanges,acceptGzip);
 			}
 
 
@@ -160,11 +176,20 @@ public class WebServerWorker implements Runnable {
 		}
 	}
 
-	private void encodeChunks(PrintWriter workerOut,String previousexchanges){
+	private void encodeChunks(PrintWriter workerOut,String previousexchanges, boolean acceptGzip){
 		System.out.println("Encoding chunks");
 
 		HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges);
 	    String createdwebpage = myhtmlcreator.createPage();
+
+	    /*
+	    //Compressing into gzip
+	    if(acceptGzip){
+    		GZipOutputStream compressedStream = new GZipOutputStream();
+	    }
+		*/
+
+		//Cut the webpage into chunks of size chunkSize
 
 	    int chunkSize = 128;
 	    int startIndex = 0;
@@ -172,7 +197,6 @@ public class WebServerWorker implements Runnable {
 	    String pageChunk;
 
 	    while(createdwebpage.length() >= endIndex){
-	    	//Cut the webpage into chunks of size chunkSize
 	    	pageChunk = createdwebpage.substring(startIndex,endIndex);
 	    	startIndex += chunkSize;
 	    	endIndex = startIndex + chunkSize;
