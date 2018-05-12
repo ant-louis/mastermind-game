@@ -34,7 +34,6 @@ public class HTMLCreator {
 		//Get the header of the response
 		this.header = header;
 
-		System.out.println(this.header);
 
 		//Get the PrintWriter of the current worker
 		this.chunkedOut = workerOut;
@@ -150,7 +149,6 @@ public class HTMLCreator {
 	/************************************CREATING CSS**********************************************/
 	//CSS style for one bubble 
 	private void createBubbleCSS(int nbGuess, int i, int color){
-		System.out.println("createBubbleCSS");
 
 		sendChunkLine("#bub");
 		sendChunkLine(Integer.toString(nbGuess));
@@ -172,7 +170,6 @@ public class HTMLCreator {
 
 	//CSS style for one result
 	private void createResultCSS(int nbGuess, int i, int color){
-		System.out.println("createResultCSS");
 		sendChunkLine("#res");
 		sendChunkLine(Integer.toString(nbGuess));
 		sendChunkLine(Integer.toString(i));
@@ -194,7 +191,7 @@ public class HTMLCreator {
 
 	//Creates the CSS template for one row of bubble buttons
 	private void createBubble(int nbGuess, String combination){
-			System.out.println("createBubble!!!!!!!!!!!!!!!");
+
 
 		//Creating buttons according to each color
 		for(int j = 0; j < combination.length(); j++) {
@@ -205,27 +202,24 @@ public class HTMLCreator {
 
 	//Creates the CSS template for one row of result buttons
 	private void createResult(int nbGuess, int placedright, int ispresent){
-			System.out.println("createResult!!!!!!!!!!!!!!!!");
 
-		System.out.println("nbguess:" +nbGuess +"placedright"+ placedright +"ispresent" +ispresent);
 		int i;
 		//Correctly placed bubbles
 		for(i = 0; i < placedright; i++){
-			System.out.println("correctlyplaced!!!!!!!!!!!!!!!!!!!!!!");
+
 
 			createResultCSS(nbGuess,i,0);
 		}
 
 		//Bubbles in the sequence but not at the correct place
 		for(;i < ispresent + placedright; i++){
-			System.out.println("notcorrect!!!!!!!!!!!!!!!!!!!!!!");
 
 			createResultCSS(nbGuess,i,5);
 		}
 
 		//Blank results
 		for(; i < 4 ; i++) {
-			System.out.println("rest!!!!!!!!!!!!!!!!!!!!!!");
+
 
 			createResultCSS(nbGuess,i,BLANK);
 		}
@@ -234,7 +228,7 @@ public class HTMLCreator {
 
 	//Creates the CSS template for all buttons
 	private void createAllButtons(){
-				System.out.println("createAllButtons");
+
 
 		int nbGuess = 11;
 		int i;
@@ -277,7 +271,7 @@ public class HTMLCreator {
 
 	/**************************************CREATE HTML******************************************/
 	private void createBoard(){
-				System.out.println("createBoard");
+
 
 		//Mastermind board
 		createMastermindBoard();
@@ -289,7 +283,7 @@ public class HTMLCreator {
 
 
 	private void createMastermindBoard(){
-				System.out.println("createMastermindBoard");
+
 
 		sendChunkLine("<div class=\"mastermind-board\">");
 
@@ -309,7 +303,6 @@ public class HTMLCreator {
 
 
 	private void createRow(int index){
-				System.out.println("createRow");
 
 		sendChunkLine("<div class=\"guess-row flexer\">");
 
@@ -325,7 +318,7 @@ public class HTMLCreator {
 
 
 	private void createGuessBox(int index){
-				System.out.println("createGuessBox");
+
 
 		sendChunkLine("<div class=\"guess-box flexer\">");
 
@@ -340,7 +333,6 @@ public class HTMLCreator {
 
 
 	private void createResultBox(int index){
-				System.out.println("createResultBox");
 
 		sendChunkLine("<div class=\"result-box flexer\">");
 
@@ -355,7 +347,7 @@ public class HTMLCreator {
 
 
 	private void createSelectionBoard(){
-				System.out.println("createSelectionBoard!!!!!!!!!!!!");
+
 
 		//-------If JS enabled-----------
 		sendChunkLine("<div class=\"selection-board flexer\" id=\"js\"> <div class=\"selection-box\">");
