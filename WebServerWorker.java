@@ -1,8 +1,6 @@
 import java.io.*;
 import java.net.*; 
-import java.util.concurrent.TimeUnit;
-import java.util.AbstractMap.*;
-import java.util.concurrent.ConcurrentHashMap;
+
 
 public class WebServerWorker implements Runnable {
 
@@ -18,7 +16,7 @@ public class WebServerWorker implements Runnable {
 		try{
 
 			InputStreamReader istream = new InputStreamReader(workerSock.getInputStream());
-			PrintWriter workerOut = new PrintWriter(workerSock.getOutputStream());
+			OutputStream socketOut = workerSock.getOutputStream();
 
 			//Parses the request and stores the important information
 		    HttpParser httpparser = new HttpParser(istream);
@@ -35,11 +33,11 @@ public class WebServerWorker implements Runnable {
 			if(path.equals("/")){
 				System.out.println("Redirecting...");
 				//Headers
-				workerOut.print("HTTP/1.1 303 See Other\r\n");
-				workerOut.print("Location: /play.html\r\n");
-				workerOut.print("Connection: close\r\n");
-				workerOut.print("\r\n");
-				workerOut.flush();
+				socketOut.write("HTTP/1.1 303 See Other\r\n".getBytes());
+				socketOut.write("Location: /play.html\r\n".getBytes());
+				socketOut.write("Connection: close\r\n".getBytes());
+				socketOut.write("\r\n".getBytes());
+				socketOut.flush();
 			}
 
 			
@@ -66,7 +64,7 @@ public class WebServerWorker implements Runnable {
 				//Body					    
 
 			    String previousexchanges = ""; //Empty previous exchanges to create blank page
-    			HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges,workerOut,header.toString(),gzipEnabled);
+    			HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges,socketOut,header.toString(),gzipEnabled);
 				myhtmlcreator.createPage();			
 			}
 			
@@ -96,21 +94,21 @@ public class WebServerWorker implements Runnable {
 				}
 
 				//HTTP Header
-		    	workerOut.print("HTTP/1.1 200 OK\r\n");
-			    workerOut.print("Content-Type: text/html\r\n");
-			    workerOut.print("Connection: close\r\n");
+		    	socketOut.write("HTTP/1.1 200 OK\r\n".getBytes());
+			    socketOut.write("Content-Type: text/html\r\n".getBytes());
+			    socketOut.write("Connection: close\r\n".getBytes());
 		   		//If we won or lost, we must delete the cookie and delete the game
 			   	if(numberOfGuesses == 12 || wellPlacedColor == 4){
-			    	workerOut.print("Set-Cookie: SESSID=deleted; path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT\r\n");
+			    	socketOut.write("Set-Cookie: SESSID=deleted; path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT\r\n".getBytes());
 			    	GameInterface.deleteGame(cookie);
 			   	}
-			    workerOut.print("\r\n");
+			    socketOut.write("\r\n".getBytes());
 		
 				//HTTP Body
 				//Body consists only of the result, no need to chunk or compress
-			    workerOut.print(result); 
-			    workerOut.flush();
-			    workerOut.close();
+			    socketOut.write(result.getBytes()); 
+			    socketOut.flush();
+			    socketOut.close();
 			}
 
 
@@ -155,7 +153,7 @@ public class WebServerWorker implements Runnable {
 
 				//HTTP Body
 			    //POST request needs to recreate the whole page, so we're passing all the previous guesses as argument
-	    		HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges,workerOut,header.toString(),gzipEnabled);
+	    		HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges,socketOut,header.toString(),gzipEnabled);
 				myhtmlcreator.createPage();			
 			}
 
@@ -165,15 +163,15 @@ public class WebServerWorker implements Runnable {
 			else if(requestType.equals("GET")){
 
 				//Headers
-				workerOut.print("HTTP/1.1 404 Not Found\r\n");
-				workerOut.print("\r\n");
+				socketOut.write("HTTP/1.1 404 Not Found\r\n".getBytes());
+				socketOut.write("\r\n".getBytes());
 
 				//Generate the HTML error page
 				String error404 = generateError("404 NOT FOUND");
 				
-  				//workerOut.print(error404.toString());
-				workerOut.flush();
-				workerOut.close();
+  				//socketOut.write(error404.toString());
+				socketOut.flush();
+				socketOut.close();
 
 			}
 			
@@ -181,8 +179,6 @@ public class WebServerWorker implements Runnable {
 
 
 			istream.close();
-
-		
 
 		}catch(Exception e){
 			e.printStackTrace();

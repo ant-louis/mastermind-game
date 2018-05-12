@@ -15,10 +15,11 @@ public class HTMLCreator {
 
 	//Class variables
 	String previousExchanges;
+	StringBuilder compress;
 	int nbExchanges;
 	int result;
 	boolean gzipEnabled;
-	PrintWriter chunkedOut;
+	OutputStream socketOut;
 	String header;
 	private static final int BLANK = 10;
 	private static String staticCSS = "body{font-family: \"Times New Roman\", Arial, serif;font-weight: normal; background-image: radial-gradient(circle at center, rgb(180,255,160), rgb(10,50,0));}.flexer{display: flex;}/********************GUESSES_AND_SCORES*********************/.mastermind-board{width: 30%;min-width:400px; height:650px; margin: 0 auto; margin-top: 20px; margin-bottom: 20px;}.title{width: 100%;height: 12%;}.mastermind-text{font-size: 4em;color: rgb(10,50,0);text-align: center;margin-top: 10px;text-shadow: 1px 1px rgb(220,255,215);}.guess-container{width:100%;height:90%;}.guess-row{box-sizing: border-box;height: 8.2%;width: 100%;}.guess-box{width: 70%;height: 100%;}.result-box{width: 28%;height: 100%;}/*************************SELECTION************************/#js{display: none;}.selection-board{width: 30%;min-width:400px;height: 50px;border: 1px solid rgb(10,50,0); border-radius: 10px; margin: 0 auto;}.button{width: 30%;height: 100%;}.submit-button{width: 80%;height: 70%;border: 1px solid rgb(161,161,161); border-radius: 10px; text-align: center; box-shadow: 2px 2px 2px rgb(161,161,161); margin: 5%; font-size: 1.2em;background-color: rgb(240,240,240);color:rgb(10,50,0); cursor: pointer;}.selection-box{width: 70%;height: 90%;}#btn0, #btn1, #btn2, #btn3{height:80%;width:16.5%;border-radius: 50%;border: 1px solid rgb(50,50,50);margin-left: 3%;margin-right: 4.5%;margin-top: 2%;background-color: red;cursor: pointer;}.list{margin-top: 3%;margin-left: 4%;}.list select{border-radius: 10%;}.list option{font-family: \"Times New Roman\", Arial, serif;font-size: 1.2em;text-align: center;}";
@@ -26,16 +27,19 @@ public class HTMLCreator {
 
 	
 	//Constructor
-	public HTMLCreator(String prevExchanges, PrintWriter workerOut,String header, boolean gzipEnabled){
+	public HTMLCreator(String prevExchanges, OutputStream workerOut, String header, boolean gzipEnabled){
 
 		//Enable compression or not
 		this.gzipEnabled = gzipEnabled;
+		if(gzipEnabled){
+			compress = new StringBuilder();
+		}
 		//Get the header of the response
 		this.header = header;
 
+		//Get the socketOutputsream
+		this.socketOut = workerOut;
 
-		//Get the PrintWriter of the current worker
-		this.chunkedOut = workerOut;
 
 		//Get the previous exchanges of the current game
 		this.previousExchanges = prevExchanges;
@@ -69,7 +73,7 @@ public class HTMLCreator {
 		try{
 
 			//HTTP Header
-			chunkedOut.print(header);
+			socketOut.write(header.getBytes());
 
 			/**************HTML******************/
 
@@ -119,16 +123,22 @@ public class HTMLCreator {
 				sendChunkLine("</body></html>");
 			}
 
-	    	//End the chunked enconding
-		    chunkedOut.print("0\r\n");
-		    chunkedOut.print("\r\n");
-		    chunkedOut.flush();
+			if(gzipEnabled){
+
+			}else{
+
+		    	//End the chunked enconding
+			    socketOut.write("0\r\n".getBytes());
+			    socketOut.write("\r\n".getBytes());
+			    socketOut.flush();
+
+			}
 		    
 		}catch(Exception e){
 			e.printStackTrace();
 		}finally{
 			try{
-				chunkedOut.close();
+				socketOut.close();
 			}catch(Exception e){
 				e.printStackTrace();
 			}
@@ -136,23 +146,23 @@ public class HTMLCreator {
 		
 	}
 
-	public void sendChunkLine(String line){ //NEED TO CLOSE IT SOMEWHERE
+	public void sendChunkLine(String line) throws IOException{ //NEED TO CLOSE IT SOMEWHERE
 		//If compression is enabled, we only compress instead of chunking
 		if(gzipEnabled){
-			chunkedOut.println(line);
-			chunkedOut.flush();
+			socketOut.write(line.getBytes());
 
 		}else{
-
 			String hexLength = Integer.toHexString(line.length());
-	    	chunkedOut.println(hexLength);
-	    	chunkedOut.println(line);
+			hexLength = hexLength + "\r\n";
+	    	socketOut.write(hexLength.getBytes());
+			line = line + "\r\n";
+	    	socketOut.write(line.getBytes());
 
 		}
 	}
 	/************************************CREATING CSS**********************************************/
 	//CSS style for one bubble 
-	private void createBubbleCSS(int nbGuess, int i, int color){
+	private void createBubbleCSS(int nbGuess, int i, int color)throws IOException{
 
 		sendChunkLine("#bub"+Integer.toString(nbGuess)+Integer.toString(i));
 		sendChunkLine("{height:70%;");
@@ -171,7 +181,7 @@ public class HTMLCreator {
 	}
 
 	//CSS style for one result
-	private void createResultCSS(int nbGuess, int i, int color){
+	private void createResultCSS(int nbGuess, int i, int color) throws IOException{
 
 		sendChunkLine("#res"+Integer.toString(nbGuess)+Integer.toString(i));
 		sendChunkLine("{height:30%;");
@@ -191,7 +201,7 @@ public class HTMLCreator {
 
 
 	//Creates the CSS template for one row of bubble buttons
-	private void createBubble(int nbGuess, String combination){
+	private void createBubble(int nbGuess, String combination) throws IOException{
 
 
 		//Creating buttons according to each color
@@ -202,7 +212,7 @@ public class HTMLCreator {
 	}
 
 	//Creates the CSS template for one row of result buttons
-	private void createResult(int nbGuess, int placedright, int ispresent){
+	private void createResult(int nbGuess, int placedright, int ispresent) throws IOException{
 
 		int i;
 		//Correctly placed bubbles
@@ -228,7 +238,7 @@ public class HTMLCreator {
 	}
 
 	//Creates the CSS template for all buttons
-	private void createAllButtons(){
+	private void createAllButtons() throws IOException{
 
 
 		int nbGuess = 11;
@@ -271,7 +281,7 @@ public class HTMLCreator {
 
 
 	/**************************************CREATE HTML******************************************/
-	private void createBoard(){
+	private void createBoard() throws IOException{
 
 
 		//Mastermind board
@@ -283,7 +293,7 @@ public class HTMLCreator {
 	}
 
 
-	private void createMastermindBoard(){
+	private void createMastermindBoard() throws IOException{
 
 
 		sendChunkLine("<div class=\"mastermind-board\">");
@@ -303,7 +313,7 @@ public class HTMLCreator {
 	}
 
 
-	private void createRow(int index){
+	private void createRow(int index) throws IOException{
 
 		sendChunkLine("<div class=\"guess-row flexer\">");
 
@@ -318,7 +328,7 @@ public class HTMLCreator {
 	}
 
 
-	private void createGuessBox(int index){
+	private void createGuessBox(int index) throws IOException{
 
 
 		sendChunkLine("<div class=\"guess-box flexer\">");
@@ -333,7 +343,7 @@ public class HTMLCreator {
 	}
 
 
-	private void createResultBox(int index){
+	private void createResultBox(int index) throws IOException{
 
 		sendChunkLine("<div class=\"result-box flexer\">");
 
@@ -347,7 +357,7 @@ public class HTMLCreator {
 	}
 
 
-	private void createSelectionBoard(){
+	private void createSelectionBoard() throws IOException{
 
 
 		//-------If JS enabled-----------
