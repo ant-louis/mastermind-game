@@ -9,14 +9,14 @@ public class HttpParser {
 	InputStreamReader parserIn;
 	private String requestType;
 	private String path;
-	private Map<String, String> headerMap = new HashMap<>();
+	private String httpVersion;
+	private Map<String,String> headerMap = new HashMap<>();
 
 	
 	public HttpParser(InputStreamReader istream){
 		parserIn = istream;
 
 		try{
-
 			getFirstHeaderLine();
 			getRemainingHeader();
 
@@ -24,7 +24,6 @@ public class HttpParser {
 			ioe.printStackTrace();
 		}
 	}	
-
 
 
 	//A method that extract the first line of the header
@@ -35,22 +34,23 @@ public class HttpParser {
 		char c;
 
 		//Reading the first line of the header
-		
 		do{
 			c = (char) parserIn.read();
-			buffer += c +"";
 			if(c == '\n'){
 				break;
 			}
-
+			buffer += c +"";
+			
 		}while(c != -1);
 		
 		//Splitting into tokens, the first one being the request type
-		//The second being the requested path
+		//The second being the requested path, the third the http version
 		String[] tokens = buffer.split(" ");
 
 		this.requestType = tokens[0];
 		this.path = tokens[1];
+		tokens[2] =  tokens[2].substring(0, tokens[2].length() - 1);//Delete \n
+		this.httpVersion = tokens[2];
 	}
 
 	//Returns the request type of the HTTP request
@@ -63,9 +63,13 @@ public class HttpParser {
 		return this.path;
 	}
 
+	public String getHttpVersion(){
+		return this.httpVersion;
+	}
 
-	public Map<String,String> getMap(){
-		return this.headerMap;
+	//Check if there is Content-Length
+	public boolean checkIfContentLength(){
+		return (headerMap.get("Content-Length") != null);
 	}
 
 
@@ -78,10 +82,12 @@ public class HttpParser {
        	char c;
 
        	do{
-
        		c = (char) parserIn.read();
        		//Appending to the line buffering the current line we're parsing
    			headerLine.append(c);
+
+   			System.out.print(c);
+
 		    //End of line reached, storing as a map
        		if (c == '\n' && headerLine != null){
        			String line = headerLine.toString();

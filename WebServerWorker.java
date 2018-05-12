@@ -9,7 +9,7 @@ public class WebServerWorker implements Runnable {
 	private boolean gzipEnabled = false;
 
 	public WebServerWorker(Socket clientSocket){
-		workerSock = clientSocket;
+		this.workerSock = clientSocket;
 	}
 
 	public void run() {
@@ -20,14 +20,22 @@ public class WebServerWorker implements Runnable {
 
 			//Parses the request and stores the important information
 		    HttpParser httpparser = new HttpParser(istream);
+
 		    //Gets the type of the request (GET or POST here)
 		    String requestType = httpparser.getRequestType();
+
 		    //Gets the path that is requested
 		    String path = httpparser.getPath();
+
+		    //Gets the http version of the request
+		    String httpVersion = httpparser.getHttpVersion();
+		    //Check if http version is valid
+			if(!httpVersion.equals("HTTP/1.1")){
+				generateError("505 HTTP Version Not Supported", socketOut);
+			}
+
 		    //boolean acceptGzip = httpparser.acceptGzipEncoding();
-		    //Get the cookie associated with the request
-		    int cookie = httpparser.getCookie();
-			
+		    
 			
 			//When the path requested is "/", we're redirecting to "/play.html"
 			if(path.equals("/")){
@@ -61,8 +69,7 @@ public class WebServerWorker implements Runnable {
 			    header.append("Set-Cookie: SESSID=" + newCookie + "; path=/\r\n");
 			    header.append("\r\n");
 
-				//Body					    
-
+				//Body
 			    String previousexchanges = ""; //Empty previous exchanges to create blank page
     			HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges,socketOut,header.toString(),gzipEnabled);
 				myhtmlcreator.createPage();			
@@ -74,7 +81,11 @@ public class WebServerWorker implements Runnable {
 			else if(requestType.equals("GET") && path.startsWith("/play.html?")){
 
 				//Get the guess from the header and submit it
-				cookie = httpparser.getCookie();
+				int cookie = httpparser.getCookie();
+				if(cookie == -1){
+					generateError("405 Method Not Allowed", socketOut);
+				}
+
 				String guess = httpparser.getGuess_GET();
 				String result = GameInterface.submitGuess(cookie,guess);
 
@@ -115,8 +126,17 @@ public class WebServerWorker implements Runnable {
 			//POST request
 			else if(requestType.equals("POST") && path.equals("/play.html")){
 
+				//Check http version
+				if(!httpparser.checkIfContentLength()){
+					generateError("411 Length Required", socketOut);
+				}
+
 				//Submit the guess received in the body
-				cookie = httpparser.getCookie();
+				int cookie = httpparser.getCookie();
+				if(cookie == -1){
+					generateError("405 Method Not Allowed", socketOut);
+				}
+
 				String guess = httpparser.getGuess_POST();
 				String result = GameInterface.submitGuess(cookie,guess); 
 
@@ -150,33 +170,26 @@ public class WebServerWorker implements Runnable {
 			   	}
 			    header.append("\r\n");
 			  
-
 				//HTTP Body
 			    //POST request needs to recreate the whole page, so we're passing all the previous guesses as argument
 	    		HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges,socketOut,header.toString(),gzipEnabled);
 				myhtmlcreator.createPage();			
 			}
 
-
-
 			//All others paths, these are wrong
 			else if(requestType.equals("GET")){
+				generateError("404 Not Found", socketOut);
+			}
 
-				//Headers
-				socketOut.write("HTTP/1.1 404 Not Found\r\n".getBytes());
-				socketOut.write("\r\n".getBytes());
-
-				//Generate the HTML error page
-				String error404 = generateError("404 NOT FOUND");
-				
-  				//socketOut.write(error404.toString());
-				socketOut.flush();
-				socketOut.close();
-
+			//If request type different from GET or POST
+			else if(!requestType.equals("GET") && !requestType.equals("POST")){
+				generateError("501 Not Implemented", socketOut);
 			}
 			
-	
-
+			//In all other cases
+			else{
+				generateError("400 Bad Request", socketOut);
+			}
 
 			istream.close();
 
@@ -185,18 +198,27 @@ public class WebServerWorker implements Runnable {
 		}
 	}
 
+
 	// Generate the HTML error pages
-	private String generateError(String error){
+	private void generateError(String error, OutputStream socketOut) throws IOException{
 
-		StringBuilder page = new StringBuilder();
+		StringBuilder pageError = new StringBuilder();
 
-		page.append("<!DOCTYPE html><html>");
-		page.append("<head><meta charset=\"utf-8\"/><title>Error 404</title>");
-		page.append("<style>body{font-family: \"Times New Roman\", Arial, serif;font-weight: normal; background-image: radial-gradient(circle at center, rgb(180,255,160), rgb(10,50,0));} .message{font-size: 3.5em; text-align: center; color: rgb(10,50,0);}</style>");
-		page.append("</head>");
-		page.append("<body><div class=\"message\"><p> <b>"+ error +"</b></p></div></body>");
-		page.append("</html>");
+		pageError.append("<!DOCTYPE html><html>");
+		pageError.append("<head><meta charset=\"utf-8\"/><title>Error</title>");
+		pageError.append("<style>body{font-family: \"Times New Roman\", Arial, serif;font-weight: normal; background-image: radial-gradient(circle at center, rgb(180,255,160), rgb(10,50,0));} .message{font-size: 3.5em; text-align: center; color: rgb(10,50,0);margin:20%;}</style>");
+		pageError.append("</head>");
+		pageError.append("<body><div class=\"message\"><p> <b>"+ error +"</b></p></div></body>");
+		pageError.append("</html>");
 
-		return page.toString();
+		//Headers
+		String firstHeaderLine = "HTTP/1.1 "+ error +"\r\n";
+		socketOut.write(firstHeaderLine.getBytes());
+		socketOut.write("\r\n".getBytes());
+
+		//Body
+		socketOut.write(pageError.toString().getBytes());
+		socketOut.flush();
+		socketOut.close();
 	}
 }
