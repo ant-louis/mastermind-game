@@ -45,8 +45,7 @@ public class HTMLCreator {
 		else{
 			this.result = 0;
 		}
-
-	}
+	}	
 
 
 	//Create the page
@@ -57,7 +56,7 @@ public class HTMLCreator {
 		//User won
 		if(result == 4){
 			page.append("<!DOCTYPE html><html>");
-			page.append("<head><meta charset=\"utf-8\"/><title>You won</title>");
+			page.append("<head><meta charset=\"utf-8\"/><title>Game Over</title>");
 			page.append("<style>body{font-family: \"Times New Roman\", Arial, serif;font-weight: normal; background-image: radial-gradient(circle at center, rgb(180,255,160), rgb(10,50,0));}.message{height:100%; font-size: 5em; text-align: center; color: rgb(10,50,0);}</style>");
 			page.append("</head>");
 			page.append("<body><div class=\"message\"><p> CONGRATULATIONS, YOU WON ! </p></div></body>");

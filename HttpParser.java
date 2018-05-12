@@ -84,7 +84,7 @@ public class HttpParser {
        		c = (char) parserIn.read();
        		//Appending to the line buffering the current line we're parsing
    			headerLine.append(c);
-
+   			System.out.print(c);
 		    //End of line reached, storing as a map
        		if (c == '\n' && headerLine != null){
        			String line = headerLine.toString();
@@ -173,7 +173,6 @@ public class HttpParser {
 		return new String(colors);
 	}
 }	
-
 
 
 

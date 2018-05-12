@@ -7,7 +7,7 @@
         	body {
 				font-family: "Times New Roman", Arial, serif;
 				font-weight: normal;
-    			background-image: radial-gradient(circle at center, rgb(180,255,160), rgb(10,50,0));
+    			background-image: radial-gradient(ellipse at center, rgb(180,255,160), rgb(10,50,0));
     		}
 
 			.flexer {
@@ -458,115 +458,114 @@
 		</noscript>
 
 
+
 	<script type = "text/javascript"> 
 
-    document.getElementById("js").style.display = "flex";
+	    document.getElementById("js").style.display = "flex";
 
-    var nbGuess = 11;
+	    var nbGuess = 11;
 
-    var colorArray = new Array();
-    colorArray[0] = "red";
-    colorArray[1] = "blue";
-    colorArray[2] = "yellow";
-    colorArray[3] = "green";
-    colorArray[4] = "white";
-    colorArray[5] = "black";
+	    var colorArray = new Array();
+	    colorArray[0] = "red";
+	    colorArray[1] = "blue";
+	    colorArray[2] = "yellow";
+	    colorArray[3] = "green";
+	    colorArray[4] = "white";
+	    colorArray[5] = "black";
 
-    var countBtn = new Array();
-    countBtn[0] = 0;
-    countBtn[1] = 0;
-    countBtn[2] = 0;
-    countBtn[3] = 0;
+	    var countBtn = new Array();
+	    countBtn[0] = 0;
+	    countBtn[1] = 0;
+	    countBtn[2] = 0;
+	    countBtn[3] = 0;
 
-    var btn0 = document.getElementById("btn0");
-    var btn1 = document.getElementById("btn1");
-    var btn2 = document.getElementById("btn2");
-    var btn3 = document.getElementById("btn3");
-    var submit_btn = document.getElementById("submit-js"); 
+	    var btn0 = document.getElementById("btn0");
+	    var btn1 = document.getElementById("btn1");
+	    var btn2 = document.getElementById("btn2");
+	    var btn3 = document.getElementById("btn3");
+	    var submit_btn = document.getElementById("submit-js"); 
 
-    /*Change color btn0*/
-    btn0.addEventListener("click", function() {
-        countBtn[0] = (countBtn[0] + 1) % colorArray.length;
-        btn0.style.backgroundColor = colorArray[countBtn[0]];
-    }); 
+	    /*Change color btn0*/
+	    btn0.addEventListener("click", function() {
+	        countBtn[0] = (countBtn[0] + 1) % colorArray.length;
+	        btn0.style.backgroundColor = colorArray[countBtn[0]];
+	    }); 
 
-    /*Change color btn1*/
-    btn1.addEventListener("click", function() {
-        countBtn[1] = (countBtn[1] + 1) % colorArray.length;
-        btn1.style.backgroundColor = colorArray[countBtn[1]];
-    }); 
+	    /*Change color btn1*/
+	    btn1.addEventListener("click", function() {
+	        countBtn[1] = (countBtn[1] + 1) % colorArray.length;
+	        btn1.style.backgroundColor = colorArray[countBtn[1]];
+	    }); 
 
-    /*Change color btn2*/
-    btn2.addEventListener("click", function() {
-        countBtn[2] = (countBtn[2] + 1) % colorArray.length;
-        btn2.style.backgroundColor = colorArray[countBtn[2]];
-    }); 
+	    /*Change color btn2*/
+	    btn2.addEventListener("click", function() {
+	        countBtn[2] = (countBtn[2] + 1) % colorArray.length;
+	        btn2.style.backgroundColor = colorArray[countBtn[2]];
+	    }); 
 
-    /*Change color btn3*/
-    btn3.addEventListener("click", function() {
-        countBtn[3] = (countBtn[3] + 1) % colorArray.length;
-        btn3.style.backgroundColor = colorArray[countBtn[3]];
-    }); 
+	    /*Change color btn3*/
+	    btn3.addEventListener("click", function() {
+	        countBtn[3] = (countBtn[3] + 1) % colorArray.length;
+	        btn3.style.backgroundColor = colorArray[countBtn[3]];
+	    }); 
 
-    /*Click on submit button*/
-    submit_btn.addEventListener("click", function() { 
+	    /*Click on submit button*/
+	    submit_btn.addEventListener("click", function() { 
 
-        /*New HTTP Request*/
-        var xhttp = new XMLHttpRequest(); 
+	        /*New HTTP Request*/
+	        var xhttp = new XMLHttpRequest(); 
 
-        /*Stock new guess*/
-        for (var i = 0; i < 4; i++) {
-            var bub = document.getElementById("bub" + nbGuess + i);
-            bub.style.backgroundColor = colorArray[countBtn[i]];
-        } 
+	        /*Stock new guess*/
+	        for (var i = 0; i < 4; i++) {
+	            var bub = document.getElementById("bub" + nbGuess + i);
+	            bub.style.backgroundColor = colorArray[countBtn[i]];
+	        } 
 
-        /*Receive data*/
-        xhttp.onreadystatechange = function() {
-            if (xhttp.readyState == 4 && xhttp.status == 200) { 
-                /*Get the response*/
-                var response = xhttp.responseText; 
+	        /*Receive data*/
+	        xhttp.onreadystatechange = function() {
+	            if (xhttp.readyState == 4 && xhttp.status == 200) { 
+	                /*Get the response*/
+	                var response = xhttp.responseText; 
 
-                /*Parse the response*/
-                var nbWellPlaced = Number(response[0]);
-                var nbNotWellPlaced = Number(response[1]);
-                var len = nbWellPlaced + nbNotWellPlaced; 
+	                /*Parse the response*/
+	                var nbWellPlaced = Number(response[0]);
+	                var nbNotWellPlaced = Number(response[1]);
+	                var len = nbWellPlaced + nbNotWellPlaced; 
 
-                /*Display the result*/
-                for (var i = 0; i < len; i++) {
-                    var res = document.getElementById("res" + nbGuess + i);
-                    if (nbWellPlaced > 0) {
-                        res.style.backgroundColor = "red";
-                        nbWellPlaced--;
-                    } else {
-                        res.style.backgroundColor = "white";
-                    }
-                } 
+	                /*Display the result*/
+	                for (var i = 0; i < len; i++) {
+	                    var res = document.getElementById("res" + nbGuess + i);
+	                    if (nbWellPlaced > 0) {
+	                        res.style.backgroundColor = "red";
+	                        nbWellPlaced--;
+	                    } else {
+	                        res.style.backgroundColor = "white";
+	                    }
+	                } 
 
-                /*Check if user won*/
-                if (response[0] == 4) {
-                    alert("YOU WIN !");
-                    setTimeout(function() {document.location = "play.html"}, 2000);
-                } 
+	                /*Check if user won*/
+	                if (response[0] == 4) {
+	                    alert("YOU WIN !");
+	                    setTimeout(function() {document.location = "play.html"}, 2000);
+	                } 
 
-                /*Decrease number of guesses left*/
-                nbGuess--; 
+	                /*Decrease number of guesses left*/
+	                nbGuess--; 
 
-                /*Check if user lost*/
-                if (nbGuess < 0) {
-                    alert("GAME OVER !");
-                    setTimeout(function() {document.location = "play.html"}, 2000);
-                }
-            }
-        }; 
+	                /*Check if user lost*/
+	                if (nbGuess < 0) {
+	                    alert("GAME OVER !");
+	                    setTimeout(function() {document.location = "play.html"}, 2000);
+	                }
+	            }
+	        }; 
 
-        /*Send request with GET*/
-        xhttp.open("GET", 'play.html?choice0=' + countBtn[0] + '&choice1=' + countBtn[1] + '&choice2=' + countBtn[2] + '&choice3=' + countBtn[3], true);
-        xhttp.send();
-    });
+	        /*Send request with GET*/
+	        xhttp.open("GET", 'play.html?choice0=' + countBtn[0] + '&choice1=' + countBtn[1] + '&choice2=' + countBtn[2] + '&choice3=' + countBtn[3], true);
+	        xhttp.send();
+	    });
 
-</script>
-​
-
-   
+	</script>
+​   
 	</body>
 </html>
