@@ -8,7 +8,7 @@ public class WebServerWorker implements Runnable {
 
 	private Socket workerSock;
 	private static int newCookie = 0;
-	private boolean gzipEnabled = true;
+	private boolean gzipEnabled = false;
 
 	public WebServerWorker(Socket clientSocket){
 		workerSock = clientSocket;
@@ -44,7 +44,8 @@ public class WebServerWorker implements Runnable {
 
 			
 			//Shows the main page and create new game : chunked encoding
-			else if((requestType.equals("GET") && path.equals("/play.html")) || (requestType.equals("POST") && path.equals("/replay.html"))){
+			else if((requestType.equals("GET") && path.equals("/play.html")) || 
+					(requestType.equals("POST") && path.equals("/replay.html"))){
 				
 				//Creating new game
 				newCookie++;
@@ -159,6 +160,7 @@ public class WebServerWorker implements Runnable {
 			}
 
 
+
 			//All others paths, these are wrong
 			else if(requestType.equals("GET")){
 
@@ -169,18 +171,20 @@ public class WebServerWorker implements Runnable {
 				//Generate the HTML error page
 				String error404 = generateError("404 NOT FOUND");
 				
-  				workerOut.print(error404.toString());
+  				//workerOut.print(error404.toString());
 				workerOut.flush();
 				workerOut.close();
 
 			}
+			
+	
 
 
 			istream.close();
 
-		}
+		
 
-		catch(Exception e){
+		}catch(Exception e){
 			e.printStackTrace();
 		}
 	}
@@ -196,5 +200,7 @@ public class WebServerWorker implements Runnable {
 		page.append("</head>");
 		page.append("<body><div class=\"message\"><p> <b>"+ error +"</b></p></div></body>");
 		page.append("</html>");
+
+		return page.toString();
 	}
 }

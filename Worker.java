@@ -15,9 +15,7 @@ public class Worker implements Runnable {
 		  WHITE,
 		  BLACK;
 	}
-	/*
-	private Socket workersock;
-	*/
+	
 	private PipedOutputStream workerOut;
 	private PipedInputStream workerIn;
 	
@@ -35,21 +33,14 @@ public class Worker implements Runnable {
 	
 	//Constructor
 	Worker(PipedOutputStream out,PipedInputStream in){
-
-		System.out.println("Worker created");
-
 		this.workerOut = out;
 		this.workerIn = in;
-		/*workersock = sock;*/
 	}
 	
 	
 	public void run(){
 
 		try {
-			/*workerOut = workersock.getOutputStream();
-			workerIn = workersock.getInputStream();
-			*/
 			boolean playGame = true;
 			
 			while(playGame){
@@ -105,36 +96,13 @@ public class Worker implements Runnable {
 					String guessedcombination = clientMessage.substring(2, length);
 					guessCombination(guessedcombination);
 				}
-
-				/*
-				//Unknown message
-				else{
-					
-					sendMessage("14");	
-				}
-				*/
 			}
 		
-		/*	
-		}catch(SocketTimeoutException e){
-			System.err.println("The connection timed out");	
-		}catch(SocketException e){
-			System.err.println("Connection with Client " + workersock.getPort() + " lost");
-		*/
+
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		/*
-		finally{
-			try{
-				workersock.close();
-			}catch(SocketException e){
-				System.err.println("The connection timed out");		
-			}catch(Exception e){
-				e.printStackTrace();
-			}
-		}
-		*/
+
 	}
 	
 	/*
