@@ -1,7 +1,8 @@
 import java.io.*;
 import java.net.*; 
 
-
+//Thread handling a connection to a client, analysing the HTTP Requests
+// and reacting appropriately
 public class WebServerWorker implements Runnable {
 
 	//Variables
@@ -80,7 +81,8 @@ public class WebServerWorker implements Runnable {
 				//*************HTTP - Body********************/
 
 			    String previousexchanges = ""; //Empty previous exchanges to create blank page
-    			HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges,socketOut,header.toString(),gzipEnabled);
+    			HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges,socketOut,
+    														header.toString(),gzipEnabled);
 				myhtmlcreator.createPage();			
 			}
 			
@@ -101,7 +103,8 @@ public class WebServerWorker implements Runnable {
 				int wellPlacedColor = Character.getNumericValue(result.charAt(0));
 				int numberOfGuesses = 0;
 
-				//Get the result of the guess and all the exchanges, including the number of total exchanges
+				//Get the result of the guess and all the exchanges, including 
+				//the number of total exchanges
 			   	String previousexchanges = GameInterface.getPreviousExchanges(cookie);
 
 	   			if(previousexchanges.length() > 0 && previousexchanges.length() <= 55){
@@ -156,7 +159,8 @@ public class WebServerWorker implements Runnable {
 				int wellPlacedColor = Character.getNumericValue(result.charAt(0));
 				int numberOfGuesses = 0;
 
-				//Get the result of the guess and all the exchanges, including the number of total exchanges
+				//Get the result of the guess and all the exchanges, 
+				//including the number of total exchanges
 			   	String previousexchanges = GameInterface.getPreviousExchanges(cookie);
 
 	   			if(previousexchanges.length() > 0 && previousexchanges.length() <= 55){
@@ -187,8 +191,10 @@ public class WebServerWorker implements Runnable {
 			    header.append("\r\n");
 			  
 				//*************HTTP - Body ********************/
-			    //POST request needs to recreate the whole page, so we're passing all the previous guesses as argument
-	    		HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges,socketOut,header.toString(),gzipEnabled);
+			    //POST request needs to recreate the whole page, so we're passing 
+			    //all the previous guesses as argument
+	    		HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges,socketOut,
+	    													header.toString(),gzipEnabled);
 				myhtmlcreator.createPage();			
 			}
 

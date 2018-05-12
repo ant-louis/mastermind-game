@@ -3,6 +3,7 @@ import java.net.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+//Class connecting to the client and creating the threadpool to handle connections
 public class WebServer {
 	
 	public static void main (String argv[]) {
