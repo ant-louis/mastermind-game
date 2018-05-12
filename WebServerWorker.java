@@ -8,7 +8,7 @@ public class WebServerWorker implements Runnable {
 
 	private Socket workerSock;
 	private static int newCookie = 0;
-
+	private boolean gzipEnabled = false;
 
 	public WebServerWorker(Socket clientSocket){
 		workerSock = clientSocket;
@@ -29,9 +29,6 @@ public class WebServerWorker implements Runnable {
 		    //boolean acceptGzip = httpparser.acceptGzipEncoding();
 		    //Get the cookie associated with the request
 		    int cookie = httpparser.getCookie();
-		    System.out.println("Cookie: " + cookie);
-
-
 			
 			
 			//When the path requested is "/", we're redirecting to "/play.html"
@@ -54,19 +51,21 @@ public class WebServerWorker implements Runnable {
 				GameInterface.createGame(newCookie);
 
 				//Headers
-		    	workerOut.print("HTTP/1.1 200 OK\r\n");
-			    workerOut.print("Content-Type: text/html\r\n");
-			    workerOut.print("Connection: close\r\n");
-			    workerOut.print("Transfer-Encoding: chunked\r\n");
-			    workerOut.print("Set-Cookie: SESSID=" + newCookie + "; path=/\r\n");
-			    workerOut.print("\r\n");
+				StringBuilder header = new StringBuilder();
+		    	header.append("HTTP/1.1 200 OK\r\n");
+			    header.append("Content-Type: text/html\r\n");
+			    header.append("Connection: close\r\n");
+			    //If gzip is not enabled, we chunk
+			    if(!gzipEnabled){
+			    	header.append("Transfer-Encoding: chunked\r\n");
+			    }
+			    header.append("Set-Cookie: SESSID=" + newCookie + "; path=/\r\n");
+			    header.append("\r\n");
 
 				//Body					    
-			    System.out.println("Main Cookie: " + cookie);
 
 			    String previousexchanges = ""; //Empty previous exchanges to create blank page
-	    		boolean gzipEnabled = true;
-    			HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges,workerOut,gzipEnabled);
+    			HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges,workerOut,header.toString(),gzipEnabled);
 				myhtmlcreator.createPage();			
 			}
 			
@@ -86,7 +85,6 @@ public class WebServerWorker implements Runnable {
 
 				//Get the result of the guess and all the exchanges ,
 				// including the number of total exchanges
-				System.out.println("Result of GET:" +result);
 			   	String previousexchanges = GameInterface.getPreviousExchanges(cookie);
 
 	   			if(previousexchanges.length() > 0 && previousexchanges.length() <= 55){
@@ -96,10 +94,6 @@ public class WebServerWorker implements Runnable {
 				else if(previousexchanges.length() > 55){
 					numberOfGuesses = Integer.parseInt(previousexchanges.substring(0,2));
 				}
-
-
-		   		System.out.println("Number of gueses : " + numberOfGuesses);
-		   		System.out.println("wellPlacedColor : " + wellPlacedColor);
 
 
 				/**************HTTP Header**************/
@@ -119,6 +113,7 @@ public class WebServerWorker implements Runnable {
 				//Body consists only of the result, no need to chunk or compress
 			    workerOut.print(result); 
 			    workerOut.flush();
+			    workerOut.close();
 			}
 
 
@@ -138,7 +133,6 @@ public class WebServerWorker implements Runnable {
 
 				//Get the result of the guess and all the exchanges ,
 				//including the number of total exchanges
-				System.out.println("Result of POST:" +result);
 			   	String previousexchanges = GameInterface.getPreviousExchanges(cookie);
 
 	   			if(previousexchanges.length() > 0 && previousexchanges.length() <= 55){
@@ -150,29 +144,29 @@ public class WebServerWorker implements Runnable {
 				}
 
 
-		   		System.out.println("Number of gueses : " + numberOfGuesses);
-		   		System.out.println("wellPlacedColor : " + wellPlacedColor);
 
 				/**************HTTP Header**************/
-		    	workerOut.print("HTTP/1.1 200 OK\r\n");
-			    workerOut.print("Content-Type: text/html\r\n");
-			    workerOut.print("Connection: close\r\n");
-			    workerOut.print("Transfer-Encoding: chunked\r\n");
-		   		//If we won or lost, we must delete the cookie.
+				StringBuilder header = new StringBuilder();
+
+		    	header.append("HTTP/1.1 200 OK\r\n");
+			    header.append("Content-Type: text/html\r\n");
+			    header.append("Connection: close\r\n");
+			    //If gzip is not enabled, we chunk
+			    if(!gzipEnabled){
+			    	header.append("Transfer-Encoding: chunked\r\n");
+			    }		   		
+			    //If we won or lost, we must delete the cookie.
 			   	if(numberOfGuesses == 12 || wellPlacedColor == 4){
-			   		System.out.println("deleted cookie");
-			    	workerOut.print("Set-Cookie: SESSID=deleted; path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT\r\n");
+			    	header.append("Set-Cookie: SESSID=deleted; path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT\r\n");
 			   	}
-			    workerOut.print("\r\n");
+			    header.append("\r\n");
 			    /**************************************/
 
 				/**************HTTP Body**************/
 
 			    //POST request needs to recreate the whole page, so we're passing 
 			    //all the previous guesses as argument
-			    System.out.println("POST Cookie: " + cookie);
-	    		boolean gzipEnabled = false;
-	    		HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges,workerOut,gzipEnabled);
+	    		HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges,workerOut,header.toString(),gzipEnabled);
 				myhtmlcreator.createPage();			
 			}
 
@@ -182,41 +176,33 @@ public class WebServerWorker implements Runnable {
 			//All others paths, these are wrong
 			else if(requestType.equals("GET")){
 
-				System.out.println("Redirecting...");
 				//Headers
 				workerOut.print("HTTP/1.1 404 Not Found\r\n");
 				workerOut.print("\r\n");
 
 				//Body
-				StringBuilder page = new StringBuilder();
+				StringBuilder error404 = new StringBuilder();
 
-				page.append("<!DOCTYPE html><html>");
-				page.append("<head><meta charset=\"utf-8\"/><title>Error 404</title>");
-				page.append("<style>body{font-family: \"Times New Roman\", Arial, serif;font-weight: normal; background-image: radial-gradient(circle at center, rgb(180,255,160), rgb(10,50,0));} .message{font-size: 5em; text-align: center; color: rgb(10,50,0);} .explain{margin: 10%; font-size: 2em; text-align: center; color: rgb(10,50,0);}</style>");
-				page.append("</head>");
-				page.append("<body><div class=\"message\"><p> <b> 404 NOT FOUND ! b></</p></div> <div class=\"explain\"> <p>The requested URL was not found on this server.</p></div></body>");
-				page.append("</html>");
+				error404.append("<!DOCTYPE html><html>");
+				error404.append("<head><meta charset=\"utf-8\"/><title>Error 404</title>");
+				error404.append("<style>body{font-family: \"Times New Roman\", Arial, serif;font-weight: normal; background-image: radial-gradient(circle at center, rgb(180,255,160), rgb(10,50,0));} .message{font-size: 5em; text-align: center; color: rgb(10,50,0);} .explain{margin: 10%; font-size: 2em; text-align: center; color: rgb(10,50,0);}</style>");
+				error404.append("</head>");
+				error404.append("<body><div class=\"message\"><p> <b> 404 NOT FOUND ! b></</p></div> <div class=\"explain\"> <p>The requested URL was not found on this server.</p></div></body>");
+				error404.append("</html>");
 
-  				workerOut.print(page.toString());
+  				workerOut.print(error404.toString());
 				workerOut.flush();
+				workerOut.close();
 
 			}
 
 
 			istream.close();
-			workerOut.close();
 
 		}
 
 		catch(Exception e){
 			e.printStackTrace();
-		}finally{
-			try{
-				workerSock.close();
-			}
-			catch(Exception e1){
-				e1.printStackTrace();
-			}
 		}
 	}
 
