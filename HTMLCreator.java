@@ -2,7 +2,7 @@ import java.io.*;
 import java.net.*; 
 import java.util.zip.GZIPOutputStream;
 
-//Interface between the Worker Class and the WebServerWorker class
+//Class to dynamically create the HTML webpage
 public class HTMLCreator {
 	//ALl the different colors in the Mastermind game
 	private enum colors {

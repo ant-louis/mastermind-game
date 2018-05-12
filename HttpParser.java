@@ -4,6 +4,7 @@ import java.lang.StringBuilder.*;
 import java.util.Map;
 import java.util.HashMap;
 
+//Class to parse the HTTP request and extract useful information
 public class HttpParser {
 
 	//Variables
@@ -30,7 +31,7 @@ public class HttpParser {
 	
 	/********************************************************************************
 	 * Extracts the first line of the header
-	 * Must always be called first before the rest of the header methods
+	 * Must always be called first before the getRemainingHeader() method
 	 *
 	 * ARGUMENTS : /
 	 *
