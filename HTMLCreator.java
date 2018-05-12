@@ -175,8 +175,19 @@ public class HTMLCreator {
 	}
 
 
-	/************************************CREATING CSS**********************************************/
-	//CSS style for one bubble 
+	/*------------------------------------CREATING CSS-------------------------------------------*/
+	
+
+	/********************************************************************************
+	 * CSS style for one bubble
+	 *
+	 * ARGUMENTS :
+	 *	- nbGuess : integer representing the index of the row
+	 *	- i : integer representing the index of the bubble in the row
+	 *	- color: integer representing the color of the bubble
+	 *
+	 * RETURNS : /
+	 ********************************************************************************/
 	private void createBubbleCSS(int nbGuess, int i, int color)throws IOException{
 
 		sendChunkLine("#bub"+Integer.toString(nbGuess)+Integer.toString(i));
@@ -195,7 +206,17 @@ public class HTMLCreator {
 
 	}
 
-	//CSS style for one result
+	
+	/********************************************************************************
+	 * CSS style for one result
+	 *
+	 * ARGUMENTS :
+	 *	- nbGuess : integer representing the index of the row
+	 *	- i : integer representing the index of the bubble in the row
+	 *	- color: integer representing the color of the bubble
+	 *
+	 * RETURNS : /
+	 ********************************************************************************/
 	private void createResultCSS(int nbGuess, int i, int color) throws IOException{
 
 		sendChunkLine("#res"+Integer.toString(nbGuess)+Integer.toString(i));
@@ -215,7 +236,15 @@ public class HTMLCreator {
 	}
 
 
-	//Creates the CSS template for one row of bubble buttons
+	/********************************************************************************
+	 * Creates the CSS template for one row of bubble buttons
+	 *
+	 * ARGUMENTS :
+	 *	- nbGuess : integer representing the index of the row
+	 *	- combination : string representing the color combination of the guess
+	 *
+	 * RETURNS : /
+	 ********************************************************************************/
 	private void createBubble(int nbGuess, String combination) throws IOException{
 
 		//Creating buttons according to each color
@@ -225,8 +254,17 @@ public class HTMLCreator {
 		}
 	}
 
-	//Creates the CSS template for one row of result buttons
 
+	/********************************************************************************
+	 * Creates the CSS template for one row of result buttons
+	 *
+	 * ARGUMENTS :
+	 *	- nbGuess : integer representing the index of the row
+	 *	- placedright : integer representing the number of good colors well placed
+	 *	- ispresent : integer representing the number of badly placed good colors
+	 *
+	 * RETURNS : /
+	 ********************************************************************************/
 	private void createResult(int nbGuess, int placedright, int ispresent) throws IOException{
 
 		int i;
@@ -247,7 +285,14 @@ public class HTMLCreator {
 		}
 	}
 
-	//Creates the CSS template for all buttons
+
+	/********************************************************************************
+	 * Creates the CSS template for all buttons
+	 *
+	 * ARGUMENTS : /
+	 *
+	 * RETURNS : /
+	 ********************************************************************************/
 	private void createAllButtons() throws IOException{
 
 		int nbGuess = 11;
@@ -287,9 +332,15 @@ public class HTMLCreator {
 	
 
 
-	/**************************************CREATE HTML******************************************/
+	/*-------------------------------------CREATE HTML-------------------------------------------*/
 
-	//Creates all the board
+	/********************************************************************************
+	 * Creates all the board
+	 *
+	 * ARGUMENTS : /
+	 *
+	 * RETURNS : /
+	 ********************************************************************************/
 	private void createBoard() throws IOException{
 
 		//Mastermind board
@@ -300,7 +351,13 @@ public class HTMLCreator {
 	}
 
 
-	//Creates the mastermind board (guesses and results)
+	/********************************************************************************
+	 * Creates the mastermind board (guesses and results)
+	 *
+	 * ARGUMENTS : /
+	 *
+	 * RETURNS : /
+	 ********************************************************************************/
 	private void createMastermindBoard() throws IOException{
 
 		sendChunkLine("<div class=\"mastermind-board\">");
@@ -320,7 +377,13 @@ public class HTMLCreator {
 	}
 
 
-	//Creates a row (one guess and its result)
+	/********************************************************************************
+	 * Creates a row (one guess and its result)
+	 *
+	 * ARGUMENTS : /
+	 *
+	 * RETURNS : /
+	 ********************************************************************************/
 	private void createRow(int index) throws IOException{
 
 		sendChunkLine("<div class=\"guess-row flexer\">");
@@ -335,7 +398,14 @@ public class HTMLCreator {
 
 	}
 
-	//Creates a guess box
+
+	/********************************************************************************
+	 * Creates a guess box
+	 *
+	 * ARGUMENTS : /
+	 *
+	 * RETURNS : /
+	 ********************************************************************************/
 	private void createGuessBox(int index) throws IOException{
 
 		sendChunkLine("<div class=\"guess-box flexer\">");
@@ -349,7 +419,14 @@ public class HTMLCreator {
 
 	}
 
-	//Creates a result box
+	
+	/********************************************************************************
+	 * Creates a result box
+	 *
+	 * ARGUMENTS : /
+	 *
+	 * RETURNS : /
+	 ********************************************************************************/
 	private void createResultBox(int index) throws IOException{
 
 		sendChunkLine("<div class=\"result-box flexer\">");
@@ -363,7 +440,14 @@ public class HTMLCreator {
 
 	}
 
-	//Creates the selection board
+	
+	/********************************************************************************
+	 * Creates the selection board
+	 *
+	 * ARGUMENTS : /
+	 *
+	 * RETURNS : /
+	 ********************************************************************************/
 	private void createSelectionBoard() throws IOException{
 
 		//-------If JS enabled-----------
