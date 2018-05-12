@@ -30,7 +30,7 @@ public class HTMLCreator {
 
 		//Enable compression or not
 		this.gzipEnabled = gzipEnabled;
-		System.out.println("Chunked encoding:" + this.gzipEnabled);
+		System.out.println("Chunked encoding(opposite of gzip):" + !this.gzipEnabled);
 		//Get the header of the response
 		this.header = header;
 
@@ -135,6 +135,8 @@ public class HTMLCreator {
 	public void sendChunkLine(String line){ //NEED TO CLOSE IT SOMEWHERE
 		//If compression is enabled, we only compress instead of chunking
 		if(gzipEnabled){
+			//System.out.println("Normal encoding");
+			System.out.println(line);
 			chunkedOut.println(line);
 			chunkedOut.flush();
 
@@ -150,9 +152,7 @@ public class HTMLCreator {
 	//CSS style for one bubble 
 	private void createBubbleCSS(int nbGuess, int i, int color){
 
-		sendChunkLine("#bub");
-		sendChunkLine(Integer.toString(nbGuess));
-		sendChunkLine(Integer.toString(i));
+		sendChunkLine("#bub"+Integer.toString(nbGuess)+Integer.toString(i));
 		sendChunkLine("{height:70%;");
 		sendChunkLine("width:12%;");
 		sendChunkLine("border-radius: 50%;");
@@ -170,9 +170,8 @@ public class HTMLCreator {
 
 	//CSS style for one result
 	private void createResultCSS(int nbGuess, int i, int color){
-		sendChunkLine("#res");
-		sendChunkLine(Integer.toString(nbGuess));
-		sendChunkLine(Integer.toString(i));
+		
+		sendChunkLine("#res"+Integer.toString(nbGuess)+Integer.toString(i));
 		sendChunkLine("{height:30%;");
 		sendChunkLine("width:12%;");
 		sendChunkLine("border-radius: 50%;");
