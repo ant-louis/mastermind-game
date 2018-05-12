@@ -51,7 +51,6 @@ public class HttpParser {
 
 		this.requestType = tokens[0];
 		this.path = tokens[1];
-		System.out.println(tokens[2]);
 	}
 
 	//Returns the request type of the HTTP request
@@ -83,7 +82,6 @@ public class HttpParser {
        		c = (char) parserIn.read();
        		//Appending to the line buffering the current line we're parsing
    			headerLine.append(c);
-   			System.out.print(c);
 		    //End of line reached, storing as a map
        		if (c == '\n' && headerLine != null){
        			String line = headerLine.toString();

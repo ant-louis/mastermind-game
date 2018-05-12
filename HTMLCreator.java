@@ -30,7 +30,6 @@ public class HTMLCreator {
 
 		//Enable compression or not
 		this.gzipEnabled = gzipEnabled;
-		System.out.println("Chunked encoding(opposite of gzip):" + !this.gzipEnabled);
 		//Get the header of the response
 		this.header = header;
 
@@ -68,8 +67,15 @@ public class HTMLCreator {
 	public void createPage(){
 
 		try{
+
+			//HTTP Header
+			chunkedOut.print(header);
+
+			/**************HTML******************/
+
 			//User won
 			if(result == 4){
+
 				sendChunkLine("<!DOCTYPE html><html>");
 				sendChunkLine("<head><meta charset=\"utf-8\"/><title>You won</title>");
 				sendChunkLine("<style>body{font-family: \"Times New Roman\", Arial, serif;font-weight: normal; background-image: radial-gradient(circle at center, rgb(180,255,160), rgb(10,50,0));}.message{height:100%; font-size: 5em; text-align: center; color: rgb(10,50,0);}.submit-btn{border-radius: 10px; background-color: rgb(10,50,0); color: white; text-align: center; font-size: 28px; padding: 20px; width: 200px; cursor: pointer; margin-left: 43%;}</style>");
@@ -91,10 +97,8 @@ public class HTMLCreator {
 			//Generate normal page
 			else{
 
-				//HTTP Header
-				chunkedOut.print(header);
 
-				/**************HTML******************/
+
 				//Headers
 				sendChunkLine("<!DOCTYPE html><html><head><meta charset=\"utf-8\" /><title>Mastermind</title>");
 
@@ -135,8 +139,6 @@ public class HTMLCreator {
 	public void sendChunkLine(String line){ //NEED TO CLOSE IT SOMEWHERE
 		//If compression is enabled, we only compress instead of chunking
 		if(gzipEnabled){
-			//System.out.println("Normal encoding");
-			System.out.println(line);
 			chunkedOut.println(line);
 			chunkedOut.flush();
 
@@ -170,7 +172,7 @@ public class HTMLCreator {
 
 	//CSS style for one result
 	private void createResultCSS(int nbGuess, int i, int color){
-		
+
 		sendChunkLine("#res"+Integer.toString(nbGuess)+Integer.toString(i));
 		sendChunkLine("{height:30%;");
 		sendChunkLine("width:12%;");

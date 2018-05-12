@@ -1,14 +1,14 @@
 import java.io.*;
 import java.net.*; 
 import java.util.concurrent.TimeUnit;
-import java.util.Map;
-import java.util.HashMap;	
+import java.util.AbstractMap.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WebServerWorker implements Runnable {
 
 	private Socket workerSock;
 	private static int newCookie = 0;
-	private boolean gzipEnabled = true;
+	private boolean gzipEnabled = false;
 
 	public WebServerWorker(Socket clientSocket){
 		workerSock = clientSocket;
@@ -44,7 +44,8 @@ public class WebServerWorker implements Runnable {
 
 			
 			//Shows the main page and create new game : chunked encoding
-			else if((requestType.equals("GET") && path.equals("/play.html")) || (requestType.equals("POST") && path.equals("/replay.html"))){
+			else if((requestType.equals("GET") && path.equals("/play.html")) || 
+					(requestType.equals("POST") && path.equals("/replay.html"))){
 				
 				//Creating new game
 				newCookie++;
@@ -165,16 +166,18 @@ public class WebServerWorker implements Runnable {
 			}
 
 
+
 			//All others paths, these are wrong
 			else if(requestType.equals("GET")){
 				generateError("404 Not Found", workerOut);
 			}
 
-
 			//If request type different from GET or POST
 			else if(!requestType.equals("GET") && !requestType.equals("POST")){
 				generateError("501 Not Implemented", workerOut);
 			}
+			
+	
 
 			//In all other cases
 			else{

@@ -15,9 +15,7 @@ public class Worker implements Runnable {
 		  WHITE,
 		  BLACK;
 	}
-	/*
-	private Socket workersock;
-	*/
+	
 	private PipedOutputStream workerOut;
 	private PipedInputStream workerIn;
 	
@@ -35,21 +33,14 @@ public class Worker implements Runnable {
 	
 	//Constructor
 	Worker(PipedOutputStream out,PipedInputStream in){
-
-		System.out.println("Worker created");
-
 		this.workerOut = out;
 		this.workerIn = in;
-		/*workersock = sock;*/
 	}
 	
 	
 	public void run(){
 
 		try {
-			/*workerOut = workersock.getOutputStream();
-			workerIn = workersock.getInputStream();
-			*/
 			boolean playGame = true;
 			
 			while(playGame){
@@ -79,7 +70,6 @@ public class Worker implements Runnable {
 
 				//List previous exchanges ("12")
 				else if(clientMessage.startsWith("12") && length == 2){
-					System.out.println("Worker listing exchanges");
 
 					StringBuilder builder = new StringBuilder("13");
 					
@@ -100,41 +90,17 @@ public class Worker implements Runnable {
 
 				//Guess a combination (ex: "121345")
 				else if(clientMessage.startsWith("12") && length == (2 + 4)){
-					System.out.println("Worker guessing combination");
 
 					String guessedcombination = clientMessage.substring(2, length);
 					guessCombination(guessedcombination);
 				}
-
-				/*
-				//Unknown message
-				else{
-					
-					sendMessage("14");	
-				}
-				*/
 			}
 		
-		/*	
-		}catch(SocketTimeoutException e){
-			System.err.println("The connection timed out");	
-		}catch(SocketException e){
-			System.err.println("Connection with Client " + workersock.getPort() + " lost");
-		*/
+
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		/*
-		finally{
-			try{
-				workersock.close();
-			}catch(SocketException e){
-				System.err.println("The connection timed out");		
-			}catch(Exception e){
-				e.printStackTrace();
-			}
-		}
-		*/
+
 	}
 	
 	/*
