@@ -47,7 +47,8 @@ public class HTMLCreator {
 		else{
 			this.result = 0;
 		}
-	}	
+
+	}
 
 
 	//Create the page

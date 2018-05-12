@@ -11,11 +11,12 @@ public class HttpParser {
 	private String path;
 	private Map<String, String> headerMap = new HashMap<>();
 
-
+	
 	public HttpParser(InputStreamReader istream){
 		parserIn = istream;
 
 		try{
+
 			getFirstHeaderLine();
 			getRemainingHeader();
 
@@ -25,6 +26,34 @@ public class HttpParser {
 	}	
 
 
+
+	//A method that extract the first line of the header
+	//Must always be called first before the rest of the header methods
+	private void getFirstHeaderLine() throws IOException {
+		// String colors = "GET /play.html?param1=1&param2=2&param3=3&param4=4";
+		// System.out.println(colors);
+
+		String buffer = "";
+		char c;
+
+		//Reading the first line of the header
+		
+		do{
+			c = (char) parserIn.read();
+			buffer += c +"";
+			if(c == '\n'){
+				break;
+			}
+
+		}while(c != -1);
+		
+		//Splitting into tokens, the first one being the request type
+		//The second being the requested path
+		String[] tokens = buffer.split(" ");
+
+		this.requestType = tokens[0];
+		this.path = tokens[1];
+	}
 
 	//Returns the request type of the HTTP request
 	public String getRequestType(){
@@ -39,6 +68,53 @@ public class HttpParser {
 
 	public Map<String,String> getMap(){
 		return this.headerMap;
+	}
+
+
+	//Gets the remaining header and stores each line in a map, 
+	//where the key is the first keyword (before ':') and the 
+	//value is the rest of the line
+	private void getRemainingHeader() throws IOException {
+       	StringBuilder headerLine = new StringBuilder();
+       	StringBuilder entireHeader = new StringBuilder();
+       	char c;
+
+       	do{
+
+       		c = (char) parserIn.read();
+       		//Appending to the line buffering the current line we're parsing
+   			headerLine.append(c);
+
+		    //End of line reached, storing as a map
+       		if (c == '\n' && headerLine != null){
+       			String line = headerLine.toString();
+       			String[] tokens = line.split(":");
+       			
+       			//Putting into map
+       			if(tokens != null && tokens.length == 2){
+       				//Small manipulation because the stored key is "\nCookie" otherwise
+       				tokens[0] = tokens[0].substring(1,tokens[0].length());
+       				headerMap.put(tokens[0],tokens[1]);
+       			}
+
+       			//Append to the string containing the whole header
+       			entireHeader.append(line);
+
+       			//Delete the line once it's mapped
+       			headerLine.delete(0,headerLine.length()-1);
+       		}
+
+       		int currentLength = entireHeader.length();
+  			
+		    //Check end of header
+       		if (currentLength > 4 &&
+   				entireHeader.charAt(currentLength - 1) == '\n'&&
+				entireHeader.charAt(currentLength - 2) == '\r' &&
+				entireHeader.charAt(currentLength - 3) == '\n'){
+				break; 
+			}
+			
+   		}while(c != -1);
 	}
 
 	public String getGuess_POST() throws IOException{
@@ -96,90 +172,6 @@ public class HttpParser {
 
 		return new String(colors);
 	}
-
-	public boolean acceptGzipEncoding() {
-		String acceptEncoding;
-		if((acceptEncoding = headerMap.get("Accept-Encoding")) == null){
-			return false;
-		}
-		return acceptEncoding.contains("gzip");
-	}
-
-
-	//A method that extract the first line of the header
-	//Must always be called first before the rest of the header methods
-	private void getFirstHeaderLine() throws IOException {
-		// String colors = "GET /play.html?param1=1&param2=2&param3=3&param4=4";
-		// System.out.println(colors);
-
-		String buffer = "";
-		char c;
-
-		//Reading the first line of the header
-		
-		do{
-			c = (char) parserIn.read();
-			buffer += c +"";
-			if(c == '\n'){
-				break;
-			}
-
-		}while(c != -1);
-		
-		//Splitting into tokens, the first one being the request type
-		//The second being the requested path
-		String[] tokens = buffer.split(" ");
-
-		this.requestType = tokens[0];
-		this.path = tokens[1];
-	}
-
-	//Gets the remaining header and stores each line in a map, 
-	//where the key is the first keyword (before ':') and the 
-	//value is the rest of the line
-	private void getRemainingHeader() throws IOException {
-       	StringBuilder headerLine = new StringBuilder();
-       	StringBuilder entireHeader = new StringBuilder();
-       	char c;
-
-       	do{
-
-       		c = (char) parserIn.read();
-       		//Appending to the line buffering the current line we're parsing
-   			headerLine.append(c);
-
-		    //End of line reached, storing as a map
-       		if (c == '\n' && headerLine != null){
-       			String line = headerLine.toString();
-       			String[] tokens = line.split(":");
-       			
-       			//Putting into map
-       			if(tokens != null && tokens.length == 2){
-       				//Small manipulation because the stored key is "\nCookie" otherwise
-       				tokens[0] = tokens[0].substring(1,tokens[0].length());
-       				headerMap.put(tokens[0],tokens[1]);
-       			}
-
-       			//Append to the string containing the whole header
-       			entireHeader.append(line);
-
-       			//Delete the line once it's mapped
-       			headerLine.delete(0,headerLine.length()-1);
-       		}
-
-       		int currentLength = entireHeader.length();
-  			
-		    //Check end of header
-       		if (currentLength > 4 &&
-   				entireHeader.charAt(currentLength - 1) == '\n'&&
-				entireHeader.charAt(currentLength - 2) == '\r' &&
-				entireHeader.charAt(currentLength - 3) == '\n'){
-				break; 
-			}
-			
-   		}while(c != -1);
-	}
-
 }	
 
 

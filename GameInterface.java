@@ -25,23 +25,20 @@ public class GameInterface {
 		return getResponse(cookie);
 	}
 
-
-	//Returns the previous exchanges and stores the total number of exchanges
 	public static String getPreviousExchanges(int cookie){
 
 		System.out.println("Getting previous exchanges");
 		PipedOutputStream gameOut = currentGamesOutput.get(cookie);
 
-		//The formatGuessToByte function automatically prepends "12"
+		//The formatGuessTobyte function automatically prepends "12"
 		byte[] formattedPrevExchanges = formatGuessToByte("");
-		System.out.println("formateddprevexchanges: " + formattedPrevExchanges);
+
 		try{
 			gameOut.write(formattedPrevExchanges);
 			gameOut.flush();
 		}catch(IOException ioe) {
 			ioe.printStackTrace();
 		}
-
 
 		return getResponse(cookie);
 	}
