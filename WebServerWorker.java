@@ -26,15 +26,12 @@ public class WebServerWorker implements Runnable {
 		    String requestType = httpparser.getRequestType();
 		    //Gets the path that is requested
 		    String path = httpparser.getPath();
+		    //boolean acceptGzip = httpparser.acceptGzipEncoding();
+		    //Get the cookie associated with the request
+		    int cookie = httpparser.getCookie();
+		    System.out.println("Cookie: " + cookie);
 
 
-
-		    System.out.print("Request type: ");
-			System.out.println(requestType);
-		    System.out.print("Path: ");
-			System.out.println(path);
-		    System.out.println("Cookie :" + httpparser.getCookie());
-		    int cookie;
 			
 			
 			//When the path requested is "/", we're redirecting to "/play.html"
@@ -65,7 +62,8 @@ public class WebServerWorker implements Runnable {
 			    workerOut.print("\r\n");
 
 				//Body					    
-			    
+			    System.out.println("Main Cookie: " + cookie);
+
 			    String previousexchanges = ""; //Empty previous exchanges to create blank page
 			    encodeChunks(workerOut,previousexchanges);
 			}
@@ -75,19 +73,48 @@ public class WebServerWorker implements Runnable {
 			//AJAX Request 
 			else if(requestType.equals("GET") && path.startsWith("/play.html?")){
 
+				//Get the guess from the header and submit it
 				cookie = httpparser.getCookie();
 				String guess = httpparser.getGuess_GET();
 				String result = GameInterface.submitGuess(cookie,guess);
-				System.out.println("Result:" +result);
+
+				//Extract the correct number of well placed colors
+				int wellPlacedColor = Character.getNumericValue(result.charAt(0));
+				int numberOfGuesses = 0;
+
+				//Get the result of the guess and all the exchanges ,
+				// including the number of total exchanges
+				System.out.println("Result of GET:" +result);
+			   	String previousexchanges = GameInterface.getPreviousExchanges(cookie);
+
+	   			if(previousexchanges.length() > 0 && previousexchanges.length() <= 55){
+
+					numberOfGuesses = Character.getNumericValue(previousexchanges.charAt(0));
+				}
+				else if(previousexchanges.length() > 55){
+					numberOfGuesses = Integer.parseInt(previousexchanges.substring(0,2));
+				}
+
+
+		   		System.out.println("Number of gueses : " + numberOfGuesses);
+		   		System.out.println("wellPlacedColor : " + wellPlacedColor);
+
+
+				/**************HTTP Header**************/
 
 		    	workerOut.print("HTTP/1.1 200 OK\r\n");
 			    workerOut.print("Content-Type: text/html\r\n");
 			    workerOut.print("Connection: close\r\n");
+		   		//If we won or lost, we must delete the cookie and delete the game
+			   	if(numberOfGuesses == 12 || wellPlacedColor == 4){
+			    	workerOut.print("Set-Cookie: SESSID=deleted; path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT\r\n");
+			    	GameInterface.deleteGame(cookie);
+			   	}
 			    workerOut.print("\r\n");
+				/*************************************/
 
-			    // Body - Consists only of the result
-			    workerOut.print(result);
-
+				/**************HTTP Body**************/
+			    workerOut.print(result); //Body consists only of the result, no need to chunk
 			    workerOut.flush();
 			}
 
@@ -96,22 +123,51 @@ public class WebServerWorker implements Runnable {
 
 			//POST request - may need to separate normal post and guess POST
 			else if(requestType.equals("POST") && path.equals("/play.html")){
+
+				//Submit the guess received in the body
 				cookie = httpparser.getCookie();
 				String guess = httpparser.getGuess_POST();
-				System.out.println("Guess:" + guess);
-				String result = GameInterface.submitGuess(cookie,guess); //Result not used
+				String result = GameInterface.submitGuess(cookie,guess); 
+
+				//Extract the correct number of well placed colors
+				int wellPlacedColor = Character.getNumericValue(result.charAt(0));
+				int numberOfGuesses = 0;
+
+				//Get the result of the guess and all the exchanges ,
+				//including the number of total exchanges
+				System.out.println("Result of POST:" +result);
+			   	String previousexchanges = GameInterface.getPreviousExchanges(cookie);
+
+	   			if(previousexchanges.length() > 0 && previousexchanges.length() <= 55){
+
+					numberOfGuesses = Character.getNumericValue(previousexchanges.charAt(0));
+				}
+				else if(previousexchanges.length() > 55){
+					numberOfGuesses = Integer.parseInt(previousexchanges.substring(0,2));
+				}
+
+
+		   		System.out.println("Number of gueses : " + numberOfGuesses);
+		   		System.out.println("wellPlacedColor : " + wellPlacedColor);
+
+				/**************HTTP Header**************/
 		    	workerOut.print("HTTP/1.1 200 OK\r\n");
 			    workerOut.print("Content-Type: text/html\r\n");
 			    workerOut.print("Connection: close\r\n");
 			    workerOut.print("Transfer-Encoding: chunked\r\n");
-
+		   		//If we won or lost, we must delete the cookie.
+			   	if(numberOfGuesses == 12 || wellPlacedColor == 4){
+			   		System.out.println("deleted cookie");
+			    	workerOut.print("Set-Cookie: SESSID=deleted; path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT\r\n");
+			   	}
 			    workerOut.print("\r\n");
+			    /**************************************/
 
-			    // Body
+				/**************HTTP Body**************/
 
-			    //POST request needs to recreate the whole page, so we're getting 
-			    //all the previous guesses and results
-			   	String previousexchanges = GameInterface.getPreviousExchanges(cookie);
+			    //POST request needs to recreate the whole page, so we're passing 
+			    //all the previous guesses as argument
+			    System.out.println("POST Cookie: " + cookie);
 		    	encodeChunks(workerOut,previousexchanges);
 			}
 
@@ -136,7 +192,7 @@ public class WebServerWorker implements Runnable {
 				page.append("<body><div class=\"message\"><p> <b> 404 NOT FOUND ! b></</p></div> <div class=\"explain\"> <p>The requested URL was not found on this server.</p></div></body>");
 				page.append("</html>");
 
-  				workerOut.print(page);
+  				workerOut.print(page.toString());
 
 				workerOut.flush();
 

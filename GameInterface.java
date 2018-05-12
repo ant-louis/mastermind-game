@@ -26,9 +26,13 @@ public class GameInterface {
 	}
 
 	public static String getPreviousExchanges(int cookie){
+	    System.out.println("Prev exchanges Cookie: " + cookie);
 
 		System.out.println("Getting previous exchanges");
 		PipedOutputStream gameOut = currentGamesOutput.get(cookie);
+
+	    System.out.println("pos: " + gameOut);
+
 
 		//The formatGuessTobyte function automatically prepends "12"
 		byte[] formattedPrevExchanges = formatGuessToByte("");
@@ -41,6 +45,12 @@ public class GameInterface {
 		}
 
 		return getResponse(cookie);
+	}
+
+	public static void deleteGame(int cookie){
+		currentGames.remove(cookie);
+		currentGamesOutput.remove(cookie);
+		currentGamesInput.remove(cookie);
 	}
 
 
