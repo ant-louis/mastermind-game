@@ -34,7 +34,7 @@ public class HTMLCreator {
 			this.nbExchanges = Integer.parseInt(previousExchanges.substring(0,2));
 		}
 		else{
-			this.nbExchanges = 0;
+			this.nbExchanges = 1;
 		}
 
 		//Get the result of the guess
@@ -56,20 +56,20 @@ public class HTMLCreator {
 		//User won
 		if(result == 4){
 			page.append("<!DOCTYPE html><html>");
-			page.append("<head><meta charset=\"utf-8\"/><title>Game Over</title>");
-			page.append("<style>body{font-family: \"Times New Roman\", Arial, serif;font-weight: normal; background-image: radial-gradient(circle at center, rgb(180,255,160), rgb(10,50,0));}.message{height:100%; font-size: 5em; text-align: center; color: rgb(10,50,0);}</style>");
+			page.append("<head><meta charset=\"utf-8\"/><title>You won</title>");
+			page.append("<style>body{font-family: \"Times New Roman\", Arial, serif;font-weight: normal; background-image: radial-gradient(circle at center, rgb(180,255,160), rgb(10,50,0));}.message{height:100%; font-size: 3.5em; text-align: center; color: rgb(10,50,0);}.button{width: 30%; height: 100%; margin: 0 auto; margin-left: 44%; padding: 10px;}.submit-button{width: 30%; height: 70%; border: 1px solid rgb(161,161,161); border-radius: 10px; text-align: center; box-shadow: 2px 2px 2px rgb(161,161,161); font-size: 2em; background-color: rgb(240,240,240); color:rgb(10,50,0);}</style>");
 			page.append("</head>");
-			page.append("<body><div class=\"message\"><p> CONGRATULATIONS, YOU WON ! </p></div></body>");
+			page.append("<body> <div class=\"message\"> <p> CONGRATULATIONS, YOU WON ! </p></div><form method=\"post\" action=\"replay.html\"> <div class=\"button\"> <input class=\"submit-button\" type=\"submit\" value=\"Replay\"/> </div></form> </body>");
 			page.append("</html>");
 		}
 
 		//User lost
-		else if(nbExchanges >= 11){
+		else if(nbExchanges > 11){
 			page.append("<!DOCTYPE html><html>");
 			page.append("<head><meta charset=\"utf-8\"/><title>Game Over</title>");
-			page.append("<style>body{font-family: \"Times New Roman\", Arial, serif;font-weight: normal; background-image: radial-gradient(circle at center, rgb(180,255,160), rgb(10,50,0));}.message{height:100%; font-size: 5em; text-align: center; color: rgb(10,50,0);}</style>");
+			page.append("<style>body{font-family: \"Times New Roman\", Arial, serif;font-weight: normal; background-image: radial-gradient(circle at center, rgb(180,255,160), rgb(10,50,0));}.message{height:100%; font-size: 3.5em; text-align: center; color: rgb(10,50,0);}.button{width: 30%; height: 100%; margin: 0 auto; margin-left: 44%; padding: 10px;}.submit-button{width: 30%; height: 70%; border: 1px solid rgb(161,161,161); border-radius: 10px; text-align: center; box-shadow: 2px 2px 2px rgb(161,161,161); font-size: 2em; background-color: rgb(240,240,240); color:rgb(10,50,0);}</style>");
 			page.append("</head>");
-			page.append("<body><div class=\"message\"><p> GAME OVER ! </p></div></body>");
+			page.append("<body> <div class=\"message\"> <p> GAME OVER ! </p></div><form method=\"post\" action=\"replay.html\"> <div class=\"button\"> <input class=\"submit-button\" type=\"submit\" value=\"Replay\"/> </div></form> </body>");
 			page.append("</html>");
 		}
 
