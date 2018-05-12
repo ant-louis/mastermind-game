@@ -30,8 +30,6 @@ public class HttpParser {
 	//A method that extract the first line of the header
 	//Must always be called first before the rest of the header methods
 	private void getFirstHeaderLine() throws IOException {
-		// String colors = "GET /play.html?param1=1&param2=2&param3=3&param4=4";
-		// System.out.println(colors);
 
 		String buffer = "";
 		char c;
@@ -53,6 +51,7 @@ public class HttpParser {
 
 		this.requestType = tokens[0];
 		this.path = tokens[1];
+		System.out.println(tokens[2]);
 	}
 
 	//Returns the request type of the HTTP request
