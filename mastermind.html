@@ -7,7 +7,7 @@
         	body {
 				font-family: "Times New Roman", Arial, serif;
 				font-weight: normal;
-    			background-image: radial-gradient(circle at center, rgb(180,255,160), rgb(10,50,0));
+    			background-image: radial-gradient(ellipse at center, rgb(180,255,160), rgb(10,50,0));
     		}
 
 			.flexer {
@@ -549,20 +549,10 @@
 					}
 
 					/*Check if user won*/
-					if(nbWellPlaced == 4){
-						alert("CONGRATULATIONS, YOU WIN !");
+					if(nbWellPlaced == 4 && nbNotWellPlaced == 0){
+						alert("YOU WIN !");
 						setTimeout(function(){document.location = "play.html"}, 3000);
 					}
-
-					/*Decrease number of guesses left*/
-					nbGuess--;
-
-					/*Check if user lost*/
-					if(nbGuess < 0){
-						alert("GAME OVER !");
-						setTimeout(function(){document.location = "play.html"}, 3000);
-					}
-
 				}
 				else if (xhr.readyState === 4 && xhr.status != 200) {
         			alert('An error occured !\n\nCode :' + xhr.status + '\nText : ' + xhr.statusText);
@@ -580,6 +570,15 @@
 		    xhr.open("GET", 'play.html?choice0='+value0 + '&choice1='+value1 + '&choice2='+value2 + '&choice3='+value3, true);
 		    xhr.send(null);
 
+
+			/*Decrease number of guesses left*/
+			nbGuess--;
+
+			/*Check if user lost*/
+			if(nbGuess < 0){
+				alert("GAME OVER");
+				setTimeout(function(){document.location = "play.html"}, 3000);
+			}
 		});
 
 	</script>
