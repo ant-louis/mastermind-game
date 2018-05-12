@@ -6,13 +6,14 @@ import java.util.HashMap;
 
 public class HttpParser {
 
+	//Variables
 	InputStreamReader parserIn;
 	private String requestType;
 	private String path;
 	private String httpVersion;
 	private Map<String,String> headerMap = new HashMap<>();
 
-	
+	//Constructor
 	public HttpParser(InputStreamReader istream){
 		parserIn = istream;
 
@@ -26,7 +27,7 @@ public class HttpParser {
 	}	
 
 
-	//A method that extract the first line of the header
+	//A method that extracts the first line of the header
 	//Must always be called first before the rest of the header methods
 	private void getFirstHeaderLine() throws IOException {
 
@@ -53,6 +54,7 @@ public class HttpParser {
 		this.httpVersion = tokens[2];
 	}
 
+
 	//Returns the request type of the HTTP request
 	public String getRequestType(){
 		return this.requestType;
@@ -63,6 +65,7 @@ public class HttpParser {
 		return this.path;
 	}
 
+	//Returns the http version of the request
 	public String getHttpVersion(){
 		return this.httpVersion;
 	}
@@ -120,6 +123,8 @@ public class HttpParser {
    		}while(c != -1);
 	}
 
+
+	//Extracts a color guess from the POST request
 	public String getGuess_POST() throws IOException{
 		char[] colors = new char[4];
 		char c;
@@ -146,8 +151,6 @@ public class HttpParser {
 	}
 
 
-
-
 	//Extracts the cookie from the header
 	public int getCookie() {
 		String cookieField;
@@ -162,7 +165,8 @@ public class HttpParser {
 		}
 	}
 
-	//Extract a color guess from the AJAX/GET request
+
+	//Extracts a color guess from the AJAX/GET request
 	public String getGuess_GET(){
 		String path = this.path;
 		char[] colors = new char[4];
@@ -175,7 +179,4 @@ public class HttpParser {
 
 		return new String(colors);
 	}
-}	
-
-
-
+}

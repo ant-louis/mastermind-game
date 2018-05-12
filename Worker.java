@@ -4,7 +4,6 @@ import java.util.*;
 
 
 public class Worker implements Runnable {
-	//Length of the secret combination
 	
 	//All possible colors in the game
 	private  enum colors {
@@ -19,10 +18,7 @@ public class Worker implements Runnable {
 	private PipedOutputStream workerOut;
 	private PipedInputStream workerIn;
 	
-
-
-	// Number of occurrence of a color in the secret combination
-	//Example : "1545" --> [0 1 0 0 1 2]
+	// Number of occurrence of a color in the secret combination (Ex: "1545" --> [0 1 0 0 1 2])
 	private int[] coloroccurrence;
 	private int[] secretcombination;
 	private ArrayList<String> previousexchanges;
@@ -61,12 +57,8 @@ public class Worker implements Runnable {
 				//Starting new game ("10")
 				if(clientMessage.startsWith("10")){
 					sendMessage("11");//Tell the client the game started
-				
 					startGame();
-				
-				
 				}
-
 
 				//List previous exchanges ("12")
 				else if(clientMessage.startsWith("12") && length == 2){
@@ -86,8 +78,6 @@ public class Worker implements Runnable {
 					sendMessage(builder.toString());
 				}
 
-				
-
 				//Guess a combination (ex: "121345")
 				else if(clientMessage.startsWith("12") && length == (2 + 4)){
 
@@ -96,20 +86,21 @@ public class Worker implements Runnable {
 				}
 			}
 		
-
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 
 	}
 	
-	/*
+
+	/********************************************************************************
 	 * Starts a new game of Mastermind, initializes all variables 
 	 * Creates the random secret combination
-	 * 
+	 *
 	 * ARGUMENTS : /
-	 * RETURNS: /
-	 */
+	 *
+	 * RETURNS : /
+	 ********************************************************************************/
 	private void startGame() throws Exception{
 		NBGUESS = 12;
 		nbexchanges = 0;
@@ -121,6 +112,7 @@ public class Worker implements Runnable {
 		Random rand = new Random();
 		
 		System.out.print("Secret combination: ");
+
 		for(int i =0; i < 4 ;i++) {
 			int randomcolor = rand.nextInt(colors.values().length);
 			secretcombination[i] = randomcolor;
@@ -132,12 +124,15 @@ public class Worker implements Runnable {
 		System.out.println("");
 	}
 	
-	/*
+
+
+	/********************************************************************************
 	 * Analyse the combination send by the user and compare it to the secretcombination
-	 * 
+	 *
 	 * ARGUMENTS : The combination guessed by the user
-	 * RETURNS: /
-	 */
+	 *
+	 * RETURNS : /
+	 ********************************************************************************/
 	private void guessCombination(String guessedcombination) throws Exception{
 		int length = guessedcombination.length();
 		int guessedcolor;
@@ -186,12 +181,13 @@ public class Worker implements Runnable {
 	
 	
 	
-	/*
+	/********************************************************************************
 	 * Sends a message to the client through a TCP connection, in bytes
-	 * 
+	 *
 	 * ARGUMENTS : The string to send to the client 
-	 * RETURNS: /
-	 */
+	 *
+	 * RETURNS : /
+	 ********************************************************************************/
 	private void sendMessage(String message) throws Exception{
 		
 			byte[] sendingmessage = new byte[64];
