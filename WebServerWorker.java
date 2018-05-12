@@ -143,10 +143,16 @@ public class WebServerWorker implements Runnable {
 				workerOut.print("\r\n");
 
 				//Body
-				workerOut.print("<!DOCTYPE html><html>\r\n");
-				workerOut.print("<head><meta charset=\"utf-8\"><title>Error 404</title></head>\r\n");
- 				workerOut.print("<body><p><b>404.</b> <ins>That’s an error.</ins></p>\r\n");
-  				workerOut.print("<p>The requested URL was not found on this server.</p></body></html>\r\n");
+				StringBuilder page = new StringBuilder();
+
+				page.append("<!DOCTYPE html><html>");
+				page.append("<head><meta charset=\"utf-8\"/><title>Error 404</title>");
+				page.append("<style>body{font-family: \"Times New Roman\", Arial, serif;font-weight: normal; background-image: radial-gradient(circle at center, rgb(180,255,160), rgb(10,50,0));} .message{font-size: 5em; text-align: center; color: rgb(10,50,0);} .explain{margin: 10%; font-size: 2em; text-align: center; color: rgb(10,50,0);}</style>");
+				page.append("</head>");
+				page.append("<body><div class=\"message\"><p> <b> 404 NOT FOUND ! b></</p></div> <div class=\"explain\"> <p>The requested URL was not found on this server.</p></div></body>");
+				page.append("</html>");
+
+  				workerOut.print(page);
 
 				workerOut.flush();
 
