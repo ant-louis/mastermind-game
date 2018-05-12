@@ -5,11 +5,22 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class GameInterface {
 
+	//Variables
 	private static ConcurrentHashMap<Integer, Thread> currentGames = new ConcurrentHashMap<>();
 	private static ConcurrentHashMap<Integer, PipedOutputStream> currentGamesOutput = new ConcurrentHashMap<>();
 	private static ConcurrentHashMap<Integer, PipedInputStream> currentGamesInput = new ConcurrentHashMap<>();
 
-	public static String submitGuess(int cookie,String guess){
+
+	/********************************************************************************
+	 * 
+	 *
+	 * ARGUMENTS :
+	 *	-
+	 *	-
+	 *
+	 * RETURNS : 
+	 ********************************************************************************/
+	public static String submitGuess(int cookie, String guess){
 
 		PipedOutputStream gameOut = currentGamesOutput.get(cookie);
 
@@ -24,6 +35,15 @@ public class GameInterface {
 		return getResponse(cookie);
 	}
 
+
+	/********************************************************************************
+	 * 
+	 *
+	 * ARGUMENTS :
+	 *	-
+	 *
+	 * RETURNS : 
+	 ********************************************************************************/
 	public static String getPreviousExchanges(int cookie){
 
 		PipedOutputStream gameOut = currentGamesOutput.get(cookie);
@@ -41,6 +61,15 @@ public class GameInterface {
 		return getResponse(cookie);
 	}
 
+
+	/********************************************************************************
+	 * 
+	 *
+	 * ARGUMENTS :
+	 *	-
+	 *
+	 * RETURNS : /
+	 ********************************************************************************/
 	public static void deleteGame(int cookie){
 		currentGames.remove(cookie);
 		currentGamesOutput.remove(cookie);
@@ -48,7 +77,14 @@ public class GameInterface {
 	}
 
 
-	
+	/********************************************************************************
+	 * 
+	 *
+	 * ARGUMENTS :
+	 *	-
+	 *
+	 * RETURNS : /
+	 ********************************************************************************/
 	public static void createGame(int cookie){
 		try{
 			//Pipes from the interface to the worker and vice versa
@@ -87,6 +123,14 @@ public class GameInterface {
 	}
 
 
+	/********************************************************************************
+	 * 
+	 *
+	 * ARGUMENTS :
+	 *	-
+	 *
+	 * RETURNS : 
+	 ********************************************************************************/
 	private static String getResponse(int cookie) {
 		PipedInputStream gameIn = currentGamesInput.get(cookie);
 		byte[] rawGuess = new byte[128];
@@ -104,6 +148,14 @@ public class GameInterface {
 	}
 
 
+	/********************************************************************************
+	 * 
+	 *
+	 * ARGUMENTS :
+	 *	-
+	 *
+	 * RETURNS : 
+	 ********************************************************************************/
 	private static byte[] formatGuessToByte(String guess){
 		StringBuilder builder = new StringBuilder("12");
 		builder.append(guess);
@@ -111,6 +163,15 @@ public class GameInterface {
 		return builder.toString().getBytes();
 	}
 
+
+	/********************************************************************************
+	 * 
+	 *
+	 * ARGUMENTS :
+	 *	-
+	 *
+	 * RETURNS : 
+	 ********************************************************************************/
 	private static String formatGuessToString(int length, byte[] guess){
 		String rawGuess = new String(guess);
 		rawGuess = rawGuess.substring(0, length);

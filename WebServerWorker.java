@@ -4,10 +4,12 @@ import java.net.*;
 
 public class WebServerWorker implements Runnable {
 
+	//Variables
 	private Socket workerSock;
 	private static int newCookie = 0;
 	private boolean gzipEnabled = false;
 
+	//Constructor
 	public WebServerWorker(Socket clientSocket){
 		this.workerSock = clientSocket;
 	}
@@ -29,6 +31,7 @@ public class WebServerWorker implements Runnable {
 
 		    //Gets the http version of the request
 		    String httpVersion = httpparser.getHttpVersion();
+
 		    //Check if http version is valid
 			if(!httpVersion.equals("HTTP/1.1")){
 				generateError("505 HTTP Version Not Supported", socketOut);
@@ -79,8 +82,7 @@ public class WebServerWorker implements Runnable {
 			}
 			
 
-
-			//AJAX Request 
+			//AJAX Request (GET)
 			else if(requestType.equals("GET") && path.startsWith("/play.html?")){
 
 				//Get the guess from the header and submit it
@@ -184,7 +186,7 @@ public class WebServerWorker implements Runnable {
 				myhtmlcreator.createPage();			
 			}
 
-			//All others paths, these are wrong
+			//All others paths are wrong
 			else if(requestType.equals("GET")){
 				generateError("404 Not Found", socketOut);
 			}
@@ -212,6 +214,7 @@ public class WebServerWorker implements Runnable {
 
 		StringBuilder pageError = new StringBuilder();
 
+		//Creates the HTML page
 		pageError.append("<!DOCTYPE html><html>");
 		pageError.append("<head><meta charset=\"utf-8\"/><title>Error</title>");
 		pageError.append("<style>body{font-family: \"Times New Roman\", Arial, serif;font-weight: normal; background-image: radial-gradient(circle at center, rgb(180,255,160), rgb(10,50,0));} .message{font-size: 3.5em; text-align: center; color: rgb(10,50,0);margin:20%;}</style>");
@@ -224,7 +227,7 @@ public class WebServerWorker implements Runnable {
 		socketOut.write(firstHeaderLine.getBytes());
 		socketOut.write("\r\n".getBytes());
 
-		//Body
+		//Print the HTML page
 		socketOut.write(pageError.toString().getBytes());
 		socketOut.flush();
 		socketOut.close();
