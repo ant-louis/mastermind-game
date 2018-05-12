@@ -65,7 +65,9 @@ public class WebServerWorker implements Runnable {
 			    System.out.println("Main Cookie: " + cookie);
 
 			    String previousexchanges = ""; //Empty previous exchanges to create blank page
-			    encodeChunks(workerOut,previousexchanges);
+	    		boolean gzipEnabled = true;
+    			HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges,workerOut,gzipEnabled);
+				myhtmlcreator.createPage();			
 			}
 			
 
@@ -114,7 +116,8 @@ public class WebServerWorker implements Runnable {
 				/*************************************/
 
 				/**************HTTP Body**************/
-			    workerOut.print(result); //Body consists only of the result, no need to chunk
+				//Body consists only of the result, no need to chunk or compress
+			    workerOut.print(result); 
 			    workerOut.flush();
 			}
 
@@ -168,7 +171,9 @@ public class WebServerWorker implements Runnable {
 			    //POST request needs to recreate the whole page, so we're passing 
 			    //all the previous guesses as argument
 			    System.out.println("POST Cookie: " + cookie);
-		    	encodeChunks(workerOut,previousexchanges);
+	    		boolean gzipEnabled = false;
+	    		HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges,workerOut,gzipEnabled);
+				myhtmlcreator.createPage();			
 			}
 
 
@@ -193,7 +198,6 @@ public class WebServerWorker implements Runnable {
 				page.append("</html>");
 
   				workerOut.print(page.toString());
-
 				workerOut.flush();
 
 			}
@@ -216,11 +220,12 @@ public class WebServerWorker implements Runnable {
 		}
 	}
 
+	/*
 	private void encodeChunks(PrintWriter workerOut,String previousexchanges){
 		System.out.println("Encoding chunks");
 
 		HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges);
-	    String createdwebpage = myhtmlcreator.createPage();
+	    String createdwebpage = myhtmlcreator.createPage(workerOut);
 
 	    int chunkSize = 128;
 	    int startIndex = 0;
@@ -255,5 +260,7 @@ public class WebServerWorker implements Runnable {
 	    workerOut.flush();
 
 	}
+
+	*/
 
 }

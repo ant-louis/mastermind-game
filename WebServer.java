@@ -10,7 +10,7 @@ public class WebServer {
 		ServerSocket serverSocket = null;
 		try {	
 
-			serverSocket = new ServerSocket(8001);
+			serverSocket = new ServerSocket(8006);
 			System.out.println("Server started... Listening on " + serverSocket.getLocalPort());
 			//Creating a threadpool of 5 threads
 	        ExecutorService executor = Executors.newFixedThreadPool(Integer.parseInt(argv[0]));
