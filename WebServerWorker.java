@@ -1,13 +1,14 @@
 import java.io.*;
 import java.net.*; 
 
-
+//Thread handling a connection to a client, analysing the HTTP Requests
+// and reacting appropriately
 public class WebServerWorker implements Runnable {
 
 	//Variables
 	private Socket workerSock;
 	private static int newCookie = 0;
-	private boolean gzipEnabled = false;
+	private boolean gzipEnabled = false; //Enabling or disabling gzip compression
 
 	//Constructor
 	public WebServerWorker(Socket clientSocket){
@@ -23,7 +24,7 @@ public class WebServerWorker implements Runnable {
 			//Parses the request and stores the important information
 		    HttpParser httpparser = new HttpParser(istream);
 
-		    //Gets the type of the request (GET or POST here)
+		    //Gets the type of the request (GET or POST here mostly)
 		    String requestType = httpparser.getRequestType();
 
 		    //Gets the path that is requested
@@ -37,6 +38,8 @@ public class WebServerWorker implements Runnable {
 				generateError("505 HTTP Version Not Supported", socketOut);
 			}
 
+
+			//Checks if the client accepts gzip encoding
 		    boolean acceptsGzip = httpparser.acceptGzipEncoding();
 		    
 			
@@ -61,12 +64,12 @@ public class WebServerWorker implements Runnable {
 				newCookie++;
 				GameInterface.createGame(newCookie);
 
-				//Headers
+				//*************HTTP - Headers********************/
 				StringBuilder header = new StringBuilder();
 		    	header.append("HTTP/1.1 200 OK\r\n");
 			    header.append("Content-Type: text/html; charset=utf-8\r\n");
 			    header.append("Connection: close\r\n");
-			    //If gzip is not enabled, we chunk
+			    //If gzip is not enabled, we chunk. Else we compress if the client allows it
 			    if(!gzipEnabled){
 			    	header.append("Transfer-Encoding: chunked\r\n");
 			    }else if(acceptsGzip){
@@ -75,9 +78,11 @@ public class WebServerWorker implements Runnable {
 			    header.append("Set-Cookie: SESSID=" + newCookie + "; path=/\r\n");
 			    header.append("\r\n");
 
-				//Body
+				//*************HTTP - Body********************/
+
 			    String previousexchanges = ""; //Empty previous exchanges to create blank page
-    			HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges,socketOut,header.toString(),gzipEnabled);
+    			HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges,socketOut,
+    														header.toString(),gzipEnabled);
 				myhtmlcreator.createPage();			
 			}
 			
@@ -98,7 +103,8 @@ public class WebServerWorker implements Runnable {
 				int wellPlacedColor = Character.getNumericValue(result.charAt(0));
 				int numberOfGuesses = 0;
 
-				//Get the result of the guess and all the exchanges, including the number of total exchanges
+				//Get the result of the guess and all the exchanges, including 
+				//the number of total exchanges
 			   	String previousexchanges = GameInterface.getPreviousExchanges(cookie);
 
 	   			if(previousexchanges.length() > 0 && previousexchanges.length() <= 55){
@@ -109,7 +115,8 @@ public class WebServerWorker implements Runnable {
 					numberOfGuesses = Integer.parseInt(previousexchanges.substring(0,2));
 				}
 
-				//HTTP Header
+				//*************HTTP - Headers********************/
+
 		    	socketOut.write("HTTP/1.1 200 OK\r\n".getBytes());
 			    socketOut.write("Content-Type: text/html; charset=utf-8\r\n".getBytes());
 			    socketOut.write("Connection: close\r\n".getBytes());
@@ -121,7 +128,8 @@ public class WebServerWorker implements Runnable {
 			   	}
 			    socketOut.write("\r\n".getBytes());
 		
-				//HTTP Body
+				//*************HTTP - Body********************/
+
 				//Body consists only of the result, no need to chunk or compress
 			    socketOut.write(result.getBytes()); 
 			    socketOut.flush();
@@ -137,12 +145,13 @@ public class WebServerWorker implements Runnable {
 					generateError("411 Length Required", socketOut);
 				}
 
-				//Submit the guess received in the body
+				//Check if the cookie is associated with a game
 				int cookie = httpparser.getCookie();
 				if(cookie == -1){
 					generateError("405 Method Not Allowed", socketOut);
 				}
 
+				//Submit the guess received in the body 
 				String guess = httpparser.getGuess_POST();
 				String result = GameInterface.submitGuess(cookie,guess); 
 
@@ -150,7 +159,8 @@ public class WebServerWorker implements Runnable {
 				int wellPlacedColor = Character.getNumericValue(result.charAt(0));
 				int numberOfGuesses = 0;
 
-				//Get the result of the guess and all the exchanges, including the number of total exchanges
+				//Get the result of the guess and all the exchanges, 
+				//including the number of total exchanges
 			   	String previousexchanges = GameInterface.getPreviousExchanges(cookie);
 
 	   			if(previousexchanges.length() > 0 && previousexchanges.length() <= 55){
@@ -160,7 +170,7 @@ public class WebServerWorker implements Runnable {
 					numberOfGuesses = Integer.parseInt(previousexchanges.substring(0,2));
 				}
 
-				//HTTP Header
+				//*************HTTP - Headers********************/
 				StringBuilder header = new StringBuilder();
 
 		    	header.append("HTTP/1.1 200 OK\r\n");
@@ -180,9 +190,11 @@ public class WebServerWorker implements Runnable {
 			   	}
 			    header.append("\r\n");
 			  
-				//HTTP Body
-			    //POST request needs to recreate the whole page, so we're passing all the previous guesses as argument
-	    		HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges,socketOut,header.toString(),gzipEnabled);
+				//*************HTTP - Body ********************/
+			    //POST request needs to recreate the whole page, so we're passing 
+			    //all the previous guesses as argument
+	    		HTMLCreator myhtmlcreator = new HTMLCreator(previousexchanges,socketOut,
+	    													header.toString(),gzipEnabled);
 				myhtmlcreator.createPage();			
 			}
 
@@ -209,7 +221,15 @@ public class WebServerWorker implements Runnable {
 	}
 
 
-	// Generate the HTML error pages
+	/********************************************************************************
+	 * Generates all kinds of HTTP errors and sends it as response
+	 *
+	 * ARGUMENTS :
+	 *	- the error code
+	 *	- the outpustream associated with the socket
+	 *
+	 * RETURNS : /
+	 ********************************************************************************/
 	private void generateError(String error, OutputStream socketOut) throws IOException{
 
 		StringBuilder pageError = new StringBuilder();

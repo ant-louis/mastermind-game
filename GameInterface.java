@@ -3,9 +3,10 @@ import java.net.*;
 import java.util.AbstractMap.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+//Interface between the Worker Class and the WebServerWorker class
 public class GameInterface {
 
-	//Variables
+	//Maps to hold information about all the games
 	private static ConcurrentHashMap<Integer, Thread> currentGames = new ConcurrentHashMap<>();
 	private static ConcurrentHashMap<Integer, PipedOutputStream> currentGamesOutput = new ConcurrentHashMap<>();
 	private static ConcurrentHashMap<Integer, PipedInputStream> currentGamesInput = new ConcurrentHashMap<>();
