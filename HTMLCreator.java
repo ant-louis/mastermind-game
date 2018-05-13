@@ -79,61 +79,62 @@ public class HTMLCreator {
 
 		try{
 			//HTTP Header
-			socketOut.write(header.getBytes());
+			socketOut.write(header.getBytes("UTF-8"));
 
 			//Generate page if user won
 			if(result == 4){
 
-				sendChunkLine("<!DOCTYPE html><html>");
-				sendChunkLine("<head><meta charset=\"utf-8\"/><title>You won</title>");
-				sendChunkLine("<style>body{font-family: \"Times New Roman\", Arial, serif;font-weight: normal; background-image: radial-gradient(circle at center, rgb(180,255,160), rgb(10,50,0));}.message{height:100%; font-size: 5em; text-align: center; color: rgb(10,50,0);}.submit-btn{border-radius: 10px; background-color: rgb(10,50,0); color: white; text-align: center; font-size: 28px; padding: 20px; width: 200px; cursor: pointer; margin-left: 43%;}</style>");
-				sendChunkLine("</head>");
-				sendChunkLine("<body> <div class=\"message\"> <p> CONGRATULATIONS, YOU WON ! </p></div><form method=\"post\" action=\"replay.html\"> <input class=\"submit-btn\" type=\"submit\" value=\"Replay\"/> </form> </body>");
-				sendChunkLine("</html>");
+				sendChunkOrCompress("<!DOCTYPE html><html>");
+				sendChunkOrCompress("<head><meta charset=\"utf-8\"/><title>You won</title>");
+				sendChunkOrCompress("<style>body{font-family: \"Times New Roman\", Arial, serif;font-weight: normal; background-image: radial-gradient(circle at center, rgb(180,255,160), rgb(10,50,0));}.message{height:100%; font-size: 5em; text-align: center; color: rgb(10,50,0);}.submit-btn{border-radius: 10px; background-color: rgb(10,50,0); color: white; text-align: center; font-size: 28px; padding: 20px; width: 200px; cursor: pointer; margin-left: 43%;}</style>");
+				sendChunkOrCompress("</head>");
+				sendChunkOrCompress("<body> <div class=\"message\"> <p> CONGRATULATIONS, YOU WON ! </p></div><form method=\"post\" action=\"replay.html\"> <input class=\"submit-btn\" type=\"submit\" value=\"Replay\"/> </form> </body>");
+				sendChunkOrCompress("</html>");
 			}
 
 			//Generate page if user lost
 			else if(nbExchanges > 11){
-				sendChunkLine("<!DOCTYPE html><html>");
-				sendChunkLine("<head><meta charset=\"utf-8\"/><title>Game Over</title>");
-				sendChunkLine("<style>body{font-family: \"Times New Roman\", Arial, serif;font-weight: normal; background-image: radial-gradient(circle at center, rgb(180,255,160), rgb(10,50,0));}.message{height:100%; font-size: 5em; text-align: center; color: rgb(10,50,0);}.submit-btn{border-radius: 10px; background-color: rgb(10,50,0); color: white; text-align: center; font-size: 28px; padding: 20px; width: 200px; cursor: pointer; margin-left: 43%;}</style>");
-				sendChunkLine("</head>");
-				sendChunkLine("<body> <div class=\"message\"> <p> GAME OVER ! </p></div><form method=\"post\" action=\"replay.html\"> <input class=\"submit-btn\" type=\"submit\" value=\"Replay\"/> </form> </body>");
-				sendChunkLine("</html>");
+				sendChunkOrCompress("<!DOCTYPE html><html>");
+				sendChunkOrCompress("<head><meta charset=\"utf-8\"/><title>Game Over</title>");
+				sendChunkOrCompress("<style>body{font-family: \"Times New Roman\", Arial, serif;font-weight: normal; background-image: radial-gradient(circle at center, rgb(180,255,160), rgb(10,50,0));}.message{height:100%; font-size: 5em; text-align: center; color: rgb(10,50,0);}.submit-btn{border-radius: 10px; background-color: rgb(10,50,0); color: white; text-align: center; font-size: 28px; padding: 20px; width: 200px; cursor: pointer; margin-left: 43%;}</style>");
+				sendChunkOrCompress("</head>");
+				sendChunkOrCompress("<body> <div class=\"message\"> <p> GAME OVER ! </p></div><form method=\"post\" action=\"replay.html\"> <input class=\"submit-btn\" type=\"submit\" value=\"Replay\"/> </form> </body>");
+				sendChunkOrCompress("</html>");
 			}
 
 			//Generate normal page
 			else{
 				//Headers
-				sendChunkLine("<!DOCTYPE html><html><head><meta charset=\"utf-8\" /><title>Mastermind</title>");
+				sendChunkOrCompress("<!DOCTYPE html><html><head><meta charset=\"utf-8\" /><title>Mastermind</title>");
 
 				//CSS
-				sendChunkLine("<style>");
-				sendChunkLine(staticCSS);
+				sendChunkOrCompress("<style>");
+				sendChunkOrCompress(staticCSS);
 				createAllButtons();
-				sendChunkLine("</style>");
-				sendChunkLine("</head>");
+				sendChunkOrCompress("</style>");
+				sendChunkOrCompress("</head>");
 
 				//HTML 
-				sendChunkLine("<body>");
+				sendChunkOrCompress("<body>");
 				createBoard();
 
 				//Javascript
-				sendChunkLine(javascript);
+				sendChunkOrCompress(javascript);
 
-				sendChunkLine("</body></html>");
+				sendChunkOrCompress("</body></html>");
 			}
 			//If gzip is enabled, create a GZIPOutputStream and write to it
 			if(gzipEnabled){
 				GZIPOutputStream gzipOut = new GZIPOutputStream(socketOut);
-				gzipOut.write(compress.toString().getBytes(),0,compress.toString().length());
+				gzipOut.write(compress.toString().getBytes("UTF-8"),0,compress.toString().length());
 				gzipOut.finish();
 				gzipOut.close();
 			}else{
 
+
 		    	//End the chunked enconding
-			    socketOut.write("0\r\n".getBytes());
-			    socketOut.write("\r\n".getBytes());
+			    socketOut.write("0\r\n".getBytes("UTF-8"));
+			    socketOut.write("\r\n".getBytes("UTF-8"));
 			    socketOut.flush();
 
 			}
@@ -160,20 +161,48 @@ public class HTMLCreator {
 	 *
 	 * RETURNS : /
 	 ********************************************************************************/
-	public void sendChunkLine(String line) throws IOException{
+	public void sendChunkOrCompress(String line) throws IOException{ 
 
 		//If compression is enabled, we only compress instead of chunking
 		if(gzipEnabled){
 			compress.append(line);
 
 		}else{
+			final int MAX_CHUNK_SIZE = 126; //128-2 for \r\n
+		    int startIndex = 0;
+		    int endIndex = startIndex + MAX_CHUNK_SIZE;
+	    	String chunk;
+
+		    if(line.length() > MAX_CHUNK_SIZE){
+		    	while(line.length() >= endIndex){
+			    	//Cut the webpage into chunks of size MAX_CHUNK_SIZE
+			    	chunk = line.substring(startIndex,endIndex);
+			    	startIndex += MAX_CHUNK_SIZE;
+			    	endIndex = startIndex + MAX_CHUNK_SIZE;
+
+			    	//Get MAX_CHUNK_SIZE in hexadecimal
+					String hexLength = Integer.toHexString(MAX_CHUNK_SIZE);
+					hexLength = hexLength + "\r\n";
+					
+	    			socketOut.write(hexLength.getBytes("UTF-8"));
+    				chunk = chunk + "\r\n";
+    				socketOut.write(chunk.getBytes("UTF-8"));
+
+			    }
+			    //If the line length is not a multiple of MAX_CHUNK_SIZE, 
+			    //there are some characters left
+		    	line = line.substring(startIndex,line.length());
+			}
+
+
+
 			//Getting the length of the String to send
 			String hexLength = Integer.toHexString(line.length());
 			
 			hexLength = hexLength + "\r\n";
-	    	socketOut.write(hexLength.getBytes());
+	    	socketOut.write(hexLength.getBytes("UTF-8"));
 			line = line + "\r\n";
-	    	socketOut.write(line.getBytes());
+	    	socketOut.write(line.getBytes("UTF-8"));
 
 		}
 	}
@@ -194,19 +223,19 @@ public class HTMLCreator {
 	 ********************************************************************************/
 	private void createBubbleCSS(int nbGuess, int i, int color)throws IOException{
 
-		sendChunkLine("#bub"+Integer.toString(nbGuess)+Integer.toString(i));
-		sendChunkLine("{height:70%;");
-		sendChunkLine("width:12%;");
-		sendChunkLine("border-radius: 50%;");
-		sendChunkLine("border: 1px solid rgb(50,50,50);");
-		sendChunkLine("margin: 8px;");
-		sendChunkLine("background-color:");
+		sendChunkOrCompress("#bub"+Integer.toString(nbGuess)+Integer.toString(i));
+		sendChunkOrCompress("{height:70%;");
+		sendChunkOrCompress("width:12%;");
+		sendChunkOrCompress("border-radius: 50%;");
+		sendChunkOrCompress("border: 1px solid rgb(50,50,50);");
+		sendChunkOrCompress("margin: 8px;");
+		sendChunkOrCompress("background-color:");
 		if(color == BLANK){
-			sendChunkLine("rgb(201,201,201)");
+			sendChunkOrCompress("rgb(201,201,201)");
 		}else{
-			sendChunkLine(colors.values()[color].toString());
+			sendChunkOrCompress(colors.values()[color].toString());
 		}
-		sendChunkLine(";}\n");
+		sendChunkOrCompress(";}\n");
 
 	}
 
@@ -223,20 +252,20 @@ public class HTMLCreator {
 	 ********************************************************************************/
 	private void createResultCSS(int nbGuess, int i, int color) throws IOException{
 
-		sendChunkLine("#res"+Integer.toString(nbGuess)+Integer.toString(i));
-		sendChunkLine("{height:30%;");
-		sendChunkLine("width:12%;");
-		sendChunkLine("border-radius: 50%;");
-		sendChunkLine("border: 1px solid rgb(50,50,50);");
-		sendChunkLine("margin: 5px;");
-		sendChunkLine("background-color:");
+		sendChunkOrCompress("#res"+Integer.toString(nbGuess)+Integer.toString(i));
+		sendChunkOrCompress("{height:30%;");
+		sendChunkOrCompress("width:12%;");
+		sendChunkOrCompress("border-radius: 50%;");
+		sendChunkOrCompress("border: 1px solid rgb(50,50,50);");
+		sendChunkOrCompress("margin: 5px;");
+		sendChunkOrCompress("background-color:");
 		if(color == BLANK){
-			sendChunkLine("rgb(201,201,201)");
+			sendChunkOrCompress("rgb(201,201,201)");
 
 		}else{
-			sendChunkLine(colors.values()[color].toString());
+			sendChunkOrCompress(colors.values()[color].toString());
 		}		
-		sendChunkLine(";}\n");
+		sendChunkOrCompress(";}\n");
 	}
 
 
@@ -364,19 +393,19 @@ public class HTMLCreator {
 	 ********************************************************************************/
 	private void createMastermindBoard() throws IOException{
 
-		sendChunkLine("<div class=\"mastermind-board\">");
+		sendChunkOrCompress("<div class=\"mastermind-board\">");
 
 		//Title
-		sendChunkLine("<div class=\"title\"><h2 class=\"mastermind-text\"> MASTERMIND</h2></div>");
+		sendChunkOrCompress("<div class=\"title\"><h2 class=\"mastermind-text\"> MASTERMIND</h2></div>");
 
 		//Guess board
-		sendChunkLine("<div class=\"guess-container\">");
+		sendChunkOrCompress("<div class=\"guess-container\">");
 
 		for(int nbGuess = 0; nbGuess <= 11; nbGuess++){
 			createRow(nbGuess);
 		}
 
-		sendChunkLine("</div></div>");
+		sendChunkOrCompress("</div></div>");
 
 	}
 
@@ -390,7 +419,7 @@ public class HTMLCreator {
 	 ********************************************************************************/
 	private void createRow(int index) throws IOException{
 
-		sendChunkLine("<div class=\"guess-row flexer\">");
+		sendChunkOrCompress("<div class=\"guess-row flexer\">");
 
 		// Guess box
 		createGuessBox(index);
@@ -398,7 +427,7 @@ public class HTMLCreator {
 		//Result box
 		createResultBox(index);
 
-		sendChunkLine("</div>");
+		sendChunkOrCompress("</div>");
 
 	}
 
@@ -412,14 +441,14 @@ public class HTMLCreator {
 	 ********************************************************************************/
 	private void createGuessBox(int index) throws IOException{
 
-		sendChunkLine("<div class=\"guess-box flexer\">");
+		sendChunkOrCompress("<div class=\"guess-box flexer\">");
 
 		//Guess bubbles
 		for(int i=0; i < 4; i++){
-			sendChunkLine("<div id=\"bub"+index+i+"\"></div>");
+			sendChunkOrCompress("<div id=\"bub"+index+i+"\"></div>");
 		}
 
-		sendChunkLine("</div>");
+		sendChunkOrCompress("</div>");
 
 	}
 
@@ -433,14 +462,14 @@ public class HTMLCreator {
 	 ********************************************************************************/
 	private void createResultBox(int index) throws IOException{
 
-		sendChunkLine("<div class=\"result-box flexer\">");
+		sendChunkOrCompress("<div class=\"result-box flexer\">");
 
 		//Result bubbles
 		for(int i=0; i < 4; i++){
-			sendChunkLine("<div id=\"res"+index+i+"\"></div>");
+			sendChunkOrCompress("<div id=\"res"+index+i+"\"></div>");
 		}
 
-		sendChunkLine("</div>");
+		sendChunkOrCompress("</div>");
 
 	}
 
@@ -455,51 +484,51 @@ public class HTMLCreator {
 	private void createSelectionBoard() throws IOException{
 
 		//-------If JS enabled-----------
-		sendChunkLine("<div class=\"selection-board flexer\" id=\"js\"> <div class=\"selection-box\">");
+		sendChunkOrCompress("<div class=\"selection-board flexer\" id=\"js\"> <div class=\"selection-box\">");
 
 		//Guess buttons
-		sendChunkLine("<div class=\"guess-box flexer\">");
+		sendChunkOrCompress("<div class=\"guess-box flexer\">");
 		for(int i=0; i<4; i++){
-			sendChunkLine("<button id=\"btn"+i+"\"></button>");
+			sendChunkOrCompress("<button id=\"btn"+i+"\"></button>");
 		}
-		sendChunkLine("</div></div>");
+		sendChunkOrCompress("</div></div>");
 
 		//Submit button
-		sendChunkLine("<div class=\"button\"><button class=\"submit-button\" id=\"submit-js\"> Submit </button></div>");
-		sendChunkLine("</div>");
+		sendChunkOrCompress("<div class=\"button\"><button class=\"submit-button\" id=\"submit-js\"> Submit </button></div>");
+		sendChunkOrCompress("</div>");
 		//--------------------------------
 
 
 		//-------If JS disabled-----------
-		sendChunkLine("<noscript>");
-		sendChunkLine("<form class=\"selection-board flexer\" method=\"post\" action=\"play.html\">");
+		sendChunkOrCompress("<noscript>");
+		sendChunkOrCompress("<form class=\"selection-board flexer\" method=\"post\" action=\"play.html\">");
 
 		//Guess scrolling lists
-		sendChunkLine("<div class=\"selection-box flexer\">");
+		sendChunkOrCompress("<div class=\"selection-box flexer\">");
 
 		for(int i=0; i < 4; i++){
-			sendChunkLine("<div class=\"list\">");
-			sendChunkLine("<select name=\"choice"+i+"\">");
+			sendChunkOrCompress("<div class=\"list\">");
+			sendChunkOrCompress("<select name=\"choice"+i+"\">");
 
-			sendChunkLine("<option value=\"0\">red</option>");	
-			sendChunkLine("<option value=\"1\">blue</option>");
-			sendChunkLine("<option value=\"2\">yellow</option>");
-			sendChunkLine("<option value=\"3\">green</option>");
-			sendChunkLine("<option value=\"4\">white</option>");
-			sendChunkLine("<option value=\"5\">black</option>");
+			sendChunkOrCompress("<option value=\"0\">red</option>");	
+			sendChunkOrCompress("<option value=\"1\">blue</option>");
+			sendChunkOrCompress("<option value=\"2\">yellow</option>");
+			sendChunkOrCompress("<option value=\"3\">green</option>");
+			sendChunkOrCompress("<option value=\"4\">white</option>");
+			sendChunkOrCompress("<option value=\"5\">black</option>");
 
-			sendChunkLine("</select>");
-			sendChunkLine("</div>");
+			sendChunkOrCompress("</select>");
+			sendChunkOrCompress("</div>");
 		}
-		sendChunkLine("</div>");
+		sendChunkOrCompress("</div>");
 
 		//Submit button
-		sendChunkLine("<div class=\"button\">");
-		sendChunkLine("<input class=\"submit-button\" type=\"submit\" value=\"Submit\"/>");
-		sendChunkLine("</div>");
+		sendChunkOrCompress("<div class=\"button\">");
+		sendChunkOrCompress("<input class=\"submit-button\" type=\"submit\" value=\"Submit\"/>");
+		sendChunkOrCompress("</div>");
 
-		sendChunkLine("</form>");
-		sendChunkLine("</noscript>");
+		sendChunkOrCompress("</form>");
+		sendChunkOrCompress("</noscript>");
 		//--------------------------------
 	}
 }
