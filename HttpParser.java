@@ -148,8 +148,6 @@ public class HttpParser {
        		//Appending to the line buffering the current line we're parsing
    			headerLine.append(c);
 
-   			System.out.print(c);
-
 		    //End of line reached, storing as a map
        		if (c == '\n' && headerLine != null){
        			String line = headerLine.toString();
@@ -232,7 +230,6 @@ public class HttpParser {
 		else {
 			//Map value of "Cookie" is stored as "SESSID=1"
 			int index = cookieField.indexOf("SESSID=")+7;
-			System.out.println("Cookiecook: " + cookieField.charAt(index));
 			char value = cookieField.charAt(index);
 			return Character.getNumericValue(value);
 		}
