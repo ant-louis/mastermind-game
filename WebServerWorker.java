@@ -47,11 +47,11 @@ public class WebServerWorker implements Runnable {
 			if(path.equals("/")){
 				System.out.println("Redirecting...");
 				//Headers
-				socketOut.write("HTTP/1.1 303 See Other\r\n".getBytes());
-				socketOut.write("Location: /play.html\r\n".getBytes());
-			    socketOut.write("Content-Type: text/html; charset=utf-8\r\n".getBytes());
-				socketOut.write("Connection: close\r\n".getBytes());
-				socketOut.write("\r\n".getBytes());
+				socketOut.write("HTTP/1.1 303 See Other\r\n".getBytes("UTF-8"));
+				socketOut.write("Location: /play.html\r\n".getBytes("UTF-8"));
+			    socketOut.write("Content-Type: text/html; charset=utf-8\r\n".getBytes("UTF-8"));
+				socketOut.write("Connection: close\r\n".getBytes("UTF-8"));
+				socketOut.write("\r\n".getBytes("UTF-8"));
 				socketOut.flush();
 			}
 
@@ -117,21 +117,21 @@ public class WebServerWorker implements Runnable {
 
 				//*************HTTP - Headers********************/
 
-		    	socketOut.write("HTTP/1.1 200 OK\r\n".getBytes());
-			    socketOut.write("Content-Type: text/html; charset=utf-8\r\n".getBytes());
-			    socketOut.write("Connection: close\r\n".getBytes());
+		    	socketOut.write("HTTP/1.1 200 OK\r\n".getBytes("UTF-8"));
+			    socketOut.write("Content-Type: text/html; charset=utf-8\r\n".getBytes("UTF-8"));
+			    socketOut.write("Connection: close\r\n".getBytes("UTF-8"));
 
 		   		//If we won or lost, we must delete the cookie and delete the game
 			   	if(numberOfGuesses == 12 || wellPlacedColor == 4){
-			    	socketOut.write("Set-Cookie: SESSID=deleted; path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT\r\n".getBytes());
+			    	socketOut.write("Set-Cookie: SESSID=deleted; path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT\r\n".getBytes("UTF-8"));
 			    	GameInterface.deleteGame(cookie);
 			   	}
-			    socketOut.write("\r\n".getBytes());
+			    socketOut.write("\r\n".getBytes("UTF-8"));
 		
 				//*************HTTP - Body********************/
 
 				//Body consists only of the result, no need to chunk or compress
-			    socketOut.write(result.getBytes()); 
+			    socketOut.write(result.getBytes("UTF-8")); 
 			    socketOut.flush();
 			    socketOut.close();
 			}
@@ -244,11 +244,11 @@ public class WebServerWorker implements Runnable {
 
 		//Headers
 		String firstHeaderLine = "HTTP/1.1 "+ error +"\r\n";
-		socketOut.write(firstHeaderLine.getBytes());
-		socketOut.write("\r\n".getBytes());
+		socketOut.write(firstHeaderLine.getBytes("UTF-8"));
+		socketOut.write("\r\n".getBytes("UTF-8"));
 
 		//Print the HTML page
-		socketOut.write(pageError.toString().getBytes());
+		socketOut.write(pageError.toString().getBytes("UTF-8"));
 		socketOut.flush();
 		socketOut.close();
 	}

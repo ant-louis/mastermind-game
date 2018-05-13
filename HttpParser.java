@@ -231,8 +231,9 @@ public class HttpParser {
 		}
 		else {
 			//Map value of "Cookie" is stored as "SESSID=1"
-			int index = cookieField.indexOf("=");
-			char value = cookieField.charAt(index+1);
+			int index = cookieField.indexOf("SESSID=")+7;
+			System.out.println("Cookiecook: " + cookieField.charAt(index));
+			char value = cookieField.charAt(index);
 			return Character.getNumericValue(value);
 		}
 	}

@@ -2,7 +2,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-
+//Server side of a game of Mastermind
 public class Worker implements Runnable {
 	
 	//All possible colors in the game
@@ -182,7 +182,7 @@ public class Worker implements Runnable {
 	
 	
 	/********************************************************************************
-	 * Sends a message to the client through a TCP connection, in bytes
+	 * Sends a message to the client through an outputstream, in bytes
 	 *
 	 * ARGUMENTS : The string to send to the client 
 	 *
