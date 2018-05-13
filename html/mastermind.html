@@ -541,7 +541,10 @@
 	                    } else {
 	                        res.style.backgroundColor = "white";
 	                    }
-	                } 
+	                }
+
+	                /*Decrease number of guesses left*/
+	                nbGuess--;
 
 	                /*Check if user won*/
 	                if (response[0] == 4) {
@@ -549,11 +552,8 @@
 	                    setTimeout(function() {document.location = "play.html"}, 2000);
 	                } 
 
-	                /*Decrease number of guesses left*/
-	                nbGuess--; 
-
 	                /*Check if user lost*/
-	                if (nbGuess < 0) {
+	                else if (nbGuess < 0) {
 	                    alert("GAME OVER !");
 	                    setTimeout(function() {document.location = "play.html"}, 2000);
 	                }
